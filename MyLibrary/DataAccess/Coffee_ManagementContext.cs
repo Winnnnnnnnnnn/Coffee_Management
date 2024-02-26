@@ -36,7 +36,7 @@ namespace MyLibrary.DataAccess
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost;Database=Coffee_Management;uid=sa;pwd=hoangthang_2003ss;encrypt=true;trustServerCertificate=true;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=Coffee_Management; pwd=haidang1210; uid=sa; encrypt=true;trustServerCertificate=true;");
             }
         }
 
@@ -55,6 +55,7 @@ namespace MyLibrary.DataAccess
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(45)
+                    .IsUnicode(false)
                     .HasColumnName("name");
             });
 
@@ -68,6 +69,7 @@ namespace MyLibrary.DataAccess
 
                 entity.Property(e => e.Note)
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("note");
 
                 entity.Property(e => e.OrderId).HasColumnName("order_id");
@@ -78,19 +80,23 @@ namespace MyLibrary.DataAccess
 
                 entity.Property(e => e.ProductId).HasColumnName("product_id");
 
-                entity.Property(e => e.Quantity).HasColumnName("quantity");
+                entity.Property(e => e.Quantity)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("quantity");
 
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Details)
                     .HasForeignKey(d => d.OrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Detail__DeletedA__4D94879B");
+                    .HasConstraintName("FK__Detail__DeletedA__3A81B327");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.Details)
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Detail__product___4E88ABD4");
+                    .HasConstraintName("FK__Detail__product___3B75D760");
             });
 
             modelBuilder.Entity<Factor>(entity =>
@@ -110,6 +116,7 @@ namespace MyLibrary.DataAccess
                 entity.Property(e => e.Note)
                     .IsRequired()
                     .HasMaxLength(1)
+                    .IsUnicode(false)
                     .HasColumnName("note");
 
                 entity.Property(e => e.OrderId).HasColumnName("order_id");
@@ -120,7 +127,7 @@ namespace MyLibrary.DataAccess
                     .WithMany(p => p.Factors)
                     .HasForeignKey(d => d.OrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Factor__order_id__571DF1D5");
+                    .HasConstraintName("FK__Factor__order_id__440B1D61");
             });
 
             modelBuilder.Entity<Log>(entity =>
@@ -132,6 +139,7 @@ namespace MyLibrary.DataAccess
                 entity.Property(e => e.Action)
                     .IsRequired()
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("action");
 
                 entity.Property(e => e.CreatedAt)
@@ -146,7 +154,7 @@ namespace MyLibrary.DataAccess
                     .WithMany(p => p.Logs)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Log__user_id__5AEE82B9");
+                    .HasConstraintName("FK__Log__user_id__47DBAE45");
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -167,6 +175,7 @@ namespace MyLibrary.DataAccess
 
                 entity.Property(e => e.Note)
                     .HasMaxLength(100)
+                    .IsUnicode(false)
                     .HasColumnName("note");
 
                 entity.Property(e => e.TableId).HasColumnName("table_id");
@@ -176,13 +185,13 @@ namespace MyLibrary.DataAccess
                 entity.HasOne(d => d.Table)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.TableId)
-                    .HasConstraintName("FK__Order__table_id__4AB81AF0");
+                    .HasConstraintName("FK__Order__table_id__37A5467C");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Order__DeletedAt__49C3F6B7");
+                    .HasConstraintName("FK__Order__DeletedAt__36B12243");
             });
 
             modelBuilder.Entity<Permission>(entity =>
@@ -193,10 +202,12 @@ namespace MyLibrary.DataAccess
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Section)
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("section");
             });
 
@@ -213,6 +224,7 @@ namespace MyLibrary.DataAccess
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Price)
@@ -222,13 +234,14 @@ namespace MyLibrary.DataAccess
                 entity.Property(e => e.Unit)
                     .IsRequired()
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("unit");
 
                 entity.HasOne(d => d.Catalogue)
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.CatalogueId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Product__Deleted__45F365D3");
+                    .HasConstraintName("FK__Product__Deleted__32E0915F");
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -239,6 +252,7 @@ namespace MyLibrary.DataAccess
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("name");
             });
 
@@ -255,12 +269,12 @@ namespace MyLibrary.DataAccess
                 entity.HasOne(d => d.Permission)
                     .WithMany(p => p.RoleHasPermissions)
                     .HasForeignKey(d => d.PermissionId)
-                    .HasConstraintName("FK__Role_Has___permi__3C69FB99");
+                    .HasConstraintName("FK__Role_Has___permi__29572725");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.RoleHasPermissions)
                     .HasForeignKey(d => d.RoleId)
-                    .HasConstraintName("FK__Role_Has___role___3B75D760");
+                    .HasConstraintName("FK__Role_Has___role___286302EC");
             });
 
             modelBuilder.Entity<Setting>(entity =>
@@ -271,6 +285,7 @@ namespace MyLibrary.DataAccess
 
                 entity.Property(e => e.Key)
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("key");
 
                 entity.Property(e => e.Value)
@@ -286,15 +301,18 @@ namespace MyLibrary.DataAccess
 
                 entity.Property(e => e.Area)
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("area");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Note)
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("note");
             });
 
@@ -316,6 +334,7 @@ namespace MyLibrary.DataAccess
 
                 entity.Property(e => e.Note)
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("note");
 
                 entity.Property(e => e.OrderId).HasColumnName("order_id");
@@ -328,13 +347,13 @@ namespace MyLibrary.DataAccess
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.OrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Transacti__Delet__52593CB8");
+                    .HasConstraintName("FK__Transacti__Delet__3F466844");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Transacti__user___534D60F1");
+                    .HasConstraintName("FK__Transacti__user___403A8C7D");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -354,6 +373,7 @@ namespace MyLibrary.DataAccess
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(255)
+                    .IsUnicode(false)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Password)
@@ -372,7 +392,7 @@ namespace MyLibrary.DataAccess
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.RoleId)
-                    .HasConstraintName("FK__User__DeletedAt__3F466844");
+                    .HasConstraintName("FK__User__DeletedAt__2C3393D0");
             });
 
             OnModelCreatingPartial(modelBuilder);
