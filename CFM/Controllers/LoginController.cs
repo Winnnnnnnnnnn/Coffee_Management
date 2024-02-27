@@ -36,9 +36,7 @@ namespace ShopManagement.Controllers
 
             if (authenticatedUser != null)
             {
-                Console.WriteLine("User Password: " + user.Password);
-                Console.WriteLine("Hashed Password: " + hashedPassword);
-                return RedirectToAction("Index", "Product");
+                return RedirectToAction("Index", "Home");
             }
 
 

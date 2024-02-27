@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MyLibrary.DataAccess;
 
+
 namespace MyLibrary.DataAccess
 {
     public class UserDAO
@@ -47,7 +48,7 @@ namespace MyLibrary.DataAccess
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    return context.Users.FirstOrDefault(u => u.Id == userId);
+                    return context.Users.FirstOrDefault(m => m.Id == userId);
                 }
             }
             catch (Exception ex)
@@ -55,6 +56,7 @@ namespace MyLibrary.DataAccess
                 throw new Exception("Error retrieving user by ID: " + ex.Message);
             }
         }
+
 
         public void AddNew(User user)
         {
@@ -104,6 +106,7 @@ namespace MyLibrary.DataAccess
             }
         }
 
+
         public void Remove(int userId)
         {
             try
@@ -127,5 +130,31 @@ namespace MyLibrary.DataAccess
                 throw new Exception("Error removing user: " + ex.Message);
             }
         }
+
+        public void RemoveMultiple(List<int> userIds)
+        {
+            try
+            {
+                using (var context = new Coffee_ManagementContext())
+                {
+                    foreach (var userId in userIds)
+                    {
+                        var userToRemove = context.Users.FirstOrDefault(u => u.Id == userId);
+                        if (userToRemove != null)
+                        {
+                            context.Users.Remove(userToRemove);
+                        }
+                    }
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error removing users: " + ex.Message);
+            }
+        }
+
+
+
     }
 }
