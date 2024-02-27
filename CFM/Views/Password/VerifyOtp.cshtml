@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "VerifyOtp";
+}
+
+<h1 style="text-align: center">Verify Otp</h1>
+
+<form asp-action="VerifyOtp" method="Post" class="container mt-3">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="otpInput">OTP Input</label>
+                <input type="text" id="otpInput" name="otpInput" class="form-control">
+            </div>
+            <span style="color: red;">@ViewData["OTP"]</span>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="form-group">
+            <input type="submit" value="Verify OTP" class="btn btn-outline-success">
+            <a asp-controller="Login" asp-action="Index"  class="btn btn-outline-primary">Back to login</a>
+        </div>
+    </div>
+</form>
+
+<hr class="mt-3">
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
