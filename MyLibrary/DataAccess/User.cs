@@ -30,8 +30,6 @@ namespace MyLibrary.DataAccess
         // [Required(ErrorMessage = "Mật khẩu không được trống")]
         // [StringLength(20, MinimumLength = 5, ErrorMessage = "Mật khẩu phải từ 5 đến 20 ký tự")]
         public string Password { get; set; }
-        public string NewPassword { get; set; }
-        public string ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "Điện thoại không được trống")]
         public string Phone { get; set; }

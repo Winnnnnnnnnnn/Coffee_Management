@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/css/app.css" />
     <link rel="stylesheet" href="~/css/sidebar.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.dataTables.css">
 </head>
 
 <body>
@@ -99,14 +100,11 @@
                                     </li>
                                     <li class="submenu-item @(ViewBag.IsActive == "setting" ? "active" : "")">
                                         <a class="text-decoration-none" asp-controller="Home" asp-action="Index">Thiết
-                                            lập
-                                            hệ
-                                            thống</a>
+                                            lập hệ thống</a>
                                     </li>
                                     <li class="submenu-item @(ViewBag.IsActive == "log" ? "active" : "")">
                                         <a class="text-decoration-none" asp-controller="Home" asp-action="Index">Nhật ký
-                                            hệ
-                                            thống</a>
+                                            hệ thống</a>
                                     </li>
                                 </ul>
                             </li>
@@ -134,7 +132,7 @@
                                 <ul class="navbar-nav d-flex justify-content-start mb-2 mb-lg-0">
                                 </ul>
                                 <div class="dropdown ms-auto">
-                                    <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div data-bs-toggle="dropdown" aria-expanded="false" class="cursor-pointer">
                                         <div class="user-menu d-flex">
                                             <div class="user-name text-end me-3">
                                                 <h6 class="mb-0 text-primary text-decoration-none">Name</h6>
@@ -146,7 +144,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </a>
+                                    </div>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                         <li>
                                             <h6 class="dropdown-header">Chào bạn, Name!</h6>
@@ -186,17 +184,23 @@
                     @RenderBody()
                 </main>
                 <footer class="footer text-muted bg-light">
-                    &copy; Group7 - CoffeeManagement - <a asp-area="" asp-controller="Home"
-                        asp-action="Privacy">Privacy</a>
+                    &copy; Group7 - CoffeeManagement - <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                 </footer>
             </div>
         </div>
     </div>
-    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script> *@
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.submenu-item', function (e) {
+
+        })
+    })
+</script>
 
 </html>

@@ -17,6 +17,7 @@ namespace CFM.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.IsActive = "user";
             var userList = userRepository.GetUsers();
             return View("~/Views/User/Index.cshtml", userList);
         }
