@@ -20,6 +20,7 @@ namespace CFM.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.IsActive = "dashboard";
             return View();
         }
 
