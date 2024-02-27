@@ -2,99 +2,88 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using MyLibrary.DataAccess;
+using MyLibrary.Repository;
 
 namespace CFM.Controllers
 {
-    [Route("[controller]")]
     public class ProfileController : Controller
     {
-        public ActionResult ChangePassword()
+        private readonly Coffee_ManagementContext _db;
+        private readonly IUserRepository _userRepository;
+
+        public ProfileController(Coffee_ManagementContext db, IUserRepository userRepository)
         {
-            // Kiểm tra xem người dùng đã đăng nhập chưa
-            if (User.Identity.IsAuthenticated)
-            {
-                // Trả về view để đổi mật khẩu
-                return View();
-            }
-            else
-            {
-                // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
-                return RedirectToAction("Index", "Login");
-            }
+            _db = db;
+            _userRepository = userRepository;
+        }
+        public IActionResult ChangePassword()
+        {
+            return View();
         }
 
-        // Action để xử lý việc thay đổi mật khẩu
         [HttpPost]
-        public ActionResult ChangePassword(string currentPassword, string newPassword)
+        public IActionResult ChangePassword(string oldPassword, string newPassword, string confirmPassword)
         {
-            // Lấy ID của người dùng từ phiên đăng nhập
-            string userId = User.Identity.Name;
-
-            // Kiểm tra mật khẩu cũ có đúng không
-            if (IsCurrentPasswordValid(userId, currentPassword))
+            int useId = (int)TempData["Id"];
+            System.Console.WriteLine(useId);
+            string passMD5;
+            using (MD5 md5 = MD5.Create())
             {
-                // Nếu đúng, thay đổi mật khẩu mới
-                if (ChangeUserPassword(userId, newPassword))
+                byte[] inputBytes = Encoding.ASCII.GetBytes(oldPassword);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                // Convert the byte array to hexadecimal string
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
                 {
-                    // Trả về trang thông báo đổi mật khẩu thành công
-                    return View("ChangePasswordSuccess");
+                    sb.Append(hashBytes[i].ToString("x2"));
                 }
-                else
-                {
-                    // Trả về trang thông báo lỗi khi đổi mật khẩu
-                    ModelState.AddModelError("", "Đã có lỗi xảy ra khi đổi mật khẩu.");
-                    return View();
-                }
+                passMD5 = sb.ToString();
+            }
+
+            oldPassword = passMD5;
+            var user = _db.Users.FirstOrDefault(u => u.Password == oldPassword && u.Id == useId);
+            System.Console.WriteLine(oldPassword);
+            System.Console.WriteLine(useId);
+
+
+
+
+            if (newPassword != confirmPassword)
+            {
+                ViewData["Password"] = "Password and confirm password do not match!";
+                return View("Index", "Profile");
             }
             else
             {
-                // Trả về trang thông báo lỗi khi mật khẩu cũ không đúng
-                ModelState.AddModelError("", "Mật khẩu cũ không đúng.");
-                return View();
-            }
-        }
 
-        // Hàm kiểm tra mật khẩu cũ
-        private bool IsCurrentPasswordValid(string userId, string currentPassword)
-        {
-            // Kết nối đến database và thực hiện kiểm tra
-            using (SqlConnection connection = new SqlConnection("YourConnectionString"))
-            {
-                connection.Open();
-
-                string query = "SELECT COUNT(*) FROM User WHERE Id = @Id AND Password = @Password";
-                using (SqlCommand command = new SqlCommand(query, connection))
+                // Hash the password using MD5
+                string hashedPassword;
+                using (MD5 md5 = MD5.Create())
                 {
-                    command.Parameters.AddWithValue("@Id", userId);
-                    command.Parameters.AddWithValue("@Password", currentPassword);
+                    byte[] inputBytes = Encoding.ASCII.GetBytes(newPassword);
+                    byte[] hashBytes = md5.ComputeHash(inputBytes);
 
-                    int count = (int)command.ExecuteScalar();
-                    return count > 0;
+                    // Convert the byte array to hexadecimal string
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < hashBytes.Length; i++)
+                    {
+                        sb.Append(hashBytes[i].ToString("x2"));
+                    }
+                    hashedPassword = sb.ToString();
                 }
-            }
-        }
+                Console.WriteLine(hashedPassword);
 
-        // Hàm thay đổi mật khẩu mới
-        private bool ChangeUserPassword(string userId, string newPassword)
-        {
-            // Kết nối đến database và thực hiện cập nhật mật khẩu mới
-            using (SqlConnection connection = new SqlConnection("YourConnectionString"))
-            {
-                connection.Open();
-
-                string query = "UPDATE Users SET Password = @Password WHERE Id = @Id";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", userId);
-                    command.Parameters.AddWithValue("@Password", newPassword);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    return rowsAffected > 0;
-                }
+                user.Password = hashedPassword;
+                _db.SaveChanges();
+                return RedirectToAction("Index", "Login");
             }
         }
     }
