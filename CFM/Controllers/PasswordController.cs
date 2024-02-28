@@ -147,7 +147,6 @@ namespace CoffeeManagement.Controllers
             }
             else
             {
-
                 // Hash the password using MD5
                 string hashedPassword;
                 using (MD5 md5 = MD5.Create())
@@ -169,5 +168,7 @@ namespace CoffeeManagement.Controllers
                 return RedirectToAction("Index", "Login");
             }
         }
+
+
     }
 }

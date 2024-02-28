@@ -29,14 +29,14 @@ namespace CFM.Controllers
         }
 
         [HttpPost]
-        public IActionResult ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+        public IActionResult ChangePassword(string Password, string newPassword, string confirmPassword)
         {
             int useId = (int)TempData["Id"];
             System.Console.WriteLine(useId);
             string passMD5;
             using (MD5 md5 = MD5.Create())
             {
-                byte[] inputBytes = Encoding.ASCII.GetBytes(oldPassword);
+                byte[] inputBytes = Encoding.ASCII.GetBytes(Password);
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
 
                 // Convert the byte array to hexadecimal string
@@ -48,18 +48,15 @@ namespace CFM.Controllers
                 passMD5 = sb.ToString();
             }
 
-            oldPassword = passMD5;
-            var user = _db.Users.FirstOrDefault(u => u.Password == oldPassword && u.Id == useId);
-            System.Console.WriteLine(oldPassword);
+            Password = passMD5;
+            var user = _db.Users.FirstOrDefault(u => u.Password == Password && u.Id == useId);
+            System.Console.WriteLine(Password);
             System.Console.WriteLine(useId);
-
-
-
 
             if (newPassword != confirmPassword)
             {
-                ViewData["Password"] = "Password and confirm password do not match!";
-                return View("Index", "Profile");
+                ViewData["Password"] = "Mật khẩu không trùng khớp";
+                return View("ChangePassword");
             }
             else
             {
@@ -79,12 +76,19 @@ namespace CFM.Controllers
                     }
                     hashedPassword = sb.ToString();
                 }
-                Console.WriteLine(hashedPassword);
-
                 user.Password = hashedPassword;
                 _db.SaveChanges();
                 return RedirectToAction("Index", "Login");
             }
         }
+
+        public IActionResult ProfileUser()
+        {
+            // TODO: Your code here
+            return View();
+        }
+
+
+
     }
 }
