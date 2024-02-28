@@ -83,7 +83,7 @@ namespace CFM.Controllers
 
                 user.Password = hashedPassword;
                 _db.SaveChanges();
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "Home");
             }
         }
     }

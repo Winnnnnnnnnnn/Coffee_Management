@@ -29,6 +29,7 @@ namespace CFM.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(User user)
         {
+            Console.WriteLine(user.Id + ' ' + user.Name);
             try
             {
                 if (ModelState.IsValid)

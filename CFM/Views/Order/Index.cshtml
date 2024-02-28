@@ -40,9 +40,6 @@
                     <table class="table table-hover" id="data-table">
                         <thead>
                             <tr>
-                                <th>
-                                    <input class="form-check-input" type="checkbox" id="all-choices">
-                                </th>
                                 <th>ID</th>
                                 <th>Nhân viên</th>
                                 <th>Bàn</th>
@@ -55,9 +52,6 @@
                             @foreach (var order in Model)
                             {
                                 <tr>
-                                    <td><input class="form-check-input choice" type="checkbox" name="selectedIds"
-                                            value="@order.Id"></td>
-                                    <td class="orderId">@order.Id</td>
                                     <td>
                                         <a style="cursor: pointer;" class="btn-update-order"
                                             data-bs-target="#editOrderModal" data-id="@order.Id">Đơn @order.Id</a>
@@ -82,9 +76,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Data table link-->
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.7.1.js"></script>d
     <script>
         $(document).ready(function () {
             $('#data-table').DataTable({
@@ -108,21 +99,6 @@
                 }
             });
         });
-
-        $('#all-choices').change(function (e) {
-            e.preventDefault();
-            $('.choice').prop('checked', $(this).prop('checked')).change();
-        });
-
-        $(document).on('change', '.choice', function (e) {
-            e.preventDefault();
-            if ($('.choice:checked').length) {
-                $('.btn-remove-order').removeClass('d-none');
-            } else {
-                $('.btn-remove-order').addClass('d-none');
-            }
-        });
-
 
         $('.btn-create-order').click(function (e) {
             $('.save-form').trigger('reset');
@@ -150,15 +126,6 @@
                 }
             });
         })
-
-        $(document).on('change', '.choice', function (e) {
-            e.preventDefault();
-            if ($('.choice:checked').length) {
-                $('.btn-remove-order').removeClass('d-none');
-            } else {
-                $('.btn-remove-order').addClass('d-none');
-            }
-        });
 
         $(document).on('click', '.btn-remove', function () {
             const id = parseInt($(this).attr('data-id'));
