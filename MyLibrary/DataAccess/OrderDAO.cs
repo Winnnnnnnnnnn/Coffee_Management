@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MyLibrary.DataAccess;
 
 
 namespace MyLibrary.DataAccess
 {
-    public class UserDAO
+    public class OrderDAO
     {
-        private static UserDAO instance = null;
+        private static OrderDAO instance = null;
         private static readonly object instanceLock = new object();
 
-        public static UserDAO Instance
+        public static OrderDAO Instance
         {
             get
             {
@@ -19,129 +20,129 @@ namespace MyLibrary.DataAccess
                 {
                     if (instance == null)
                     {
-                        instance = new UserDAO();
+                        instance = new OrderDAO();
                     }
                     return instance;
                 }
             }
         }
 
-        public IEnumerable<User> GetUserList()
+        public IEnumerable<Order> GetOrderList()
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    return context.Users.ToList();
+                    return context.Orders.ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error retrieving user list: " + ex.Message);
+                throw new Exception("Error retrieving Order list: " + ex.Message);
             }
         }
 
-        public User GetUserByID(int userId)
+        public Order GetOrderByID(int OrderId)
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    return context.Users.FirstOrDefault(m => m.Id == userId);
+                    return context.Orders.FirstOrDefault(m => m.Id == OrderId);
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error retrieving user by ID: " + ex.Message);
+                throw new Exception("Error retrieving Order by ID: " + ex.Message);
             }
         }
 
 
-        public void AddNew(User user)
+        public void AddNew(Order Order)
         {
             try
             {
-                var existingUser = GetUserByID(user.Id);
-                if (existingUser == null)
+                var existingOrder = GetOrderByID(Order.Id);
+                if (existingOrder == null)
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
-                        context.Users.Add(user);
+                        context.Orders.Add(Order);
                         context.SaveChanges();
                     }
                 }
                 else
                 {
-                    throw new Exception("The user already exists.");
+                    throw new Exception("The Order already exists.");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error adding new user: " + ex.Message);
+                throw new Exception("Error adding new Order: " + ex.Message);
             }
         }
 
-        public void Update(User user)
+        public void Update(Order Order)
         {
             try
             {
-                var existingUser = GetUserByID(user.Id);
-                if (existingUser != null)
+                var existingOrder = GetOrderByID(Order.Id);
+                if (existingOrder != null)
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
-                        context.Users.Update(user);
+                        context.Orders.Update(Order);
                         context.SaveChanges();
                     }
                 }
                 else
                 {
-                    throw new Exception("The user does not exist.");
+                    throw new Exception("The Order does not exist.");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error updating user: " + ex.Message);
+                throw new Exception("Error updating Order: " + ex.Message);
             }
         }
 
 
-        public void Remove(int userId)
+        public void Remove(int OrderId)
         {
             try
             {
-                var userToRemove = GetUserByID(userId);
-                if (userToRemove != null)
+                var OrderToRemove = GetOrderByID(OrderId);
+                if (OrderToRemove != null)
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
-                        context.Users.Remove(userToRemove);
+                        context.Orders.Remove(OrderToRemove);
                         context.SaveChanges();
                     }
                 }
                 else
                 {
-                    throw new Exception("The user does not exist.");
+                    throw new Exception("The Order does not exist.");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error removing user: " + ex.Message);
+                throw new Exception("Error removing Order: " + ex.Message);
             }
         }
 
-        public void RemoveMultiple(List<int> userIds)
+        public void RemoveMultiple(List<int> OrderIds)
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    foreach (var userId in userIds)
+                    foreach (var OrderId in OrderIds)
                     {
-                        var userToRemove = context.Users.FirstOrDefault(u => u.Id == userId);
-                        if (userToRemove != null)
+                        var OrderToRemove = context.Orders.FirstOrDefault(u => u.Id == OrderId);
+                        if (OrderToRemove != null)
                         {
-                            context.Users.Remove(userToRemove);
+                            context.Orders.Remove(OrderToRemove);
                         }
                     }
                     context.SaveChanges();
@@ -149,7 +150,7 @@ namespace MyLibrary.DataAccess
             }
             catch (Exception ex)
             {
-                throw new Exception("Error removing users: " + ex.Message);
+                throw new Exception("Error removing Orders: " + ex.Message);
             }
         }
     }

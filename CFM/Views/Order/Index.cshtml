@@ -1,11 +1,11 @@
-@model IEnumerable<MyLibrary.DataAccess.User>
+@model IEnumerable<MyLibrary.DataAccess.Order>
 
 @{
     ViewData["Title"] = "Quản lý tài khoản";
 }
 
-@Html.Partial("../Includes/_ModalCreateUser.cshtml")
-@Html.Partial("../Includes/_ModalEditUser.cshtml")
+@Html.Partial("../Includes/_ModalCreateOrder.cshtml")
+@Html.Partial("../Includes/_ModalEditOrder.cshtml")
 
 <div class="page-heading">
     <div class="page-title">
@@ -28,13 +28,14 @@
 <div class="page-content">
     <div class="card">
         <div class="card-header">
-            <button type="button" class="btn btn-create-user btn-primary me-2" data-bs-toggle="modal"
-                data-bs-target="#createUserModal"><i class="bi bi-plus-circle-dotted"></i>Thêm</button>
-            <button type="button" class="btn btn-remove-user btn-danger d-none" id="btn-remove-users"> <i
+            <button type="button" class="btn btn-create-order btn-primary me-2" data-bs-toggle="modal"
+                data-bs-target="#createOrderModal"><i class="bi bi-plus-circle-dotted"></i>Thêm</button>
+            <button type="button" class="btn btn-remove-order btn-danger d-none" id="btn-remove-orders"> <i
                     class="icon-mid bi bi-trash"></i> Xóa</button>
         </div>
         <div class="card-body">
             <form id="batch-form" asp-action="Delete" method="post">
+                @Html.AntiForgeryToken()
                 <div class="table-responsive">
                     <table class="table table-hover" id="data-table">
                         <thead>
@@ -43,30 +44,31 @@
                                     <input class="form-check-input" type="checkbox" id="all-choices">
                                 </th>
                                 <th>ID</th>
-                                <th>Tên người dùng</th>
-                                <th>Email</th>
-                                <th>Điện thoại</th>
-                                <th>Vai trò</th>
+                                <th>Nhân viên</th>
+                                <th>Bàn</th>
+                                <th>Trạng thái</th>
+                                <th>Ghi chú</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var user in Model)
+                            @foreach (var order in Model)
                             {
                                 <tr>
                                     <td><input class="form-check-input choice" type="checkbox" name="selectedIds"
-                                            value="@user.Id"></td>
-                                    <td class="userId">@user.Id</td>
+                                            value="@order.Id"></td>
+                                    <td class="orderId">@order.Id</td>
                                     <td>
-                                        <a style="cursor: pointer;" class="btn-update-user" data-bs-target="#editUserModal"
-                                            data-id="@user.Id">@user.Name</a>
+                                        <a style="cursor: pointer;" class="btn-update-order"
+                                            data-bs-target="#editOrderModal" data-id="@order.Id">Đơn @order.Id</a>
                                     </td>
-                                    <td>@user.Email</td>
-                                    <td>@user.Phone</td>
-                                    <td>@user.RoleId</td>
+                                    <td>@order.UserId</td>
+                                    <td>@order.TableId</td>
+                                    <td>@order.CheckoutAt</td>
+                                    <td>@order.Note</td>
                                     <td>
-                                        <input type="hidden" value="@user.Id" name="id" />
-                                        <a class="btn btn-danger me-2 btn-remove" data-id="@user.Id">
+                                        <input type="hidden" value="@order.Id" name="id" />
+                                        <a class="btn btn-danger me-2 btn-remove" data-id="@order.Id">
                                             <i class="bi bi-trash"></i></a>
                                     </td>
                                 </tr>
@@ -107,7 +109,6 @@
             });
         });
 
-
         $('#all-choices').change(function (e) {
             e.preventDefault();
             $('.choice').prop('checked', $(this).prop('checked')).change();
@@ -116,35 +117,32 @@
         $(document).on('change', '.choice', function (e) {
             e.preventDefault();
             if ($('.choice:checked').length) {
-                $('.btn-remove-user').removeClass('d-none');
+                $('.btn-remove-order').removeClass('d-none');
             } else {
-                $('.btn-remove-user').addClass('d-none');
+                $('.btn-remove-order').addClass('d-none');
             }
         });
 
 
-        $('.btn-create-user').click(function (e) {
+        $('.btn-create-order').click(function (e) {
             $('.save-form').trigger('reset');
             e.preventDefault();
-            $('#user-modal').modal('show');
         });
 
-        $(document).on('click', '.btn-update-user', function (e) {
+        $(document).on('click', '.btn-update-order', function (e) {
             e.preventDefault();
             const form = $(this).parents().find('form');
             let id = $(this).attr("data-id");
             $.ajax({
-                url: '/User/Edit/' + id,
+                url: '/Order/Edit/' + id,
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                    console.log(data.id, data);
                     form.find('[name=Id]').val(data.id);
-                    form.find('[name=Name]').val(data.name);
-                    form.find('[name=Email]').val(data.email);
-                    form.find('[name=Phone]').val(data.phone);
-                    form.find('[name=RoleId]').val(data.roleId);
-                    $('#modalEditUser').find('.modal').modal('show')
+                    form.find('[name=CustomerId]').val(data.name);
+                    form.find('[name=TableId]').val(data.email);
+                    form.find('[name=Note]').val(data.phone);
+                    $('#modalEditOrder').find('.modal').modal('show')
 
                 },
                 error: function (xhr, status, error) {
@@ -156,9 +154,9 @@
         $(document).on('change', '.choice', function (e) {
             e.preventDefault();
             if ($('.choice:checked').length) {
-                $('.btn-remove-user').removeClass('d-none');
+                $('.btn-remove-order').removeClass('d-none');
             } else {
-                $('.btn-remove-user').addClass('d-none');
+                $('.btn-remove-order').addClass('d-none');
             }
         });
 
@@ -175,10 +173,11 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/User/Delete/' + id,
+                        url: '/Order/Delete/' + id,
                         type: 'GET',
                         success: function (response) {
                             window.location.reload()
+
                         },
                         error: function (xhr, status, error) {
                         }
@@ -186,5 +185,6 @@
                 }
             });
         });
+
     </script>
 }
