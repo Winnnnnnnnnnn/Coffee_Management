@@ -158,7 +158,8 @@
                                                 Thông tin tài khoản</a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item cursor-pointer btn-profile-password" data-id="">
+                                            <a class="dropdown-item cursor-pointer btn-profile-password"
+                                                asp-controller="Profile" asp-action="ChangePassword" asp-route-id="2">
                                                 <i class="icon-mid bi bi-key me-2"></i>
                                                 Đổi mật khẩu</a>
                                         </li>
@@ -199,12 +200,28 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-<script>
-    $(document).ready(function () {
-        $(document).on('click', '.submenu-item', function (e) {
+@* <script>
+$(document).ready(function () {
+$(document).on('click', '.btn-profile-password', function myFunction(id) {
+// Gửi id tới phía máy chủ thông qua Ajax hoặc các phương thức khác
+// Ví dụ: sử dụng JavaScript hoặc jQuery để thực hiện một yêu cầu HTTP
+console.log("Received ID: " + id);
 
-        })
-    })
-</script>
+// Gọi hàm phía máy chủ bằng Ajax
+// Ví dụ sử dụng jQuery
+$.ajax({
+type: "POST",
+url: "/Profile/ChangePassword", // Thay đổi đường dẫn và tên hàm theo yêu cầu của bạn
+data: { id: id },
+success: function (response) {
+console.log(response);
+},
+error: function (error) {
+console.error(error);
+}
+});
+})
+})
+</script> *@
 
 </html>
