@@ -113,6 +113,7 @@ namespace CoffeeManagement.Controllers
             TempData.Keep("OTP");
             if (otpInput == generatedOTP)
             {
+                TempData.Remove("OTP");
                 return RedirectToAction("UpdatePassword", "Password");
             }
             else

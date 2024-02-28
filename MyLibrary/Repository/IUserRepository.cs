@@ -14,5 +14,6 @@ namespace MyLibrary.Repository
         void DeleteUser(int userId);
         void DeleteUsers(List<int> userIds);
         void UpdateUser(User user);
+        string GetRole(User user);
     }
 }

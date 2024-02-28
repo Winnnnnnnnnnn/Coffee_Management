@@ -33,10 +33,13 @@ namespace ShopManagement.Controllers
             string hashedPassword = GetMd5Hash(user.Password);
 
             var authenticatedUser = userList.FirstOrDefault(u => u.Email == user.Email && u.Password == hashedPassword);
-           
+
             if (authenticatedUser != null)
             {
                 TempData["Id"] = authenticatedUser.Id;
+                HttpContext.Session.SetInt32("AuthId", authenticatedUser.Id);
+                HttpContext.Session.SetString("AuthName", authenticatedUser.Name);
+                HttpContext.Session.SetString("AuthRole", userRepository.GetRole(authenticatedUser));
 
                 return RedirectToAction("Index", "Home");
             }
