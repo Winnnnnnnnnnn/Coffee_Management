@@ -18,8 +18,10 @@ namespace MyLibrary.DataAccess
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Họ tên không được trống")]
-        [StringLength(50, MinimumLength = 5, ErrorMessage = "Họ tên phải từ 5 đến 50 ký tự")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Họ tên phải từ 3 trở lên")]
         public string Name { get; set; }
+
+
         public int? RoleId { get; set; }
 
         [Required(ErrorMessage = "Email không được trống")]
@@ -27,8 +29,8 @@ namespace MyLibrary.DataAccess
         [RegularExpression("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", ErrorMessage = "Email phải đúng định dạng")]
         public string Email { get; set; }
 
-        // [Required(ErrorMessage = "Mật khẩu không được trống")]
-        // [StringLength(20, MinimumLength = 5, ErrorMessage = "Mật khẩu phải từ 5 đến 20 ký tự")]
+        [Required(ErrorMessage = "Mật khẩu không được trống")]
+        [StringLength(20, MinimumLength = 5, ErrorMessage = "Mật khẩu phải từ 5 đến 20 ký tự")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Điện thoại không được trống")]
