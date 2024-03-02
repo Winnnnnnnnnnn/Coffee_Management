@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace CFM.Controllers
 {
-    [Route("[controller]")]
     public class ProfileController : Controller
     {
         public ActionResult ChangePassword()

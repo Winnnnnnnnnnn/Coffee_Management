@@ -4,8 +4,8 @@
     ViewData["Title"] = "Quản lý tài khoản";
 }
 
-@Html.Partial("../Includes/_ModalCreateUser.cshtml")
-@Html.Partial("../Includes/_ModalEditUser.cshtml")
+@* @Html.Partial("../Includes/_ModalCreateUser.cshtml")
+@Html.Partial("../Includes/_ModalEditUser.cshtml") *@
 
 <div class="page-heading">
     <div class="page-title">
@@ -80,9 +80,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Data table link-->
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.7.1.js"></script>d
     <script>
         $(document).ready(function () {
             $('#data-table').DataTable({

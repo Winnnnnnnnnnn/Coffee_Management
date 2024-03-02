@@ -22,13 +22,11 @@ namespace CFM.Controllers
             return View("~/Views/User/Index.cshtml", userList);
         }
 
-
-        public ActionResult Create() => View("~/Views/User/Create.cshtml");
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(User user)
         {
+            // System.Console.WriteLine(user.Id + "  "+ user.Name);
             try
             {
                 if (ModelState.IsValid)
@@ -93,6 +91,7 @@ namespace CFM.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
+            System.Console.WriteLine(id);
             userRepository.DeleteUser(id);
             return RedirectToAction("Index");
         }
