@@ -1,0 +1,41 @@
+<div id="modalCreateTable">
+    <div class="modal fade" id="createTableModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTableModalLabel">Tạo bàn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-action="Create" method="post" id="createTableModal" class="save-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">Tên bàn</label>
+                            <input required type="text" class="form-control" id="name" name="Name"
+                                placeholder="Nhập tên bàn">
+                            <span class="text-danger">@ViewData["TableName"]</span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="area" class="form-label fw-bold">Khu vực</label>
+                            <input required type="text" class="form-control" id="area" name="Area"
+                                placeholder="Nhập khu vực">
+                            <span class="text-danger">@ViewData["TableArea"]</span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="note" class="form-label fw-bold">Ghi chú</label>
+                            <input type="text" class="form-control" id="note" name="Note" placeholder="Nhập ghi chú">
+                            @* <span asp-validation-for="Phone" class="text-danger"></span> *@
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary px-4">Tạo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

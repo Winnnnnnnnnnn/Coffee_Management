@@ -14,10 +14,11 @@
             <span style="color: red;">@ViewData["OTP"]</span>
         </div>
     </div>
+    <div id="countdown" class="text-danger align-items-center"></div>
     <div class="row justify-content-center">
         <div class="form-group">
             <input type="submit" value="Verify OTP" class="btn btn-outline-success">
-            <a asp-controller="Login" asp-action="Index"  class="btn btn-outline-primary">Back to login</a>
+            <a asp-controller="Login" asp-action="Index" class="btn btn-outline-primary">Back to login</a>
         </div>
     </div>
 </form>
@@ -27,3 +28,28 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<script>
+    // Lấy phần tử hiển thị đếm ngược
+    var countdownElement = document.getElementById('countdown');
+
+    // Đặt thời gian ban đầu là 60 giây
+    var secondsRemaining = 60;
+
+    // Hàm cập nhật đếm ngược
+    function updateCountdown() {
+        countdownElement.innerHTML = 'Remaining time: ' + secondsRemaining + ' seconds';
+
+        // Giảm số giây còn lại
+        secondsRemaining--;
+
+        // Nếu đã đếm ngược xong, dừng lại
+        if (secondsRemaining < 0) {
+            clearInterval(countdownInterval);
+            countdownElement.innerHTML = 'Time is up!';
+        }
+    }
+
+    // Bắt đầu cập nhật đếm ngược mỗi giây
+    var countdownInterval = setInterval(updateCountdown, 1000);
+</script>

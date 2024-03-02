@@ -25,6 +25,13 @@ namespace CFM
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(2);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddScoped<Coffee_ManagementContext>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddControllersWithViews();
@@ -45,6 +52,8 @@ namespace CFM
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseSession();
 
             app.UseRouting();
 
