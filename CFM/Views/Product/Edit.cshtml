@@ -5,11 +5,11 @@
         <div class="container mx-5 p-3">
             <h3 class="fw-bold">Cập nhật sản phẩm</h3>
             <hr>
-            <form asp-action="Edit" method="post" id="product-form" class="save-form" accept-charset="UTF-8">
+            <form asp-action="Edit" method="post" id="product-form" class="save-form" accept-charset="UTF-8" mo>
                 <div class="p-5">
                     <div class="row">
                         <input type="hidden" asp-for="Id">
-                            <span asp-validation-for="Id" class="text-danger"></span>
+                        <span asp-validation-for="Id" class="text-danger"></span>
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label fw-bold">Tên sản phẩm</label>
                             <input type="text" class="form-control" asp-for="Name" placeholder="Nhập tên sản phẩm">
@@ -26,9 +26,9 @@
                             <span asp-validation-for="Price" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label asp-for="CatalogueId" class="form-label fw-bold">Danh mục</label>
-                            <input type="text" class="form-control" asp-for="CatalogueId" placeholder="Nhập danh mục">
-                            <span asp-validation-for="CatalogueId" class="text-danger"></span>
+                            <label asp-for="Catalogue" class="form-label fw-bold">Danh mục</label>
+                            <input type="text" class="form-control" asp-for="Catalogue" placeholder="Nhập danh mục">
+                            <span asp-validation-for="Catalogue" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="d-flex justify-content-end me-5 mb-3">

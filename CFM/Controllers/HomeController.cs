@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CFM.Models;
+using Microsoft.AspNetCore.Authorization;
+using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
+    [Authentication]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

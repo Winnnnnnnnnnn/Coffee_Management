@@ -16,6 +16,7 @@ namespace MyLibrary.DataAccess
         public string Name { get; set; }
         public string Area { get; set; }
         public string Note { get; set; }
+        public int? Status { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
     }

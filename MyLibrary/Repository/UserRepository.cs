@@ -17,7 +17,7 @@ namespace MyLibrary.Repository
         public string GetRole(User user)
         {
             var role = "";
-            switch (user.RoleId)
+            switch (user.Role)
             {
                 case 1:
                     role = "Admin";

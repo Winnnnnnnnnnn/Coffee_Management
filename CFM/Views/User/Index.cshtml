@@ -4,8 +4,8 @@
     ViewData["Title"] = "Quản lý tài khoản";
 }
 
-@* @Html.Partial("../Includes/_ModalCreateUser.cshtml")
-@Html.Partial("../Includes/_ModalEditUser.cshtml") *@
+@Html.Partial("../Includes/_ModalCreateUser.cshtml")
+@Html.Partial("../Includes/_ModalEditUser.cshtml")
 
 <div class="page-heading">
     <div class="page-title">
@@ -63,7 +63,7 @@
                                     </td>
                                     <td>@user.Email</td>
                                     <td>@user.Phone</td>
-                                    <td>@user.RoleId</td>
+                                    <td>@user.Role</td>
                                     <td>
                                         <input type="hidden" value="@user.Id" name="id" />
                                         <a class="btn btn-danger me-2 btn-remove" data-id="@user.Id">
@@ -104,6 +104,10 @@
             });
         });
 
+        $(document).on('click', '.btn-create-user', function (e) {
+            $("#modalCreateUser").find('modal').modal('show');
+            console.log('ok');
+        });
 
         $('#all-choices').change(function (e) {
             e.preventDefault();
@@ -178,6 +182,7 @@
                             window.location.reload()
                         },
                         error: function (xhr, status, error) {
+                            console.log(xhr, status, error)
                         }
                     });
                 }

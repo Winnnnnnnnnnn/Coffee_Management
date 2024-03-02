@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MyLibrary.DataAccess;
 
 
 namespace MyLibrary.DataAccess
@@ -66,7 +67,6 @@ namespace MyLibrary.DataAccess
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
-                        System.Console.WriteLine(user.Name);
                         context.Users.Add(user);
                         context.SaveChanges();
                     }
@@ -153,5 +153,8 @@ namespace MyLibrary.DataAccess
                 throw new Exception("Error removing users: " + ex.Message);
             }
         }
+
+
+
     }
 }

@@ -10,9 +10,11 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using MyLibrary.DataAccess;
 using MyLibrary.Repository;
+using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
+    [Authentication]
     public class ProfileController : Controller
     {
         private readonly Coffee_ManagementContext _db;

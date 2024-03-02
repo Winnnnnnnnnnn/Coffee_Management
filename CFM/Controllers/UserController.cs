@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyLibrary.Repository;
 using MyLibrary.DataAccess;
+using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
+    [Authentication]
     public class UserController : Controller
     {
         IUserRepository userRepository = null;
@@ -26,19 +28,22 @@ namespace CFM.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(User user)
         {
-            // System.Console.WriteLine(user.Id + "  "+ user.Name);
             try
             {
                 if (ModelState.IsValid)
                 {
                     userRepository.InsertUser(user);
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    return View("~/Views/User/Index.cshtml");
+                }
             }
             catch (Exception ex)
             {
                 ViewBag.Message = ex.Message;
-                return View(user);
+                return View("~/Views/User/Index.cshtml");
             }
         }
 
@@ -89,9 +94,16 @@ namespace CFM.Controllers
 
         public ActionResult Delete(int id)
         {
-            System.Console.WriteLine(id);
-            userRepository.DeleteUser(id);
-            return RedirectToAction("Index");
+            try
+            {
+                userRepository.DeleteUser(id);
+                // Phản hồi về thành công khi xóa thành công
+                return Ok(new { message = "Xóa tài khoản thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Đã xảy ra lỗi khi xóa tài khoản: " + ex.Message });
+            }
         }
     }
 }

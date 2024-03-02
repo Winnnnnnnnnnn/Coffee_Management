@@ -37,9 +37,15 @@ namespace ShopManagement.Controllers
             if (authenticatedUser != null)
             {
                 TempData["Id"] = authenticatedUser.Id;
-                HttpContext.Session.SetInt32("AuthId", authenticatedUser.Id);
-                HttpContext.Session.SetString("AuthName", authenticatedUser.Name);
-                HttpContext.Session.SetString("AuthRole", userRepository.GetRole(authenticatedUser));
+
+                // Lấy ISession
+                HttpContext context = HttpContext;
+                var session = context.Session;
+                string key_access = "user";
+
+                // Convert accessInfo thành chuỗi Json và lưu lại vào Session
+                string userJson = Newtonsoft.Json.JsonConvert.SerializeObject(authenticatedUser);
+                session.SetString(key_access, userJson);
 
                 return RedirectToAction("Index", "Home");
             }

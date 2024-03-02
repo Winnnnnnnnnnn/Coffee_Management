@@ -44,6 +44,7 @@
                                 <th>Nhân viên</th>
                                 <th>Bàn</th>
                                 <th>Trạng thái</th>
+                                <th>Thời gian tạo</th>
                                 <th>Ghi chú</th>
                                 <th></th>
                             </tr>
@@ -58,7 +59,8 @@
                                     </td>
                                     <td>@order.UserId</td>
                                     <td>@order.TableId</td>
-                                    <td>@order.CheckoutAt</td>
+                                    <td>@order.Status</td>
+                                    <td>@order.CreatedAt</td>
                                     <td>@order.Note</td>
                                     <td>
                                         <input type="hidden" value="@order.Id" name="id" />
