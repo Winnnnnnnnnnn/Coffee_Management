@@ -37,6 +37,9 @@ namespace ShopManagement.Controllers
             if (authenticatedUser != null)
             {
                 TempData["Id"] = authenticatedUser.Id;
+                HttpContext.Session.SetInt32("AuthId", authenticatedUser.Id);
+                HttpContext.Session.SetString("AuthName", authenticatedUser.Name);
+                HttpContext.Session.SetString("AuthRole", userRepository.GetRole(authenticatedUser));
 
                 // Lấy ISession
                 HttpContext context = HttpContext;
@@ -72,6 +75,8 @@ namespace ShopManagement.Controllers
 
         public ActionResult Logout()
         {
+            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("UserName");
             return RedirectToAction("Index", "Login");
         }
     }
