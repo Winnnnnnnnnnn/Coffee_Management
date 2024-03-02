@@ -36,13 +36,13 @@ namespace MyLibrary.DataAccess
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost;Database=Coffee_Management; pwd=hoangthang_2003ss; uid=sa; encrypt=true;trustServerCertificate=true;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=Coffee_Management; pwd=haidang1210; uid=sa; encrypt=true;trustServerCertificate=true;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+            modelBuilder.HasAnnotation("Relational:Collation", "Vietnamese_CI_AI");
 
             modelBuilder.Entity<Catalogue>(entity =>
             {

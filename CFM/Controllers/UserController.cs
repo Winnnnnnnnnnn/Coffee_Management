@@ -22,14 +22,11 @@ namespace CFM.Controllers
             return View("~/Views/User/Index.cshtml", userList);
         }
 
-
-        public ActionResult Create() => View("~/Views/User/Create.cshtml");
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(User user)
         {
-            Console.WriteLine(user.Id + ' ' + user.Name);
+            // System.Console.WriteLine(user.Id + "  "+ user.Name);
             try
             {
                 if (ModelState.IsValid)
@@ -92,16 +89,9 @@ namespace CFM.Controllers
 
         public ActionResult Delete(int id)
         {
-            try
-            {
-                userRepository.DeleteUser(id);
-                // Phản hồi về thành công khi xóa thành công
-                return Ok(new { message = "Xóa tài khoản thành công!" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = "Đã xảy ra lỗi khi xóa tài khoản: " + ex.Message });
-            }
+            System.Console.WriteLine(id);
+            userRepository.DeleteUser(id);
+            return RedirectToAction("Index");
         }
     }
 }

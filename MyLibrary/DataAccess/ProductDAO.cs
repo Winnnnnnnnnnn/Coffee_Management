@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MyLibrary.DataAccess;
 
 
 namespace MyLibrary.DataAccess
 {
-    public class UserDAO
+    public class ProductDAO
     {
-        private static UserDAO instance = null;
+        private static ProductDAO instance = null;
         private static readonly object instanceLock = new object();
 
-        public static UserDAO Instance
+        public static ProductDAO Instance
         {
             get
             {
@@ -19,130 +20,130 @@ namespace MyLibrary.DataAccess
                 {
                     if (instance == null)
                     {
-                        instance = new UserDAO();
+                        instance = new ProductDAO();
                     }
                     return instance;
                 }
             }
         }
 
-        public IEnumerable<User> GetUserList()
+        public IEnumerable<Product> GetProductList()
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    return context.Users.ToList();
+                    return context.Products.ToList();
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error retrieving user list: " + ex.Message);
+                throw new Exception("Error retrieving product list: " + ex.Message);
             }
         }
 
-        public User GetUserByID(int userId)
+        public Product GetProductByID(int product_id)
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    return context.Users.FirstOrDefault(m => m.Id == userId);
+                    return context.Products.FirstOrDefault(m => m.Id == product_id);
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error retrieving user by ID: " + ex.Message);
+                throw new Exception("Error retrieving product by ID: " + ex.Message);
             }
         }
 
 
-        public void AddNew(User user)
+        public void AddNew(Product product)
         {
             try
             {
-                var existingUser = GetUserByID(user.Id);
-                if (existingUser == null)
+                var existingProduct = GetProductByID(product.Id);
+                if (existingProduct == null)
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
-                        System.Console.WriteLine(user.Name);
-                        context.Users.Add(user);
+                        System.Console.WriteLine(product.Price);
+                        context.Products.Add(product);
                         context.SaveChanges();
                     }
                 }
                 else
                 {
-                    throw new Exception("The user already exists.");
+                    throw new Exception("The product already exists.");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error adding new user: " + ex.Message);
+                throw new Exception("Error adding new product: " + ex.Message);
             }
         }
 
-        public void Update(User user)
+        public void Update(Product product)
         {
             try
             {
-                var existingUser = GetUserByID(user.Id);
-                if (existingUser != null)
+                var existingProduct = GetProductByID(product.Id);
+                if (existingProduct != null)
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
-                        context.Users.Update(user);
+                        context.Products.Update(product);
                         context.SaveChanges();
                     }
                 }
                 else
                 {
-                    throw new Exception("The user does not exist.");
+                    throw new Exception("The product does not exist.");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error updating user: " + ex.Message);
+                throw new Exception("Error updating product: " + ex.Message);
             }
         }
 
 
-        public void Remove(int userId)
+        public void Remove(int productId)
         {
             try
             {
-                var userToRemove = GetUserByID(userId);
-                if (userToRemove != null)
+                var productToRemove = GetProductByID(productId);
+                if (productToRemove != null)
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
-                        context.Users.Remove(userToRemove);
+                        context.Products.Remove(productToRemove);
                         context.SaveChanges();
                     }
                 }
                 else
                 {
-                    throw new Exception("The user does not exist.");
+                    throw new Exception("The product does not exist.");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error removing user: " + ex.Message);
+                throw new Exception("Error removing product: " + ex.Message);
             }
         }
 
-        public void RemoveMultiple(List<int> userIds)
+        public void RemoveMultiple(List<int> productIds)
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    foreach (var userId in userIds)
+                    foreach (var productId in productIds)
                     {
-                        var userToRemove = context.Users.FirstOrDefault(u => u.Id == userId);
-                        if (userToRemove != null)
+                        var productToRemove = context.Users.FirstOrDefault(u => u.Id == productId);
+                        if (productToRemove != null)
                         {
-                            context.Users.Remove(userToRemove);
+                            context.Users.Remove(productToRemove);
                         }
                     }
                     context.SaveChanges();
@@ -153,5 +154,8 @@ namespace MyLibrary.DataAccess
                 throw new Exception("Error removing users: " + ex.Message);
             }
         }
+
+
+
     }
 }
