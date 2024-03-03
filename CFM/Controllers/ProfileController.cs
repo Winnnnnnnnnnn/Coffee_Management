@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 
 namespace CFM.Controllers
 {
-    [Authentication]
+    // [Authentication]
     public class ProfileController : Controller
     {
         private readonly Coffee_ManagementContext _db;

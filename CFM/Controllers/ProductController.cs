@@ -11,7 +11,7 @@ using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
-    [Authentication]
+    // [Authentication]
     public class ProductController : Controller
     {
         IProductRepository productRepository = null;

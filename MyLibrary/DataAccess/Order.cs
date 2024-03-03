@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 #nullable disable
 
@@ -30,6 +31,17 @@ namespace MyLibrary.DataAccess
         public string getStatus()
         {
             return (this.Status == 0) ? "Chưa thanh toán" : "Đã thanh toán";
+        }
+
+        public string getTableName()
+        {
+            if (this.TableId != null)
+            {
+                TableDAO table = new TableDAO();
+                var name = table.GetTableByID(this.TableId).Name;
+                return name;
+            }
+            return "Mang đi";
         }
 
         public virtual Table Table { get; set; }

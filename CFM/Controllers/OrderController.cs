@@ -10,7 +10,7 @@ using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
-    [Authentication]
+    // [Authentication]
     public class OrderController : Controller
     {
         IOrderRepository orderRepository = null;
@@ -29,12 +29,12 @@ namespace CFM.Controllers
             {
                 checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + o?.Id + "'>",
                 id = o?.Id,
-                table_id = "<a class='btn btn-link text-decoration-none' href='/Order/Edit/" + o?.Id + "'>" + o?.Table?.Name + " </ a > ",
+                table_id = "<a class='btn btn-link text-decoration-none' href='/Order/Edit/" + o?.Id + "'>" + o?.getTableName() + " </ a > ",
                 user_id = o?.UserId,
                 total_price = o?.TotalPrice,
                 note = o?.Note,
-                created_at = o?.CreatedAt,
-                status = o?.getStatus(),
+                created_at = o?.CreatedAt.Value.ToString("HH:mm:ss dd/MM/yyyy"),
+                status = "<span class=" + (o.Status == 0 ? "text-danger" : "text-success") + ">" + o?.getStatus() + "</span>",
                 action = "<form action='/Order/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + o?.Id + "' data-id='" + o?.Id + "'/> <button type='submit' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
             });
 

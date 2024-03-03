@@ -11,7 +11,7 @@ using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
-    [Authentication]
+    // [Authentication]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
