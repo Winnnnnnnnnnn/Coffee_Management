@@ -40,4 +40,5 @@ namespace MyLibrary.DataAccess
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
     }
+
 }

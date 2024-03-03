@@ -10,11 +10,13 @@ using MyLibrary.Repository;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace ShopManagement.Controllers
 {
     public class LoginController : Controller
     {
+        private readonly Coffee_ManagementContext _db;
         IUserRepository userRepository = null;
 
         public LoginController() => userRepository = new UserRepository();
@@ -33,9 +35,17 @@ namespace ShopManagement.Controllers
             string hashedPassword = GetMd5Hash(user.Password);
 
             var authenticatedUser = userList.FirstOrDefault(u => u.Email == user.Email && u.Password == hashedPassword);
-           
             if (authenticatedUser != null)
             {
+                // Lấy ISession
+                HttpContext context = HttpContext;
+                var session = context.Session;
+                string key_access = "user_infor";
+
+                // Convert accessInfo thành chuỗi Json và lưu lại vào Session
+                string userJson = JsonConvert.SerializeObject(authenticatedUser);
+                session.SetString(key_access, userJson);
+
                 TempData["Id"] = authenticatedUser.Id;
 
                 return RedirectToAction("Index", "Home");
