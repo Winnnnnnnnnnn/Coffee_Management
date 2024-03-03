@@ -5,12 +5,15 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyLibrary.DataAccess;
 using MyLibrary.Repository;
 using MyMVC.Models.Authentication;
+using Newtonsoft.Json;
 
 namespace CFM.Controllers
 {
@@ -25,20 +28,36 @@ namespace CFM.Controllers
             _db = db;
             _userRepository = userRepository;
         }
+
         public IActionResult ChangePassword()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+        public IActionResult ChangePassword(string Password, string newPassword, string confirmPassword)
         {
-            int useId = (int)TempData["Id"];
-            System.Console.WriteLine(useId);
+            HttpContext context = HttpContext;
+            var session = context.Session;
+            string key_access = "user";
+            string jsonUser = session.GetString(key_access);
+            User user = null;
+            if (jsonUser != null)
+            {
+                // Convert chuỗi Json - thành đối tượng
+                user = JsonConvert.DeserializeObject<User>(jsonUser);
+            }
+            else
+            {
+                // json chưa từng lưu trong Session, accessInfo lấy bằng giá trị khởi  tạo
+                return RedirectToAction("Index", "Login");
+            }
+            System.Console.WriteLine(Password);
             string passMD5;
+
             using (MD5 md5 = MD5.Create())
             {
-                byte[] inputBytes = Encoding.ASCII.GetBytes(oldPassword);
+                byte[] inputBytes = Encoding.ASCII.GetBytes(Password);
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
 
                 // Convert the byte array to hexadecimal string
@@ -50,18 +69,22 @@ namespace CFM.Controllers
                 passMD5 = sb.ToString();
             }
 
-            oldPassword = passMD5;
-            var user = _db.Users.FirstOrDefault(u => u.Password == oldPassword && u.Id == useId);
-            System.Console.WriteLine(oldPassword);
-            System.Console.WriteLine(useId);
-
-
-
-
+            Password = passMD5;
+            User userUpdate = _db.Users.FirstOrDefault(u => u.Password == Password && u.Id == user.Id);
+            if (newPassword == "")
+            {
+                ViewData["newPassword"] = "Không thể để trống";
+                return View("ChangePassword");
+            }
+            if (confirmPassword == "")
+            {
+                ViewData["confirmPassword"] = "Không thể để trống";
+                return View("ChangePassword");
+            }
             if (newPassword != confirmPassword)
             {
-                ViewData["Password"] = "Password and confirm password do not match!";
-                return View("Index", "Profile");
+                ViewData["confirmPassword"] = "Mật khẩu không trùng khớp";
+                return View("ChangePassword");
             }
             else
             {
@@ -81,12 +104,66 @@ namespace CFM.Controllers
                     }
                     hashedPassword = sb.ToString();
                 }
-                Console.WriteLine(hashedPassword);
-
-                user.Password = hashedPassword;
+                userUpdate.Password = hashedPassword;
                 _db.SaveChanges();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Login");
             }
         }
+
+        public IActionResult ProfileUser()
+        {
+            HttpContext context = HttpContext;
+            var session = context.Session;
+            string key_access = "user";
+            string jsonUser = session.GetString(key_access);
+            User user = null;
+            if (jsonUser != null)
+            {
+                user = JsonConvert.DeserializeObject<User>(jsonUser);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            return View(user);
+        }
+
+        [HttpPost]
+        public ActionResult ProfileUser(User user)
+        {
+            try
+            {
+                HttpContext context = HttpContext;
+                var session = context.Session;
+                string key_access = "user";
+                string jsonUser = session.GetString(key_access);
+                User userSession = null;
+                if (jsonUser != null)
+                {
+                    userSession = JsonConvert.DeserializeObject<User>(jsonUser);
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Login");
+                }
+                // Kiểm tra tính hợp lệ của dữ liệu đầu vào
+                user.Id = userSession.Id;
+                user.Password = userSession.Password;
+                // Tiến hành cập nhật thông tin người dùng
+                using (var db_context = new Coffee_ManagementContext())
+                {
+                    db_context.Users.Update(user);
+                    db_context.SaveChanges();
+                }
+                return RedirectToAction("Index", "Login");
+            }
+            catch (DbUpdateException ex)
+            {
+                // Xử lý lỗi và trả về phản hồi phù hợp
+                ViewBag.Message = ex.InnerException.Message;
+                return View(user);
+            }
+        }
+
     }
 }
