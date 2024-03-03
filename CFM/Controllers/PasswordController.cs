@@ -7,13 +7,17 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using MyLibrary.DataAccess;
 using MyLibrary.Repository;
+using Microsoft.AspNetCore.Http;
+
 
 namespace CoffeeManagement.Controllers
 {
+
     public class PasswordController : Controller
     {
         private readonly Coffee_ManagementContext _db;
         private readonly IUserRepository _userRepository;
+        private DateTime otpEndTime;
 
         public PasswordController(Coffee_ManagementContext db, IUserRepository userRepository)
         {
@@ -25,6 +29,7 @@ namespace CoffeeManagement.Controllers
         {
             Random random = new Random();
             int otp = random.Next(100000, 1000000);
+            HttpContext.Session.SetString("OTP_Creation_Time", DateTime.Now.ToString("o"));
             return otp.ToString();
         }
 
@@ -78,6 +83,7 @@ namespace CoffeeManagement.Controllers
 
                 TempData["OTP"] = otp;
                 TempData["Email"] = email;
+                HttpContext.Session.SetString("OtpSentTime", DateTime.Now.ToString());
 
                 return RedirectToAction("VerifyOtp", "Password");
             }
@@ -108,19 +114,40 @@ namespace CoffeeManagement.Controllers
         [HttpPost]
         public IActionResult VerifyOtp(string otpInput, string generatedOTP)
         {
-
-            generatedOTP = TempData["OTP"] as string;
-            TempData.Keep("OTP");
-            if (otpInput == generatedOTP)
+            if (HttpContext.Session.GetString("OtpSentTime") == null)
             {
                 TempData.Remove("OTP");
-                return RedirectToAction("UpdatePassword", "Password");
+                ViewData["Session"] = "Hết phiên đăng nhập! Vui lòng thực hiện lại!";
+                return View("/Views/Login/Index.cshtml");
             }
             else
             {
-                ViewData["OTP"] = "Wrong otp code! Please enter again!";
-                return View("VerifyOtp");
+                var otpSentTime = DateTime.Parse(HttpContext.Session.GetString("OtpSentTime"));
 
+                generatedOTP = TempData["OTP"] as string;
+                TempData.Keep("OTP");
+                otpEndTime = DateTime.Now;
+
+                if (otpEndTime - otpSentTime > TimeSpan.FromSeconds(60))
+                {
+                    TempData.Remove("OTP");
+                    ViewData["EndTime"] = "Mã otp của bạn đã hết hạn sử dụng!";
+                    return View("ForgotPassword");
+                }
+
+                generatedOTP = TempData["OTP"] as string;
+                TempData.Keep("OTP");
+                if (otpInput == generatedOTP)
+                {
+                    TempData.Remove("OTP");
+                    return RedirectToAction("UpdatePassword", "Password");
+                }
+                else
+                {
+                    ViewData["OTP"] = "Wrong otp code! Please enter again!";
+                    return View("VerifyOtp");
+
+                }
             }
         }
 
@@ -135,28 +162,24 @@ namespace CoffeeManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdatePassword(string email, string password, string confirmPassword)
+        public IActionResult UpdatePassword(string email, string Password, string confirmPassword)
         {
 
             var user = _db.Users.FirstOrDefault(u => u.Email == email);
             ViewData["Message"] = user.Email;
-
-            if (password != confirmPassword)
+            if (Password != confirmPassword)
             {
                 ViewData["Password"] = "Password and confirm password do not match!";
                 return View("UpdatePassword");
             }
             else
             {
-
-                // Hash the password using MD5
                 string hashedPassword;
                 using (MD5 md5 = MD5.Create())
                 {
-                    byte[] inputBytes = Encoding.ASCII.GetBytes(password);
+                    byte[] inputBytes = Encoding.ASCII.GetBytes(Password);
                     byte[] hashBytes = md5.ComputeHash(inputBytes);
 
-                    // Convert the byte array to hexadecimal string
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < hashBytes.Length; i++)
                     {

@@ -1,0 +1,180 @@
+@model IEnumerable<MyLibrary.DataAccess.Table>
+
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+}
+
+@Html.Partial("../Includes/_ModalCreateTable.cshtml")
+@Html.Partial("../Includes/_ModalEditTable.cshtml")
+
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>@ViewData["Title"]</h3>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Bảng tin</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <button type="button" class="btn btn-create-table btn-primary me-2" data-bs-toggle="modal"
+                data-bs-target="#createTableModal"><i class="bi bi-plus-circle-dotted"></i>Thêm</button>
+            <button type="button" class="btn btn-remove-table btn-danger d-none" id="btn-remove-tables"> <i
+                    class="icon-mid bi bi-trash"></i> Xóa</button>
+        </div>
+        <div class="card-body">
+            <form id="batch-form" asp-action="Delete" method="post">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="data-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input class="form-check-input" type="checkbox" id="all-choices">
+                                </th>
+                                <th>ID</th>
+                                <th>Tên bàn</th>
+                                <th>Khu vực</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var table in Model)
+                            {
+                                <tr>
+                                    <td><input class="form-check-input choice" type="checkbox" name="selectedIds"
+                                            value="@table.Id"></td>
+                                    <td class="tableId">@table.Id</td>
+                                    <td>
+                                        <a style="cursor: pointer;" class="btn-update-table"
+                                            data-bs-target="#edittableModal" data-id="@table.Id">@table.Name</a>
+                                    </td>
+                                    <td>@table.Area</td>
+                                    <td>@table.Note</td>
+                                    <td>
+                                        <input type="hidden" value="@table.Id" name="id" />
+                                        <a class="btn btn-danger me-2 btn-remove">
+                                            <i class="bi bi-trash"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Data table link-->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.7.1.js"></script>d
+    <script>
+        $(document).ready(function () {
+            $('#data-table').DataTable({
+                "language": {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "_MENU_ dòng /  trang",
+                    "emptyTable": "Không có dữ liệu",
+                    "sZeroRecords": "Không có kết quả nào được tìm thấy",
+                    "sInfo": "Hiển thị từ _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị từ 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "(đã lọc từ _MAX_ mục)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Tìm kiếm:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "&laquo;",
+                        "sLast": "&raquo;",
+                        "sNext": "&rsaquo;",
+                        "sPrevious": "&lsaquo;"
+                    }
+                }
+            });
+        });
+
+
+        $('#all-choices').change(function (e) {
+            e.preventDefault();
+            $('.choice').prop('checked', $(this).prop('checked')).change();
+        });
+
+        $(document).on('change', '.choice', function (e) {
+            e.preventDefault();
+            if ($('.choice:checked').length) {
+                $('.btn-remove-table').removeClass('d-none');
+            } else {
+                $('.btn-remove-table').addClass('d-none');
+            }
+        });
+
+
+        $('.btn-create-table').click(function (e) {
+            $('.save-form').trigger('reset');
+            e.preventDefault();
+            $('#table-modal').modal('show');
+        });
+
+        $(document).on('click', '.btn-update-table', function (e) {
+            e.preventDefault();
+            const form = $(this).parents().find('form');
+            let id = $(this).attr("data-id");
+            $.ajax({
+                url: '/Table/Edit/' + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data.id, data);
+                    form.find('[name=Id]').val(data.id);
+                    form.find('[name=Name]').val(data.name);
+                    form.find('[name=Area]').val(data.area);
+                    form.find('[name=Note]').val(data.note);
+                    $('#modalEditTable').find('.modal').modal('show')
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        })
+
+        $(document).on('change', '.choice', function (e) {
+            e.preventDefault();
+            if ($('.choice:checked').length) {
+                $('.btn-remove-table').removeClass('d-none');
+            } else {
+                $('.btn-remove-table').addClass('d-none');
+            }
+        });
+
+        $(document).on('click', '.btn-remove', function () {
+            const form = $(this).closest('form');
+            console.log(form);
+            Swal.fire({
+                title: "Lưu ý!",
+                text: "Bạn có chắc muốn xóa?",
+                icon: "warning",
+                showCancelButton: true,
+                showCloseButton: true,
+                confirmButtonText: "Có, Xóa nó!",
+                cancelButtonText: "Không, Hủy bỏ!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+}
