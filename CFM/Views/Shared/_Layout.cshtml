@@ -155,13 +155,14 @@
                                                 @Context.Session.GetString("AuthName")
                                         </li>
                                         <li>
-                                            <a class="dropdown-item cursor-pointer btn-profile" data-id="">
+                                            <a class="dropdown-item cursor-pointer btn-profile" asp-controller="Profile"
+                                                asp-action="ProfileUser">
                                                 <i class="icon-mid bi bi-person me-2"></i>
                                                 Thông tin tài khoản</a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item cursor-pointer btn-profile-password"
-                                                asp-controller="Profile" asp-action="ChangePassword" asp-route-id="2">
+                                                asp-controller="Profile" asp-action="ChangePassword">
                                                 <i class="icon-mid bi bi-key me-2"></i>
                                                 Đổi mật khẩu</a>
                                         </li>
