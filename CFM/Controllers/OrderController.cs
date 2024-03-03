@@ -19,8 +19,27 @@ namespace CFM.Controllers
         public ActionResult Index()
         {
             ViewBag.IsActive = "order";
-            var OrderList = orderRepository.GetOrders();
-            return View("~/Views/Order/Index.cshtml", OrderList);
+            return View();
+        }
+
+        public IActionResult Load()
+        {
+            var orders = orderRepository.GetOrders();
+            var data = orders.Select(o => new
+            {
+                checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + o?.Id + "'>",
+                id = o?.Id,
+                table_id = "<a class='btn btn-link text-decoration-none' href='/Order/Edit/" + o?.Id + "'>" + o?.Table?.Name + " </ a > ",
+                user_id = o?.UserId,
+                total_price = o?.TotalPrice,
+                note = o?.Note,
+                created_at = o?.CreatedAt,
+                status = o?.getStatus(),
+                action = "<form action='/Order/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + o?.Id + "' data-id='" + o?.Id + "'/> <button type='submit' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
+            });
+
+            System.Console.WriteLine(data);
+            return Json(new { data = data });
         }
 
 
