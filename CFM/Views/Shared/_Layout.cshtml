@@ -219,7 +219,7 @@
             }
         }
     }
-    
+
     $(document).ready(function () {
         $(document).on('click', '.btn-remove', function () {
             let form = $(this).parent();
@@ -237,6 +237,7 @@
                         position: "center",
                         backgroundColor: "var(--bs-" + response.status + ")",
                     }).showToast();
+                    
                 }
             });
         })
