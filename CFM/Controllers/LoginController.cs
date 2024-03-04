@@ -75,7 +75,7 @@ namespace ShopManagement.Controllers
         public ActionResult Logout()
         {
             HttpContext.Session.Clear();
-            HttpContext.Session.Remove("UserName");
+            HttpContext.Session.Remove("user");
             return RedirectToAction("Index", "Login");
         }
     }

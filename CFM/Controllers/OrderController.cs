@@ -10,7 +10,7 @@ using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
-    // [Authentication]
+    [Authentication]
     public class OrderController : Controller
     {
         IOrderRepository orderRepository = null;

@@ -41,7 +41,7 @@ namespace MyLibrary.DataAccess
             }
         }
 
-        public Table GetTableByID(int tableId)
+        public Table GetTableByID(int? tableId)
         {
             try
             {
