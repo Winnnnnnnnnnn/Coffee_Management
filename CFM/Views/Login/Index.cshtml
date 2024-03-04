@@ -36,7 +36,12 @@
         <input required type="text" asp-for="Email" placeholder="Email">
 
         <label for="Password">Mật khẩu</label>
-        <input required type="password" asp-for="Password" placeholder=" Mật khẩu" class="mb-3">
+        <div class="d-flex align-items-center">
+            <input required type="password" asp-for="Password" placeholder=" Mật khẩu" class="mb-3 visibility">
+            <label for="checkVisible" style="margin-left: -10%; margin-bottom: 10%;"><i
+                    class="bi bi-eye-fill cursor-pointer"></i></label>
+            <input type="checkbox" class="d-none" id="checkVisible" onclick="visibilityFunction()">
+        </div>
         <a asp-controller="Password" asp-action="ForgotPassword" class="text-primary">Quên mật khẩu?</a>
         <br>
         <span style="color: red;">@ViewData["Message"]</span>
@@ -44,5 +49,22 @@
         <button type="submit">Đăng nhập</button>
     </form>
 </body>
+<script>
+    function visibilityFunction() {
+        var inputPass = document.querySelector('.visibility');
+        if (inputPass) {
+            if (inputPass.getAttribute("type") === "password") {
+                document.querySelector('.bi-eye-fill').classList.add('bi-eye-slash-fill');
+                document.querySelector('.bi-eye-fill').classList.remove('bi-eye-fill');
+                inputPass.setAttribute("type", "text");
+            } else {
+                document.querySelector('.bi-eye-slash-fill').classList.add('bi-eye-fill');
+                document.querySelector('.bi-eye-slash-fill').classList.remove('bi-eye-slash-fill');
+                inputPass.setAttribute("type", "password");
+            }
+        }
+    }
+
+</script>
 
 </html>

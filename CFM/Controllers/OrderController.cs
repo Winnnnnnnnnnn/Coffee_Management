@@ -43,7 +43,7 @@ namespace CFM.Controllers
         }
 
 
-        public ActionResult Create() => View("~/Views/Order/Create.cshtml");
+        public ActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]

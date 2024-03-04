@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using MyLibrary.Repository;
 using MyLibrary.DataAccess;
 using MyMVC.Models.Authentication;
+using CoffeeManagement.Controllers;
 
 namespace CFM.Controllers
 {
@@ -20,35 +21,57 @@ namespace CFM.Controllers
         public ActionResult Index()
         {
             ViewBag.IsActive = "user";
-            var userList = userRepository.GetUsers();
-            return View("~/Views/User/Index.cshtml", userList);
+            return View();
+        }
+
+        public IActionResult Load()
+        {
+            var users = userRepository.GetUsers();
+            var data = users.Select(u => new
+            {
+                checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + u.Id + "'>",
+                id = u.Id,
+                name = "<a class='btn btn-link text-decoration-none' href='/User/Edit/" + u.Id + "'>" + u.Name + " </ a > ",
+                role = u.Role,
+                email = u.Email,
+                phone = "" + u.Phone,
+                action = "<form action='/User/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + u.Id + "' data-id='" + u.Id + "'/> <button type='button' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
+            });
+            return Json(new { data = data });
+        }
+
+        public IActionResult Create()
+        {
+            ViewBag.IsActive = "user";
+            return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Create(User user)
         {
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    userRepository.InsertUser(user);
-                    return RedirectToAction(nameof(Index));
+                    return PartialView(user);
                 }
                 else
                 {
-                    return View("~/Views/User/Index.cshtml");
+                    user.Password = PasswordHelper.HashPassword(user.Password);
+                    System.Console.WriteLine(user.Password);
+                    userRepository.InsertUser(user);
+                    return RedirectToAction("Index");
                 }
             }
             catch (Exception ex)
             {
                 ViewBag.Message = ex.Message;
-                return View("~/Views/User/Index.cshtml");
+                return View(user);
             }
         }
 
 
-        public object Edit(int? id)
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -59,7 +82,8 @@ namespace CFM.Controllers
             {
                 return NotFound();
             }
-            return Json(user);
+            System.Console.WriteLine(user.Password);
+            return View(user);
         }
 
         [HttpPost]
@@ -68,19 +92,8 @@ namespace CFM.Controllers
         {
             try
             {
-                // Kiểm tra tính hợp lệ của dữ liệu đầu vào
-                if (!ModelState.IsValid)
-                {
-                    return View("_ModalEditUser", user);
-                }
-
-                if (string.IsNullOrEmpty(user.Password))
-                {
-                    var existingUser = userRepository.GetUserByID(id);
-                    user.Password = existingUser.Password;
-                }
-
-                // Tiến hành cập nhật thông tin người dùng
+                user.Password = userRepository.GetUserByID(id).Password;
+                // Tiến hành cập nhật thông tin vai trò
                 userRepository.UpdateUser(user);
                 return RedirectToAction(nameof(Index));
             }
@@ -92,18 +105,19 @@ namespace CFM.Controllers
             }
         }
 
-        public ActionResult Delete(int id)
+        [HttpPost]
+        public ActionResult Delete(string id)
         {
-            try
+            if (id == null)
             {
-                userRepository.DeleteUser(id);
-                // Phản hồi về thành công khi xóa thành công
-                return Ok(new { message = "Xóa tài khoản thành công!" });
+                return NotFound();
             }
-            catch (Exception ex)
+            if (userRepository.GetUserByID(int.Parse(id)) == null)
             {
-                return BadRequest(new { message = "Đã xảy ra lỗi khi xóa tài khoản: " + ex.Message });
+                return NotFound();
             }
+            userRepository.DeleteUser(int.Parse(id));
+            return RedirectToAction("Index");
         }
     }
 }
