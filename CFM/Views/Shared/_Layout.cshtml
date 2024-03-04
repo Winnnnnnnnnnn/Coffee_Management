@@ -217,21 +217,33 @@
     $(document).ready(function () {
         $(document).on('click', '.btn-remove', function () {
             let form = $(this).parent();
-            $.ajax({
-                data: form.serializeArray(),
-                url: form.attr("action"),
-                method: form.attr("method"),
-                success: function (response) {
-                    window.location.href = "\\" + response.controller + "\\Index";
-                    Toastify({
-                        text: response.title,
-                        duration: 1000,
-                        close: true,
-                        gravity: "top",
-                        position: "center",
-                        backgroundColor: "var(--bs-" + response.status + ")",
-                    }).showToast();
-                    
+            Swal.fire({
+                title: "Lưu ý!",
+                text: "Bạn có chắc chắn xóa?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Vâng, xóa đi!",
+                cancelButtonText: "Không, hủy bỏ!",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        data: form.serializeArray(),
+                        url: form.attr("action"),
+                        method: form.attr("method"),
+                        success: function (response) {
+                            window.location.href = "\\" + response.controller + "\\Index";
+                            Toastify({
+                                text: response.title,
+                                duration: 1000,
+                                close: true,
+                                gravity: "top",
+                                position: "center",
+                                backgroundColor: "var(--bs-" + response.status + ")",
+                            }).showToast();
+
+                        }
+                    });
                 }
             });
         })

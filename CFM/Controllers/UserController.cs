@@ -27,17 +27,44 @@ namespace CFM.Controllers
         public IActionResult Load()
         {
             var users = userRepository.GetUsers();
+            int recordsTotal = users.Count();
             var data = users.Select(u => new
             {
                 checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + u.Id + "'>",
                 id = u.Id,
                 name = "<a class='btn btn-link text-decoration-none' href='/User/Edit/" + u.Id + "'>" + u.Name + " </ a > ",
-                role = u.Role,
+                role = u.getRoleName(),
                 email = u.Email,
                 phone = "" + u.Phone,
                 action = "<form action='/User/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + u.Id + "' data-id='" + u.Id + "'/> <button type='button' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
             });
-            return Json(new { data = data });
+            var language = new
+            {
+                sProcessing = "Đang xử lý...",
+                sLengthMenu = "_MENU_ dòng /  trang",
+                emptyTable = "Không có dữ liệu",
+                sZeroRecords = "Không có kết quả nào được tìm thấy",
+                sInfo = "Hiển thị từ _START_ đến _END_ của _TOTAL_ mục",
+                sInfoEmpty = "Hiển thị từ 0 đến 0 của 0 mục",
+                sInfoFiltered = "(đã lọc từ _MAX_ mục)",
+                sInfoPostFix = "",
+                sSearch = "Tìm kiếm:",
+                sUrl = "",
+                oPaginate = new
+                {
+                    sFirst = "&laquo;",
+                    sLast = "&raquo;",
+                    sNext = "&rsaquo;",
+                    sPrevious = "&lsaquo;"
+                }
+            };
+
+            return Json(new
+            {
+                recordsTotal = recordsTotal,
+                data = data,
+                language = language
+            });
         }
 
         public IActionResult Create()
@@ -53,12 +80,11 @@ namespace CFM.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return PartialView(user);
+                    return View(user);
                 }
                 else
                 {
                     user.Password = PasswordHelper.HashPassword(user.Password);
-                    System.Console.WriteLine(user.Password);
                     userRepository.InsertUser(user);
                     return RedirectToAction("Index");
                 }
@@ -82,7 +108,6 @@ namespace CFM.Controllers
             {
                 return NotFound();
             }
-            System.Console.WriteLine(user.Password);
             return View(user);
         }
 
@@ -106,18 +131,41 @@ namespace CFM.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(string id)
+        public ActionResult Delete(int id)
         {
-            if (id == null)
+            object response = null;
+            try
             {
-                return NotFound();
+                if (userRepository.GetUserByID(id) == null)
+                {
+                    response = new
+                    {
+                        title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
+                        status = "danger"
+                    };
+                    return Json(response);
+                }
+                else
+                {
+                    response = new
+                    {
+                        controller = "User",
+                        title = "Đã xóa thành công.",
+                        status = "success"
+                    };
+                    userRepository.DeleteUser(id);
+                }
+                return Json(response);
             }
-            if (userRepository.GetUserByID(int.Parse(id)) == null)
+            catch (System.Exception)
             {
-                return NotFound();
+                response = new
+                {
+                    title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
+                    status = "danger"
+                };
+                return Json(response);
             }
-            userRepository.DeleteUser(int.Parse(id));
-            return RedirectToAction("Index");
         }
     }
 }
