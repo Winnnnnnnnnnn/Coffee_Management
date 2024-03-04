@@ -22,35 +22,25 @@ namespace CFM.Controllers
             return View("~/Views/Table/Index.cshtml", tableList);
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Table table)
         {
-            if (table.Name == null)
+            System.Console.WriteLine(table.Status);
+            if (ModelState.IsValid)
             {
-                ViewData["TableName"] = "Tên bàn không được để trống!";
+                tableRepository.InsertTable(table);
             }
-            if (table.Area == null)
-            {
-                ViewData["TableArea"] = "Khu vực không được để trống!";
-            }
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    tableRepository.InsertTable(table);
-                }
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Message = ex.Message;
-                return View(table);
-            }
+            return RedirectToAction(nameof(Index));
         }
 
-        public object Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -61,7 +51,7 @@ namespace CFM.Controllers
             {
                 return NotFound();
             }
-            return Json(table);
+            return View("Edit", table);
         }
 
         [HttpPost]
@@ -70,14 +60,6 @@ namespace CFM.Controllers
         {
             try
             {
-                if (table.Name == null)
-                {
-                    ViewData["TableName"] = "Tên bàn không được để trống!";
-                }
-                if (table.Area == null)
-                {
-                    ViewData["TableArea"] = "Khu vực không được để trống!";
-                }
                 tableRepository.UpdateTable(table);
                 return RedirectToAction(nameof(Index));
             }
@@ -93,7 +75,6 @@ namespace CFM.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
-            System.Console.WriteLine(id);
             tableRepository.DeleteTable(id);
             return RedirectToAction("Index");
         }

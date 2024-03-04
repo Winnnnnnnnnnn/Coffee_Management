@@ -4,9 +4,6 @@
     ViewData["Title"] = "Quản lý tài khoản";
 }
 
-@Html.Partial("../Includes/_ModalCreateTable.cshtml")
-@Html.Partial("../Includes/_ModalEditTable.cshtml")
-
 <div class="page-heading">
     <div class="page-title">
         <div class="row">
@@ -28,8 +25,8 @@
 <div class="page-content">
     <div class="card">
         <div class="card-header">
-            <button type="button" class="btn btn-create-table btn-primary me-2" data-bs-toggle="modal"
-                data-bs-target="#createTableModal"><i class="bi bi-plus-circle-dotted"></i>Thêm</button>
+            <a asp-controller="Table" asp-action="Create" type="button" class="btn btn-primary me-2"><i
+                    class="bi bi-plus-circle-dotted"></i>Thêm</a>
             <button type="button" class="btn btn-remove-table btn-danger d-none" id="btn-remove-tables"> <i
                     class="icon-mid bi bi-trash"></i> Xóa</button>
         </div>
@@ -46,22 +43,34 @@
                                 <th>Tên bàn</th>
                                 <th>Khu vực</th>
                                 <th>Ghi chú</th>
-                                <th></th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var table in Model)
                             {
                                 <tr>
-                                    <td><input class="form-check-input choice" type="checkbox" name="selectedIds"
+                                    <td><input asp-class="form-check-input choice" type="checkbox" name="selectedIds"
                                             value="@table.Id"></td>
                                     <td class="tableId">@table.Id</td>
                                     <td>
-                                        <a style="cursor: pointer;" class="btn-update-table"
+                                        <a asp-controller="Table" asp-action="Edit" asp-route-id="@table.Id"
+                                            style="cursor: pointer;" class="btn-update-table"
                                             data-bs-target="#edittableModal" data-id="@table.Id">@table.Name</a>
                                     </td>
                                     <td>@table.Area</td>
                                     <td>@table.Note</td>
+                                    <td>
+                                        @if (table.Status == 1)
+                                        {
+                                            <i class="bi bi-check-circle-fill text-success" style="font-size: 1.5rem;"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-x-circle-fill text-danger" style="font-size: 1.5rem;"></i>
+                                        }
+                                    </td>
+
                                     <td>
                                         <input type="hidden" value="@table.Id" name="id" />
                                         <a class="btn btn-danger me-2 btn-remove">
@@ -127,28 +136,6 @@
             $('#table-modal').modal('show');
         });
 
-        $(document).on('click', '.btn-update-table', function (e) {
-            e.preventDefault();
-            const form = $(this).parents().find('form');
-            let id = $(this).attr("data-id");
-            $.ajax({
-                url: '/Table/Edit/' + id,
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    console.log(data.id, data);
-                    form.find('[name=Id]').val(data.id);
-                    form.find('[name=Name]').val(data.name);
-                    form.find('[name=Area]').val(data.area);
-                    form.find('[name=Note]').val(data.note);
-                    $('#modalEditTable').find('.modal').modal('show')
-
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        })
 
         $(document).on('change', '.choice', function (e) {
             e.preventDefault();
