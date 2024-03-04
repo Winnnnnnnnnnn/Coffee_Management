@@ -10,8 +10,14 @@ namespace CFM.Controllers
         public ActionResult Index()
         {
             ViewBag.IsActive = "setting";
-            var settingList = settingRepository.GetSettings();
-            return View(settingList);
+            return View();
         }
+
+        public IActionResult Load()
+        {
+            var settingList = settingRepository.GetSettings();
+            return Json(settingList);
+        }
+
     }
 }

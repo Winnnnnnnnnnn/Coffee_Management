@@ -94,7 +94,7 @@
                                             hạn</a>
                                     </li>
                                     <li class="submenu-item @(ViewBag.IsActive == "setting" ? "active" : "")">
-                                        <a class="text-decoration-none" asp-controller="Home" asp-action="Index">Thiết
+                                        <a class="text-decoration-none" asp-controller="Setting" asp-action="Index">Thiết
                                             lập hệ thống</a>
                                     </li>
                                     <li class="submenu-item @(ViewBag.IsActive == "log" ? "active" : "")">
@@ -213,7 +213,6 @@
             }
         }
     }
-
     $(document).ready(function () {
         $(document).on('click', '.btn-remove', function () {
             let form = $(this).parent();
@@ -241,7 +240,6 @@
                                 position: "center",
                                 backgroundColor: "var(--bs-" + response.status + ")",
                             }).showToast();
-
                         }
                     });
                 }

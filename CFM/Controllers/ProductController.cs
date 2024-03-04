@@ -31,7 +31,7 @@ namespace CFM.Controllers
             {
                 checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + p.Id + "'>",
                 id = p.Id,
-                name = "<a class='btn btn-link text-decoration-none' href='/Product/Edit/" + p.Id + "'>" + p.Name + " </ a > ",
+                name = "<a class='btn btn-link text-decoration-none' href='/Product/Edit/" + p.Id + "'>" + p.Name + " </ a >",
                 unit = p.Unit,
                 price = p.Price,
                 catalogue_id = p.Catalogue,
