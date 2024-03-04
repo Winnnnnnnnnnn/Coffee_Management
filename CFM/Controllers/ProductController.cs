@@ -11,7 +11,7 @@ using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
-    [Authentication]
+    // [Authentication]
     public class ProductController : Controller
     {
         IProductRepository productRepository = null;
@@ -26,6 +26,7 @@ namespace CFM.Controllers
         public IActionResult Load()
         {
             var products = productRepository.GetProducts();
+            int recordsTotal = products.Count();
             var data = products.Select(p => new
             {
                 checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + p.Id + "'>",
@@ -33,11 +34,39 @@ namespace CFM.Controllers
                 name = "<a class='btn btn-link text-decoration-none' href='/Product/Edit/" + p.Id + "'>" + p.Name + " </ a > ",
                 unit = p.Unit,
                 price = p.Price,
-                catalogue_id = "" + p.Catalogue,
-                action = "<form action='/Product/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + p.Id + "' data-id='" + p.Id + "'/> <button type='submit' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
+                catalogue_id = p.Catalogue,
+                action = "<form action='/Product/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + p.Id + "' data-id='" + p.Id + "'/> <button type='button' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
             });
-            return Json(new { data = data });
+
+            var language = new
+            {
+                sProcessing = "Đang xử lý...",
+                sLengthMenu = "_MENU_ dòng /  trang",
+                emptyTable = "Không có dữ liệu",
+                sZeroRecords = "Không có kết quả nào được tìm thấy",
+                sInfo = "Hiển thị từ _START_ đến _END_ của _TOTAL_ mục",
+                sInfoEmpty = "Hiển thị từ 0 đến 0 của 0 mục",
+                sInfoFiltered = "(đã lọc từ _MAX_ mục)",
+                sInfoPostFix = "",
+                sSearch = "Tìm kiếm:",
+                sUrl = "",
+                oPaginate = new
+                {
+                    sFirst = "&laquo;",
+                    sLast = "&raquo;",
+                    sNext = "&rsaquo;",
+                    sPrevious = "&lsaquo;"
+                }
+            };
+
+            return Json(new
+            {
+                recordsTotal = recordsTotal,
+                data = data,
+                language = language
+            });
         }
+
 
         public IActionResult Create()
         {
@@ -52,7 +81,7 @@ namespace CFM.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return PartialView(product);
+                    return View(product);
                 }
                 else
                 {
@@ -66,8 +95,6 @@ namespace CFM.Controllers
                 return View(product);
             }
         }
-
-
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -107,15 +134,42 @@ namespace CFM.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(string id)
+        public ActionResult Delete(int id)
         {
-            System.Console.WriteLine(id);
-            if (id == null)
+            object response = null;
+            try
             {
-                return NotFound();
+                if (productRepository.GetProductByID(id) == null)
+                {
+                    response = new
+                    {
+                        title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
+                        status = "danger"
+                    };
+                    return Json(response);
+                }
+                else
+                {
+                    response = new
+                    {
+                        controller = "Product",
+                        title = "Đã xóa thành công.",
+                        status = "success"
+                    };
+                    productRepository.DeleteProduct(id);
+                }
+                return Json(response);
             }
-            productRepository.DeleteProduct(int.Parse(id));
-            return RedirectToAction("Index");
+            catch (System.Exception)
+            {
+                response = new
+                {
+                    title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
+                    status = "danger"
+                };
+                return Json(response);
+            }
+
         }
     }
 }

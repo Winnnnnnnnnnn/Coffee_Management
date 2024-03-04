@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@12"></script>
 </head>
 
@@ -200,12 +200,45 @@
         src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" charset="utf8"
         src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 <script>
+    function visibilityFunction() {
+        var inputPass = document.querySelector('.visibility');
+        if (inputPass) {
+            if (inputPass.getAttribute("type") === "password") {
+                document.querySelector('.bi-eye-fill').classList.add('bi-eye-slash-fill');
+                document.querySelector('.bi-eye-fill').classList.remove('bi-eye-fill');
+                inputPass.setAttribute("type", "text");
+            } else {
+                document.querySelector('.bi-eye-slash-fill').classList.add('bi-eye-fill');
+                document.querySelector('.bi-eye-slash-fill').classList.remove('bi-eye-slash-fill');
+                inputPass.setAttribute("type", "password");
+            }
+        }
+    }
+    
     $(document).ready(function () {
-        $(document).on('click', '.submenu-item', function (e) {
-
+        $(document).on('click', '.btn-remove', function () {
+            let form = $(this).parent();
+            $.ajax({
+                data: form.serializeArray(),
+                url: form.attr("action"),
+                method: form.attr("method"),
+                success: function (response) {
+                    window.location.href = "\\" + response.controller + "\\Index";
+                    Toastify({
+                        text: response.title,
+                        duration: 1000,
+                        close: true,
+                        gravity: "top",
+                        position: "center",
+                        backgroundColor: "var(--bs-" + response.status + ")",
+                    }).showToast();
+                }
+            });
         })
     })
 </script>

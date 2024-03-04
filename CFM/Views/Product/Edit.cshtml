@@ -22,7 +22,7 @@
                         </div>
                         <div class="mb-3">
                             <label asp-for="Price" class="form-label fw-bold">Giá</label>
-                            <input type="text" class="form-control" asp-for="Price" placeholder="Nhập giá">
+                            <input type="text" class="form-control" asp-for="Price" placeholder="Nhập giá" value="@Model.Price.ToString("0.##")">
                             <span asp-validation-for="Price" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
@@ -31,7 +31,7 @@
                             <span asp-validation-for="Catalogue" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-end me-5 mb-3">
+                    <div class="d-flex justify-content-end mb-3">
                         <button type="submit" id="product-submit" class="btn btn-primary">Lưu</button>
                     </div>
                 </div>

@@ -1,11 +1,8 @@
-@model IEnumerable<MyLibrary.DataAccess.User>
+@model MyLibrary.DataAccess.User
 
 @{
     ViewData["Title"] = "Quản lý tài khoản";
 }
-
-@Html.Partial("../Includes/_ModalCreateUser.cshtml")
-@Html.Partial("../Includes/_ModalEditUser.cshtml")
 
 <div class="page-heading">
     <div class="page-title">
@@ -13,65 +10,47 @@
             <div class="col-12 col-md-6 order-md-1 order-last">
                 <h3>@ViewData["Title"]</h3>
             </div>
-            <div class="col-12 col-md-6 order-md-2 order-first">
+            <div class="col-12 col-md-6 order-md-2 order-first d-flex justify-content-end align-items-end">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Bảng tin</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+                        <li class="breadcrumb-item"><a asp-controller="Home">
+                                <p class="text-light-primary">Bảng tin</p>
+                            </a></li>
+                        <li class="breadcrumb-item text-dark active" aria-current="page">@ViewData["Title"]</li>
                     </ol>
                 </nav>
             </div>
         </div>
     </div>
 </div>
-
 <div class="page-content">
     <div class="card">
         <div class="card-header">
-            <button type="button" class="btn btn-create-user btn-primary me-2" data-bs-toggle="modal"
-                data-bs-target="#createUserModal"><i class="bi bi-plus-circle-dotted"></i>Thêm</button>
-            <button type="button" class="btn btn-remove-user btn-danger d-none" id="btn-remove-users"> <i
-                    class="icon-mid bi bi-trash"></i> Xóa</button>
+            <a class="btn btn-primary me-2" asp-controller="User" asp-action="Create">
+                <i class="bi bi-plus-circle-dotted"></i>
+                Thêm
+            </a>
+            <button type="button" class="btn btn-danger btn-removes d-none"><i class="bi bi-trash"></i>
+                Xóa
+            </button>
         </div>
         <div class="card-body">
-            <form id="batch-form" asp-action="Delete" method="post">
-                <div class="table-responsive">
+            <form method="post" id="batch-form">
+                <div class="table-resposive">
                     <table class="table table-hover" id="data-table">
                         <thead>
                             <tr>
                                 <th>
-                                    <input class="form-check-input" type="checkbox" id="all-choices">
+                                    <input type="checkbox" class="form-check-input cursor-pointer all-choices">
                                 </th>
-                                <th>ID</th>
-                                <th>Tên người dùng</th>
+                                <th>Id</th>
+                                <th>Tên tài khoản</th>
+                                <th>Nhóm quyền</th>
                                 <th>Email</th>
-                                <th>Điện thoại</th>
-                                <th>Vai trò</th>
+                                <th>Số điện thoại</th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach (var user in Model)
-                            {
-                                <tr>
-                                    <td><input class="form-check-input choice" type="checkbox" name="selectedIds"
-                                            value="@user.Id"></td>
-                                    <td class="userId">@user.Id</td>
-                                    <td>
-                                        <a style="cursor: pointer;" class="btn-update-user" data-bs-target="#editUserModal"
-                                            data-id="@user.Id">@user.Name</a>
-                                    </td>
-                                    <td>@user.Email</td>
-                                    <td>@user.Phone</td>
-                                    <td>@user.Role</td>
-                                    <td>
-                                        <input type="hidden" value="@user.Id" name="id" />
-                                        <a class="btn btn-danger me-2 btn-remove" data-id="@user.Id">
-                                            <i class="bi bi-trash"></i></a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
                     </table>
                 </div>
             </form>
@@ -82,111 +61,69 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#data-table').DataTable({
-                "language": {
+            const table = $('#data-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: `/User/Load`,
+                    error: function (err) {
+                        if (err.status == 401 || err.status == 419) {
+                            console.warn(err.responseJSON.errors);
+                            window.location.href = "/Login/Index";
+                        } else {
+                            console.log('Error:', err);
+                            swal(`{{ __("ĐÃ CÓ LỖI XẢY RA!") }}`, err.responseJSON.$message, 'error');
+                        }
+                    },
+                },
+                columns: [{
+                    data: 'checkbox',
+                    name: 'checkbox'
+                }, {
+                    data: 'id',
+                    name: 'id'
+                }, {
+                    data: 'name',
+                    name: 'name'
+                }, {
+                    data: 'role',
+                    name: 'role'
+                }, {
+                    data: 'email',
+                    name: 'email'
+                }, {
+                    data: 'phone',
+                    name: 'phone'
+                }, {
+                    data: 'action',
+                    name: 'action'
+                },
+                ],
+                language: {
                     "sProcessing": "Đang xử lý...",
-                    "sLengthMenu": "_MENU_ dòng /  trang",
-                    "emptyTable": "Không có dữ liệu",
-                    "sZeroRecords": "Không có kết quả nào được tìm thấy",
-                    "sInfo": "Hiển thị từ _START_ đến _END_ của _TOTAL_ mục",
-                    "sInfoEmpty": "Hiển thị từ 0 đến 0 của 0 mục",
-                    "sInfoFiltered": "(đã lọc từ _MAX_ mục)",
+                    "sLengthMenu": "_MENU_   dòng / trang",
+                    "sZeroRecords": "Nội dung trong.",
+                    "sInfo": "Từ _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Không có mục nào",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    'searchPlaceholder': "Tìm kiếm dữ liệu",
                     "sInfoPostFix": "",
-                    "sSearch": "Tìm kiếm:",
+                    "sSearch": "",
                     "sUrl": "",
                     "oPaginate": {
                         "sFirst": "&laquo;",
-                        "sLast": "&raquo;",
+                        "sPrevious": "&lsaquo;",
                         "sNext": "&rsaquo;",
-                        "sPrevious": "&lsaquo;"
-                    }
-                }
-            });
-        });
-
-        $(document).on('click', '.btn-create-user', function (e) {
-            $("#modalCreateUser").find('modal').modal('show');
-            console.log('ok');
-        });
-
-        $('#all-choices').change(function (e) {
-            e.preventDefault();
-            $('.choice').prop('checked', $(this).prop('checked')).change();
-        });
-
-        $(document).on('change', '.choice', function (e) {
-            e.preventDefault();
-            if ($('.choice:checked').length) {
-                $('.btn-remove-user').removeClass('d-none');
-            } else {
-                $('.btn-remove-user').addClass('d-none');
-            }
-        });
-
-
-        $('.btn-create-user').click(function (e) {
-            $('.save-form').trigger('reset');
-            e.preventDefault();
-            $('#user-modal').modal('show');
-        });
-
-        $(document).on('click', '.btn-update-user', function (e) {
-            e.preventDefault();
-            const form = $(this).parents().find('form');
-            let id = $(this).attr("data-id");
-            $.ajax({
-                url: '/User/Edit/' + id,
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    console.log(data.id, data);
-                    form.find('[name=Id]').val(data.id);
-                    form.find('[name=Name]').val(data.name);
-                    form.find('[name=Email]').val(data.email);
-                    form.find('[name=Phone]').val(data.phone);
-                    form.find('[name=RoleId]').val(data.roleId);
-                    $('#modalEditUser').find('.modal').modal('show')
-
+                        "sLast": "&raquo;",
+                    },
                 },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
+                columnDefs: [{
+                    target: 0,
+                    sortable: false,
+                    searchable: false,
+                }]
+
+            })
         })
-
-        $(document).on('change', '.choice', function (e) {
-            e.preventDefault();
-            if ($('.choice:checked').length) {
-                $('.btn-remove-user').removeClass('d-none');
-            } else {
-                $('.btn-remove-user').addClass('d-none');
-            }
-        });
-
-        $(document).on('click', '.btn-remove', function () {
-            const id = parseInt($(this).attr('data-id'));
-            Swal.fire({
-                title: "Lưu ý!",
-                text: "Bạn có chắc muốn xóa?",
-                icon: "warning",
-                showCancelButton: true,
-                showCloseButton: true,
-                confirmButtonText: "Có, Xóa nó!",
-                cancelButtonText: "Không, Hủy bỏ!",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/User/Delete/' + id,
-                        type: 'GET',
-                        success: function (response) {
-                            window.location.reload()
-                        },
-                        error: function (xhr, status, error) {
-                            console.log(xhr, status, error)
-                        }
-                    });
-                }
-            });
-        });
     </script>
 }

@@ -20,11 +20,11 @@ namespace CFM.Controllers
         {
             ViewBag.IsActive = "order";
             var OrderList = orderRepository.GetOrders();
-            return View("~/Views/Order/Index.cshtml", OrderList);
+            return View(OrderList);
         }
 
 
-        public ActionResult Create() => View("~/Views/Order/Create.cshtml");
+        public ActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
