@@ -26,7 +26,6 @@
                                     <h5 class="text-primary my-0">Thu ngân</h5>
                                     <span class="text-dark fs-5 ms-2 my-0" id="cashier-name"></span>
                                     <input type="hidden" asp-for="UserId" id="cashier-id">
-                                    <input type="hidden" asp-for="Status" value="0">
                                 </div>
                                 <div class="d-flex col-6 col-lg-5 px-0 mt-3 mt-lg-0">
                                     <div class="row w-100 algin-items-center">
@@ -68,7 +67,7 @@
                             <div class="col-12 col-lg-6 text-end me-lg-4 order-calc-fee d-none"></div>
                             <div class="col-12 col-lg-6 text-end me-lg-4 order-calc-discount"></div>
                             <div class="col-12 col-lg-6 text-end me-lg-4">
-                                <input type="hidden" class="bill-total">
+                                <input type="hidden" asp-for="TotalPrice" class="bill-total">
                                 Tổng giá trị đơn hàng:<span class="order-summary ms-2"></span>
                             </div>
                         </div>
@@ -119,7 +118,7 @@
                     var str = `
                                             <div class="row order-detail mb-2">
                                                 <div class="col-12 col-lg-4">
-                                                    <select name="products[]" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
+                                                    <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
                                                         <option value="" selected hidden disabled>Chọn món</option>`;
                     $.each(data.products, function (key, product) {
                         str += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
@@ -127,10 +126,11 @@
                     str += ` </select>
                                             </div>
                                             <div class="col-4 col-lg-2">
-                                                <span type="text" name="prices[]" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" autocomplete="off"><span>
+                                                <input type="hidden" name="details[${index}].OrderId" value="1">
+                                                <span type="text" name="details[${index}].Price" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" autocomplete="off"><span>
                                             </div>
                                             <div class="col-2 col-lg-2">
-                                                <input type="number" name="quantities[]" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
+                                                <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
                                             </div>
                                             <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end display-price"></div>
                                             <div class="col-3 col-lg-2 d-flex">
@@ -139,7 +139,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center mb-5">
-                                            <input type="text" name="notes[]" class="form-control small order-note w-100" placeholder="Ghi chú">
+                                            <input type="text" name="details[${index}].Note" class="form-control small order-note w-100" placeholder="Ghi chú">
                                         </div>`
                     $('#order-details').append(str)
                 })
@@ -153,6 +153,19 @@
                 detail.find('.order-quantity').removeAttr('disabled').val(1);
                 detail.find('.btn-print').removeAttr('disabled');
 
+                calcBill();
+            });
+
+            $(document).on('change keyup', '.order-quantity', function() {
+                $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
+                var inputValue = $(this).val();
+                $(this).val((inputValue >= 1) ? inputValue : 1)
+                calcBill()
+            });
+
+            $(document).on('click', '.btn-cancel', function() {
+                $(this).parents('.order-detail').next().remove();
+                $(this).parents('.order-detail').remove();
                 calcBill();
             })
         });

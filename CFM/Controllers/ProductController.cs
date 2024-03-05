@@ -106,6 +106,7 @@ namespace CFM.Controllers
             {
                 return NotFound();
             }
+            ViewBag.IsActive = "product";
             return View(product);
         }
 

@@ -51,13 +51,15 @@ namespace CFM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Order Order)
+        public ActionResult Create(Order Order, List<Detail> details)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    Order.UserId = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user")).Id;
+                    User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                    System.Console.WriteLine(Order);
+                    Order.UserId = user.Id;
                     orderRepository.InsertOrder(Order);
                     var dbContext = new Coffee_ManagementContext();
                     var table = dbContext.Tables.FirstOrDefault(t => t.Id == Order.TableId);
@@ -66,10 +68,22 @@ namespace CFM.Controllers
                         table.Status = 1;
                         dbContext.SaveChanges();
                     }
-                }
-                else
-                {
-
+                    LogDAO dao = new LogDAO();
+                    dao.AddNew(new Log{
+                        Id = 0,
+                        UserId = user.Id,
+                        Action = "Đã tạo",
+                        Object = "Đơn hàng",
+                        ObjectId = Order.Id,
+                    });
+                    dbContext.SaveChanges();
+                    IDetailRepository detailRepository = new DetailRepository();
+                    foreach (var detail in details)
+                    {
+                        detail.OrderId = Order.Id;
+                        System.Console.WriteLine(detail);
+                        detailRepository.InsertDetail(detail);
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }

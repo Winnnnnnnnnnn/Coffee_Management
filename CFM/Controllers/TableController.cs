@@ -36,6 +36,7 @@ namespace CFM.Controllers
             {
                 tableRepository.InsertTable(table);
             }
+            ViewBag.IsActive = "table";
             return RedirectToAction(nameof(Index));
         }
 
