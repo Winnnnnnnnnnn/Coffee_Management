@@ -32,7 +32,6 @@ namespace CFM.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Table table)
         {
-            System.Console.WriteLine(table.Status);
             if (ModelState.IsValid)
             {
                 tableRepository.InsertTable(table);
@@ -72,11 +71,41 @@ namespace CFM.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
-            tableRepository.DeleteTable(id);
-            return RedirectToAction("Index");
+            object response = null;
+            try
+            {
+                if (tableRepository.GetTableByID(id) == null)
+                {
+                    response = new
+                    {
+                        title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
+                        status = "danger"
+                    };
+                    return Json(response);
+                }
+                else
+                {
+                    response = new
+                    {
+                        controller = "Table",
+                        title = "Đã xóa thành công.",
+                        status = "success"
+                    };
+                    tableRepository.DeleteTable(id);
+                }
+                return Json(response);
+            }
+            catch (System.Exception)
+            {
+                response = new
+                {
+                    title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
+                    status = "danger"
+                };
+                return Json(response);
+            }
         }
     }
 }

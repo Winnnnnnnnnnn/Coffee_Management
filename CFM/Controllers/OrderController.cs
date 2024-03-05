@@ -30,7 +30,7 @@ namespace CFM.Controllers
                 checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + o?.Id + "'>",
                 id = o?.Id,
                 table_id = "<a class='btn btn-link text-decoration-none' href='/Order/Edit/" + o?.Id + "'>" + o?.getTableName() + " </ a > ",
-                user_id = o?.UserId,
+                user_id = o.getUserName(),
                 total_price = o?.TotalPrice,
                 note = o?.Note,
                 created_at = o?.CreatedAt.Value.ToString("HH:mm:ss dd/MM/yyyy"),
@@ -40,8 +40,20 @@ namespace CFM.Controllers
             return Json(new { data = data });
         }
 
+        public ActionResult Create()
+        {
+            ViewBag.IsActive = "order";
+            var context = new Coffee_ManagementContext();
+            var products = context.Products.ToList();
+            var tables = context.Tables.Where(t => t.Status == 0).ToList();
 
-        public ActionResult Create() => View();
+            var viewModel = new Order
+            {
+                Products = products,
+                Tables = tables
+            };
+            return View();
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -52,6 +64,13 @@ namespace CFM.Controllers
                 if (ModelState.IsValid)
                 {
                     orderRepository.InsertOrder(Order);
+                    var dbContext = new Coffee_ManagementContext();
+                    var table = dbContext.Tables.FirstOrDefault(t => t.Id == Order.TableId);
+                    if (table != null)
+                    {
+                        table.Status = 1;
+                        dbContext.SaveChanges();
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }

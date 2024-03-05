@@ -42,13 +42,13 @@ namespace MyLibrary.DataAccess
             }
         }
 
-        public Order GetOrderByID(int OrderId)
+        public Order GetOrderByID(int Id)
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    return context.Orders.FirstOrDefault(m => m.Id == OrderId);
+                    return context.Orders.FirstOrDefault(m => m.Id == Id);
                 }
             }
             catch (Exception ex)
@@ -107,11 +107,11 @@ namespace MyLibrary.DataAccess
         }
 
 
-        public void Remove(int OrderId)
+        public void Remove(int Id)
         {
             try
             {
-                var OrderToRemove = GetOrderByID(OrderId);
+                var OrderToRemove = GetOrderByID(Id);
                 if (OrderToRemove != null)
                 {
                     using (var context = new Coffee_ManagementContext())
@@ -131,15 +131,15 @@ namespace MyLibrary.DataAccess
             }
         }
 
-        public void RemoveMultiple(List<int> OrderIds)
+        public void RemoveMultiple(List<int> Ids)
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    foreach (var OrderId in OrderIds)
+                    foreach (var Id in Ids)
                     {
-                        var OrderToRemove = context.Orders.FirstOrDefault(u => u.Id == OrderId);
+                        var OrderToRemove = context.Orders.FirstOrDefault(u => u.Id == Id);
                         if (OrderToRemove != null)
                         {
                             context.Orders.Remove(OrderToRemove);

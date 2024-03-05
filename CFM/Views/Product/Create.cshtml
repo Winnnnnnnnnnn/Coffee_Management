@@ -5,7 +5,8 @@
         <div class="container card me-5 p-5 shadow-lg">
             <h3 class="fw-bold">Thêm sản phẩm mới</h3>
             <hr>
-            <form asp-action="Create" method="post" id="product-form" class="save-form" accept-charset="UTF-8">
+            <form asp-controller="Product" asp-action="Create" method="post" id="product-form" class="save-form"
+                accept-charset="UTF-8">
                 <div class="p-5">
                     <div class="row">
                         <input type="hidden" asp-for="Id" value="0">

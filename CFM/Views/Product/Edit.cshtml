@@ -5,7 +5,8 @@
         <div class="container card me-5 p-5 shadow-lg">
             <h3 class="fw-bold">Cập nhật sản phẩm</h3>
             <hr>
-            <form asp-action="Edit" method="post" id="product-form" class="save-form" accept-charset="UTF-8" mo>
+            <form asp-controller="Product" asp-action="Edit" method="post" id="product-form" class="save-form"
+                accept-charset="UTF-8" mo>
                 <div class="p-5">
                     <div class="row">
                         <input type="hidden" asp-for="Id">
@@ -22,7 +23,8 @@
                         </div>
                         <div class="mb-3">
                             <label asp-for="Price" class="form-label fw-bold">Giá</label>
-                            <input type="text" class="form-control" asp-for="Price" placeholder="Nhập giá" value="@Model.Price.ToString("0.##")">
+                            <input type="text" class="form-control" asp-for="Price" placeholder="Nhập giá"
+                                value="@Model.Price.ToString("0.##")">
                             <span asp-validation-for="Price" class="text-danger"></span>
                         </div>
                         <div class="mb-3">

@@ -17,7 +17,6 @@ namespace MyLibrary.DataAccess
 
         [Required(ErrorMessage = "Tên không được trống")]
         public string Name { get; set; }
-        [Required(ErrorMessage = "Khu vực không được trống")]
         public string Area { get; set; }
         public string Note { get; set; }
 

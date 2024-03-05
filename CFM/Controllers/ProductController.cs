@@ -67,7 +67,6 @@ namespace CFM.Controllers
             });
         }
 
-
         public IActionResult Create()
         {
             ViewBag.IsActive = "product";

@@ -82,19 +82,16 @@
                             <li class="sidebar-item has-sub">
                                 <a class='sidebar-link cursor-pointer'>
                                     <i class="bi bi-gear-fill"></i>
-                                    <span>Cài đặt hệ thống</span>
+                                    <span>Cài đặt</span>
                                 </a>
                                 <ul class="submenu">
                                     <li class="submenu-item @(ViewBag.IsActive == "user" ? "active" : "")">
                                         <a class="text-decoration-none" asp-controller="User" asp-action="Index">Tài
                                             khoản</a>
                                     </li>
-                                    <li class="submenu-item @(ViewBag.IsActive == "role" ? "active" : "")">
-                                        <a class="text-decoration-none" asp-controller="Home" asp-action="Index">Quyền
-                                            hạn</a>
-                                    </li>
                                     <li class="submenu-item @(ViewBag.IsActive == "setting" ? "active" : "")">
-                                        <a class="text-decoration-none" asp-controller="Setting" asp-action="Index">Thiết
+                                        <a class="text-decoration-none" asp-controller="Setting"
+                                            asp-action="Index">Thiết
                                             lập hệ thống</a>
                                     </li>
                                     <li class="submenu-item @(ViewBag.IsActive == "log" ? "active" : "")">
@@ -149,7 +146,8 @@
                                                 @Context.Session.GetString("AuthName")
                                         </li>
                                         <li>
-                                            <a class="dropdown-item cursor-pointer btn-profile" data-id="">
+                                            <a class="dropdown-item cursor-pointer btn-profile" asp-controller="Profile"
+                                                asp-action="ProfileUser">
                                                 <i class="icon-mid bi bi-person me-2"></i>
                                                 Thông tin tài khoản</a>
                                         </li>
@@ -177,9 +175,6 @@
                 <main role="main" class="pb-3">
                     @RenderBody()
                 </main>
-                <footer class="footer text-muted bg-light">
-                    &copy; Group7 - CoffeeManagement - <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                </footer>
             </div>
         </div>
     </div>

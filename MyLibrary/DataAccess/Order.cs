@@ -28,6 +28,9 @@ namespace MyLibrary.DataAccess
         public DateTime? UpdatetedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
 
+        public List<Product> Products { get; set; }
+        public List<Table> Tables { get; set; }
+
         public string getStatus()
         {
             return (this.Status == 0) ? "Chưa thanh toán" : "Đã thanh toán";
@@ -42,6 +45,13 @@ namespace MyLibrary.DataAccess
                 return name;
             }
             return "Mang đi";
+        }
+
+        public string getUserName()
+        {
+            UserDAO table = new UserDAO();
+            var name = table.GetUserByID(this.UserId).Name;
+            return name;
         }
 
         public virtual Table Table { get; set; }

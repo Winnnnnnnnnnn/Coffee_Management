@@ -25,13 +25,9 @@ namespace MyLibrary.Repository
                 case 2:
                     role = "Chủ quán";
                     break;
-                case 3:
-                    role = "Thu ngân";
-                    break;
                 default:
                     role = "Nhân viên";
                     break;
-
             }
             return role;
         }
