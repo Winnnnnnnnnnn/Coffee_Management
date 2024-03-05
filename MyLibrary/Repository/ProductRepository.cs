@@ -19,5 +19,10 @@ namespace MyLibrary.Repository
         }
         public void DeleteProducts(List<int> product_ids) => ProductDAO.Instance.RemoveMultiple(product_ids);
         public void UpdateProduct(Product product) => ProductDAO.Instance.Update(product);
+
+        public decimal GetTotalProducts(DateTime a, DateTime b)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

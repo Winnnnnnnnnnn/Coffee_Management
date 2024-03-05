@@ -17,7 +17,7 @@ namespace CFM.Controllers
     public class OrderController : Controller
     {
         IOrderRepository orderRepository = null;
-        public OrderController() => orderRepository = new OrderRepository();
+        // public OrderController() => orderRepository = new OrderRepository();
 
         public ActionResult Index()
         {

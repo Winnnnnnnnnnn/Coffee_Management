@@ -30,7 +30,7 @@ namespace MyLibrary.DataAccess
                 {
                         Logs = new HashSet<Log>();
                         Orders = new HashSet<Order>();
-}
+                }
 
                 public int Id { get; set; }
 

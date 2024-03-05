@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 #nullable disable
 
@@ -9,6 +10,8 @@ namespace MyLibrary.DataAccess
 {
     public partial class Order
     {
+        public virtual ICollection<Detail> Details { get; set; }
+        public virtual ICollection<Factor> Factors { get; set; }
         public Order()
         {
             Details = new HashSet<Detail>();
@@ -27,8 +30,6 @@ namespace MyLibrary.DataAccess
         public DateTime? UpdatetedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
 
-        // public List<Product> Products { get; set; }
-        // public List<Table> Tables { get; set; }
 
         public string getStatus()
         {
@@ -55,7 +56,5 @@ namespace MyLibrary.DataAccess
 
         public virtual Table Table { get; set; }
         public virtual User User { get; set; }
-        public virtual ICollection<Detail> Details { get; set; }
-        public virtual ICollection<Factor> Factors { get; set; }
     }
 }
