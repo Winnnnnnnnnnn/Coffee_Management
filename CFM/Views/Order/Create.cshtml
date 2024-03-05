@@ -117,32 +117,43 @@
                 const index = $('.order-product').length;
                 $.get('/Product/Load', function (data) {
                     var str = `
-                                <div class="row order-detail mb-2">
-                                    <div class="col-12 col-lg-4">
-                                        <select name="products[]" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
-                                            <option value="" selected hidden disabled>Chọn món</option>`;
+                                            <div class="row order-detail mb-2">
+                                                <div class="col-12 col-lg-4">
+                                                    <select name="products[]" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
+                                                        <option value="" selected hidden disabled>Chọn món</option>`;
                     $.each(data.products, function (key, product) {
                         str += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
                     });
                     str += ` </select>
-                                </div>
-                                <div class="col-4 col-lg-2">
-                                    <input type="text" name="prices[]" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" inputmode="numeric"  autocomplete="off" disabled>
-                                </div>
-                                <div class="col-2 col-lg-2">
-                                    <input type="number" name="quantities[]" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
-                                </div>
-                                <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end display-price"></div>
-                                <div class="col-3 col-lg-2 d-flex">
-                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3" disabled><i class="bi bi-printer"></i></button>
-                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center mb-5">
-                                <input type="text" name="notes[]" class="form-control small order-note w-100" placeholder="Ghi chú">
-                            </div>`
+                                            </div>
+                                            <div class="col-4 col-lg-2">
+                                                <span type="text" name="prices[]" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" autocomplete="off"><span>
+                                            </div>
+                                            <div class="col-2 col-lg-2">
+                                                <input type="number" name="quantities[]" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
+                                            </div>
+                                            <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end display-price"></div>
+                                            <div class="col-3 col-lg-2 d-flex">
+                                                <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3" disabled><i class="bi bi-printer"></i></button>
+                                                <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center mb-5">
+                                            <input type="text" name="notes[]" class="form-control small order-note w-100" placeholder="Ghi chú">
+                                        </div>`
                     $('#order-details').append(str)
                 })
+            })
+
+            $(document).on('change', '.order-product', function () {
+                $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
+                const detail = $(this).parents('.order-detail');
+                const value = $(this).find(':selected').attr('data-price')
+                detail.find('.order-price').text(number_format(value));
+                detail.find('.order-quantity').removeAttr('disabled').val(1);
+                detail.find('.btn-print').removeAttr('disabled');
+
+                calcBill();
             })
         });
     </script>
