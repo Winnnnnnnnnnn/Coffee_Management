@@ -84,7 +84,7 @@ namespace CFM.Controllers
                 }
                 else
                 {
-                    user.Password = PasswordHelper.HashPassword(user.Password);
+                    user.Password = Helper.HashPassword(user.Password);
                     userRepository.InsertUser(user);
                     return RedirectToAction("Index");
                 }
@@ -166,6 +166,12 @@ namespace CFM.Controllers
                 };
                 return Json(response);
             }
+        }
+
+        public User GetUserInfo()
+        {
+            System.Console.WriteLine(Helper.UserInfo(HttpContext).Name);
+            return Helper.UserInfo(HttpContext);
         }
     }
 }

@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using MyLibrary.DataAccess;
 using MyLibrary.Repository;
 using MyMVC.Models.Authentication;
+using Newtonsoft.Json;
 
 
 namespace CFM.Controllers
 {
-    [Authentication]
+    // [Authentication]
     public class OrderController : Controller
     {
         IOrderRepository orderRepository = null;
@@ -43,15 +46,6 @@ namespace CFM.Controllers
         public ActionResult Create()
         {
             ViewBag.IsActive = "order";
-            var context = new Coffee_ManagementContext();
-            var products = context.Products.ToList();
-            var tables = context.Tables.Where(t => t.Status == 0).ToList();
-
-            var viewModel = new Order
-            {
-                Products = products,
-                Tables = tables
-            };
             return View();
         }
 
@@ -63,6 +57,7 @@ namespace CFM.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    Order.UserId = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user")).Id;
                     orderRepository.InsertOrder(Order);
                     var dbContext = new Coffee_ManagementContext();
                     var table = dbContext.Tables.FirstOrDefault(t => t.Id == Order.TableId);
@@ -71,6 +66,10 @@ namespace CFM.Controllers
                         table.Status = 1;
                         dbContext.SaveChanges();
                     }
+                }
+                else
+                {
+
                 }
                 return RedirectToAction(nameof(Index));
             }

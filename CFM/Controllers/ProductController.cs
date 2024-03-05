@@ -61,6 +61,7 @@ namespace CFM.Controllers
 
             return Json(new
             {
+                products = products,
                 recordsTotal = recordsTotal,
                 data = data,
                 language = language

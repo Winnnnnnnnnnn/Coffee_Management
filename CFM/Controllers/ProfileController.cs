@@ -37,22 +37,7 @@ namespace CFM.Controllers
         [HttpPost]
         public IActionResult ChangePassword(string Password, string newPassword, string confirmPassword)
         {
-            HttpContext context = HttpContext;
-            var session = context.Session;
-            string key_access = "user";
-            string jsonUser = session.GetString(key_access);
-            User user = null;
-            if (jsonUser != null)
-            {
-                // Convert chuỗi Json - thành đối tượng
-                user = JsonConvert.DeserializeObject<User>(jsonUser);
-            }
-            else
-            {
-                // json chưa từng lưu trong Session, accessInfo lấy bằng giá trị khởi  tạo
-                return RedirectToAction("Index", "Login");
-            }
-            System.Console.WriteLine(Password);
+            User user = Helper.UserInfo(HttpContext);
             string passMD5;
 
             using (MD5 md5 = MD5.Create())

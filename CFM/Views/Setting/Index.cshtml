@@ -55,7 +55,7 @@
                     form.find('[name=bank_id]').append(`<option value="${bank.bin}">(${bank.bin}) ${bank.shortName} </option>`);
                 })
             })
-            $.get(`\\Setting\\Load`, function (settingList) {
+            $.get(`/Setting/Load`, function (settingList) {
                 $.each(settingList, function (index, setting) {
                     let form = $('#setting-form');
                     if (setting.key == "bank_number") {

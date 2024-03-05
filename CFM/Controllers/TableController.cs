@@ -39,6 +39,13 @@ namespace CFM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public ActionResult GetTableFree(Table table)
+        {
+            var context = new Coffee_ManagementContext();
+            var tables = context.Tables.Where(t => t.Status == 0).ToList();
+            return Json(tables);
+        }
+
         public IActionResult Edit(int? id)
         {
             if (id == null)

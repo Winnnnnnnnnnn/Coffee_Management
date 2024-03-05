@@ -22,14 +22,13 @@ namespace MyLibrary.DataAccess
         [Required]
         public int Status { get; set; }
         public string Note { get; set; }
-        [Required]
         public decimal? TotalPrice { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatetedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
 
-        public List<Product> Products { get; set; }
-        public List<Table> Tables { get; set; }
+        // public List<Product> Products { get; set; }
+        // public List<Table> Tables { get; set; }
 
         public string getStatus()
         {
