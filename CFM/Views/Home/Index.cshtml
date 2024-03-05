@@ -105,6 +105,11 @@
             });
             reloadChart();
             Revenue();
+
+            $(document).on('change', 'input[name="dateRange"]', function () {
+                reloadChart();
+                Revenue();
+            })
             function reloadChart() {
                 let revenuesArrayNew = [],
                     timesArrayNew = [], productNumber = 0, orderNumber = 0;
@@ -118,23 +123,10 @@
                     $('.totalOrders').text(orderNumber);
                     $('.saleProducts').text(data.numberProduct);
                     drawChart(timesArrayNew, revenuesArrayNew);
-
                 })
             }
 
             function Revenue() {
-                $.get(`/Home/Load1/?range=${$('input[name="dateRange"]').val()}`, function (data) {
-                    $('.revenues').text(data);
-                })
-            }
-
-            function Orders() {
-                $.get(`/Home/Load1/?range=${$('input[name="dateRange"]').val()}`, function (data) {
-                    $('.revenues').text(data);
-                })
-            }
-
-            function Orders() {
                 $.get(`/Home/Load1/?range=${$('input[name="dateRange"]').val()}`, function (data) {
                     $('.revenues').text(data);
                 })
