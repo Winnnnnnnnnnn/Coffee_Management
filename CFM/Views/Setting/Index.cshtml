@@ -1,74 +1,120 @@
 @{
     ViewData["Title"] = "Index";
 }
-
 <section class="row justify-content-center align-items-center">
     <div class="col-7">
         <div class="container card me-5 p-5 shadow-lg">
-            <h3 class="fw-bold">Thiết lập hệ thống</h3>
+            <h3 class="fw-bold">Cài đặt thanh toán</h3>
             <hr>
-            <form asp-action="BankUpdate" method="post" id="setting-form" class="save-form" accept-charset="UTF-8">
+            <form asp-controller="Setting" asp-action="BankUpdate" method="post" id="setting-form" class="save-form"
+                accept-charset="UTF-8">
                 <div class="p-5">
                     <div class="row justify-content-center">
                         <div class="form-group col-12 col-lg-6">
-                            <label class="fw-bold" for="bank-id">Chọn ngân hàng</label>
-                            <select class="form-control" name="bank_id" id="bank-id">
+                            <label class="fw-bold" for="bank-id">Ngân hàng</label>
+                            <select disabled class="form-control" name="bank_id" id="bank-id">
+                                <option selected disabled hidden>Chọn ngân hàng</option>
                             </select>
                         </div>
                         <div class="form-group col-12 col-lg-6">
                             <label class="fw-bold" for="bank-number">Số tài khoản</label>
-                            <input type="text" class="form-control" id="bank-number" name="bank_number"
+                            <input disabled type="text" class="form-control" id="bank-number" name="bank_number"
                                 placeholder="Nhập số tài khoản">
                         </div>
                         <div class="form-group col-12 col-lg-6">
                             <label class="fw-bold" for="template">Mẩu QR</label>
-                            <select class="form-control" id="template">
-                                <option selected value="compact">Cơ bản</option>
-                                <option value="compact">Số tài khoản - số tiền</option>
+                            <select disabled class="form-control" name="bank_template">
+                                <option selected disabled hidden>Chọn mẩu QR</option>
+                                <option value="compact">Cơ bản</option>
+                                <option value="compact2">Số tài khoản - số tiền</option>
                                 <option value="qr_only">Chỉ mã QR</option>
                                 <option value="print">Mẩu in</option>
                             </select>
                         </div>
                         <div class="form-group col-12 col-lg-6">
-                            <label class="fw-bold" for="bank-amount">Nội dung chuyển khoản</label>
-                            <input type="text" class="form-control" id="bank-amount" name="amount"
-                                placeholder="Nội dung chuyển khoản" value="Thanh toán hóa đơn.">
+                            <label class="fw-bold" for="bank-content">Nội dung chuyển khoản</label>
+                            <input disabled type="text" class="form-control" id="bank-content" name="bank_content"
+                                placeholder="Nội dung chuyển khoản">
                         </div>
                     </div>
                     <div class="d-flex justify-content-end mt-4">
-                        <button type="submit" id="setting-submit" class="btn btn-primary">Lưu</button>
+                        <button type="button" class="btn btn-outline-success btn-setting-example mx-3">
+                            Xem thử mẩu</button>
+                        <button type="button" class="btn btn-warning btn-setting-update">Chỉnh sửa</button>
+                        <button type="submit" class="btn btn-primary d-none btn-setting-save">Xác nhật </button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </section>
-
+<div class="modal" id="setting-example">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Xem thử mẫu chuyển khoản</h4>
+            </div>
+            <div class="modal-body">
+                <img class="img-fluid" alt="Example Image">
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
     <script>
         $(document).ready(function () {
-            $.get('https://api.vietqr.io/v2/banks', function (api) {
-                let form = $('#setting-form');
-                $.each(api.data, function (index, bank) {
-                    form.find('[name=bank_id]').append(`<option value="${bank.bin}">(${bank.bin}) ${bank.shortName} </option>`);
-                })
-            })
+            let form = $('#setting-form');
             $.get(`/Setting/Load`, function (settingList) {
                 $.each(settingList, function (index, setting) {
-                    let form = $('#setting-form');
                     if (setting.key == "bank_number") {
-                        form.find('[name=bank_number]').val(setting.value)
+                        form.find('[name=bank_number]').val(setting.value);
                     } else if (setting.key == "bank_id") {
-                        form.find('[name=bank_id]').val(setting.value)
-                    } else if (setting.key == "bank_number") {
-                        form.find('[name=bank_number]').val(setting.value)
-                    } else if (setting.key == "bank_number") {
-                        form.find('[name=bank_number]').val(setting.value)
+                        $.get('https://api.vietqr.io/v2/banks', function (api) {
+                            $.each(api.data, function (index, bank) {
+                                form.find('[name=bank_id]').append(`<option ${(bank.bin == setting.value) ? 'selected' : ''} value="${bank.bin}">(${bank.bin}) ${bank.shortName} </option>`);
+                            });
+                        });
+                        form.find('[name=bank_id]').val(setting.value);
+                    } else if (setting.key == "bank_template") {
+                        form.find(`option[value="${setting.value}"]`).prop('selected', true);
+                        form.find('[name=bank_template]');
+                    } else if (setting.key == "bank_content") {
+                        form.find('[name=bank_content]').val(setting.value);
                     }
-                })
+                });
+            });
+
+            $(document).on('click', '.btn-setting-update', function () {
+                $(this).addClass('d-none');
+                form.find('.btn-setting-save').removeClass('d-none');
+                form.find('input, select').removeAttr('disabled');
             })
-        })
+
+            $(document).on('click', '.btn-setting-example', function () {
+                let modalEx = $('#setting-example'), str = `https://img.vietqr.io/image/`;
+                $.get(`/Setting/Load`, function (settingList) {
+                    $.each(settingList, function (index, setting) {
+                        if (setting.key == "bank_number") {
+                            str += setting.value + '-';
+                        } if (setting.key == "bank_id") {
+                            str += setting.value + '-';
+                        }
+                        if (setting.key == "bank_template") {
+                            str += setting.value + '.png?amount=20000&addInfo=';
+                        }
+                        if (setting.key == "bank_content") {
+                            str += setting.value;
+                        }
+                    });
+                    console.log(str)
+                    str += '&accountName=ABC'
+                    modalEx.find('img').attr('src', str);
+                });
+                modalEx.modal('show');
+            })
+        });
+
     </script>
 }
