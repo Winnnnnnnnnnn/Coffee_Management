@@ -19,6 +19,7 @@ namespace MyLibrary.DataAccess
         [Required(ErrorMessage = "Vui lòng nhập đầy đủ thông tin.")]
         public string Name { get; set; }
         public string Image { get; set; }
+        
         [Required(ErrorMessage = "Vui lòng nhập đầy đủ thông tin.")]
         public string Unit { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập đầy đủ thông tin.")]

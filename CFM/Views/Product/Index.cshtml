@@ -49,6 +49,7 @@
                                 <th>Giá</th>
                                 <th>Danh mục</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                     </table>
@@ -76,6 +77,7 @@
                         }
                     },
                 },
+
                 columns: [{
                     data: 'checkbox',
                     name: 'checkbox'
@@ -100,7 +102,19 @@
                 }, {
                     data: 'catalogue_id',
                     name: 'catalogue_id'
-                }, {
+                },
+                {
+                    data: 'image',
+                    name: 'image',
+                    render: function (data, type, row, meta) {
+                        var imgsrc = data; 
+                        if (type === 'display') {
+                            return '<img class="img-responsive" src="' + imgsrc + '" alt="Product_Image" height="100px" width="100px">';
+                        }
+                        return data;
+                    }
+                },
+                {
                     data: 'action',
                     name: 'action'
                 },
