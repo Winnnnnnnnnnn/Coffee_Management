@@ -2,7 +2,167 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <div class="col-12 col-lg-6 mb-3">
+        <div class="d-flex justify-content-start align-item-center p-0">
+            <button class="btn btn-primary">Đơn hàng mới</button>
+            <button class="btn btn-primary mx-2">Khách hàng mới</button>
+            <button class="btn btn-primary">Sản phẩm mới</button>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="d-flex justify-content-end align-item-center">
+            <input type="text" id="dateRange" name="dateRange" class="btn btn-outline-primary mt-0 mb-0"
+                style="opacity: 1;">
+        </div>
+    </div>
 </div>
+
+<div class="page-content">
+    <section class="row">
+        <div class="col-12 col-lg-12">
+            <div class="row">
+                <div class="col-6 col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-3 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="stats-icon purple">
+                                        <i class="icon-mid  bi-cash-coin"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6 class="text-muted font-semibold">Doanh Thu</h6>
+                                    <h6 class="font-extrabold mb-0 revenues">0</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-3 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="stats-icon blue">
+                                        <i class="icon-mid  bi-box2-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6 class="text-muted font-semibold">Đơn hàng</h6>
+                                    <h6 class="font-extrabold mb-0 totalOrders">0</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-4 col-md-6">
+                    <div class="card">
+                        <div class="card-body px-3 py-4-5">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="stats-icon green">
+                                        <i class="icon-mid  bi-cup-straw"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6 class="text-muted font-semibold">Số sản phẩm</h6>
+                                    <h6 class="font-extrabold mb-0 saleProducts">0</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Profile Visit</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="chart-profile-visit"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var now = new Date();
+            var endDate = moment(now).format('DD/MM/YYYY');
+            var startDate = moment(now.getTime() - 7 * 24 * 60 * 60 * 1000).format('DD/MM/YYYY');
+            $('input[name="dateRange"]').daterangepicker({
+                "startDate": startDate,
+                "endDate": endDate,
+                opens: 'left',
+                locale: {
+                    format: 'DD/MM/YYYY'
+                }
+            });
+            reloadChart();
+            Revenue();
+
+            $(document).on('change', 'input[name="dateRange"]', function () {
+                reloadChart();
+                Revenue();
+            })
+            function reloadChart() {
+                let revenuesArrayNew = [],
+                    timesArrayNew = [], productNumber = 0, orderNumber = 0;
+                let range = $('input[name="dateRange"]').val();
+                $.get(`/Home/Load/?range=${$('input[name="dateRange"]').val()}`, function (data) {
+                    $.each(data.dailiRevenues, function (index, order) {
+                        orderNumber += 1;
+                        revenuesArrayNew.push(order.totalPrice);
+                        timesArrayNew.push(moment(order.createdAt).format('DD/MM/YYYY'));
+                    })
+                    $('.totalOrders').text(orderNumber);
+                    $('.saleProducts').text(data.numberProduct);
+                    drawChart(timesArrayNew, revenuesArrayNew);
+                })
+            }
+
+            function Revenue() {
+                $.get(`/Home/Load1/?range=${$('input[name="dateRange"]').val()}`, function (data) {
+                    $('.revenues').text(data);
+                })
+            }
+
+            //Vẽ biểu đổ với 2 tham số
+            function drawChart(times, revenues) {
+                var optionsProfileVisit = {
+                    annotations: {
+                        position: 'back'
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    chart: {
+                        type: 'bar',
+                        height: 300,
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    plotOptions: {},
+                    series: [{
+                        name: 'sales',
+                        data: revenues,
+                    }],
+                    colors: `var(--bs-primary)`,
+                    xaxis: {
+                        categories: times,
+                    },
+                }
+                var chartProfileVisit = new ApexCharts(document.querySelector("#chart-profile-visit"),
+                    optionsProfileVisit);
+                chartProfileVisit.render();
+                chartProfileVisit.updateOptions(optionsProfileVisit, true);
+            }
+        });
+    </script>
+}

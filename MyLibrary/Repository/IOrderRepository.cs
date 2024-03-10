@@ -9,6 +9,8 @@ namespace MyLibrary.Repository
 {
     public interface IOrderRepository
     {
+        IEnumerable<Order> GetOrderRange(DateTime a, DateTime b);
+        decimal GetDailyRevenues(DateTime a, DateTime b);
         IEnumerable<Order> GetOrders();
         Order GetOrderByID(int OrderId);
         void InsertOrder(Order Order);
