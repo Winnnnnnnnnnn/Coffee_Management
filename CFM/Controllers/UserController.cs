@@ -170,7 +170,6 @@ namespace CFM.Controllers
 
         public User GetUserInfo()
         {
-            System.Console.WriteLine(Helper.UserInfo(HttpContext).Name);
             return Helper.UserInfo(HttpContext);
         }
     }
