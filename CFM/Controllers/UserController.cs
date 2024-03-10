@@ -9,10 +9,12 @@ using MyLibrary.Repository;
 using MyLibrary.DataAccess;
 using MyMVC.Models.Authentication;
 using CoffeeManagement.Controllers;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace CFM.Controllers
 {
-    // [Authentication]
+    [Authentication]
     public class UserController : Controller
     {
         IUserRepository userRepository = null;
@@ -86,6 +88,18 @@ namespace CFM.Controllers
                 {
                     user.Password = Helper.HashPassword(user.Password);
                     userRepository.InsertUser(user);
+                    User auth = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                    var dbContext = new Coffee_ManagementContext();
+                    LogDAO dao = new LogDAO();
+                    dao.AddNew(new Log
+                    {
+                        Id = 0,
+                        UserId = auth.Id,
+                        Action = "Đã tạo",
+                        Object = "Tài khoản",
+                        ObjectId = user.Id,
+                    });
+                    dbContext.SaveChanges();
                     return RedirectToAction("Index");
                 }
             }
@@ -120,6 +134,18 @@ namespace CFM.Controllers
                 user.Password = userRepository.GetUserByID(id).Password;
                 // Tiến hành cập nhật thông tin vai trò
                 userRepository.UpdateUser(user);
+                User auth = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var dbContext = new Coffee_ManagementContext();
+                LogDAO dao = new LogDAO();
+                dao.AddNew(new Log
+                {
+                    Id = 0,
+                    UserId = auth.Id,
+                    Action = "Đã tạo",
+                    Object = "Sản phẩm",
+                    ObjectId = user.Id,
+                });
+                dbContext.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -154,6 +180,18 @@ namespace CFM.Controllers
                         status = "success"
                     };
                     userRepository.DeleteUser(id);
+                    User auth = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                    var dbContext = new Coffee_ManagementContext();
+                    LogDAO dao = new LogDAO();
+                    dao.AddNew(new Log
+                    {
+                        Id = 0,
+                        UserId = auth.Id,
+                        Action = "Đã xóa",
+                        Object = "Tài khoản",
+                        ObjectId = id,
+                    });
+                    dbContext.SaveChanges();
                 }
                 return Json(response);
             }

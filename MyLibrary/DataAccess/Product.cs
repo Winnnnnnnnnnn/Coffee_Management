@@ -19,14 +19,32 @@ namespace MyLibrary.DataAccess
         [Required(ErrorMessage = "Vui lòng nhập đầy đủ thông tin.")]
         public string Name { get; set; }
         public string Image { get; set; }
-        
+
         [Required(ErrorMessage = "Vui lòng nhập đầy đủ thông tin.")]
         public string Unit { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập đầy đủ thông tin.")]
         public decimal Price { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập đầy đủ thông tin.")]
         public int Catalogue { get; set; }
-        
+
         public virtual ICollection<Detail> Details { get; set; }
+
+        public string getCatalogueName()
+        {
+            var name = "";
+            switch (this.Catalogue)
+            {
+                case 1:
+                    name = "Đồ ăn";
+                    break;
+                case 2:
+                    name = "Đồ uống";
+                    break;
+                default:
+                    name = "Món khác";
+                    break;
+            }
+            return name;
+        }
     }
 }

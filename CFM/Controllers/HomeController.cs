@@ -14,7 +14,7 @@ using MyLibrary.DataAccess;
 
 namespace CFM.Controllers
 {
-    // [Authentication]
+    [Authentication]
     public class HomeController : Controller
     {
         IOrderRepository orderRepository = null;

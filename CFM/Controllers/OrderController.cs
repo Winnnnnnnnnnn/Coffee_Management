@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace CFM.Controllers
 {
-    // [Authentication]
+    [Authentication]
     public class OrderController : Controller
     {
         IOrderRepository orderRepository = null;
@@ -58,7 +58,6 @@ namespace CFM.Controllers
                 if (ModelState.IsValid)
                 {
                     User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
-                    System.Console.WriteLine(Order);
                     Order.UserId = user.Id;
                     orderRepository.InsertOrder(Order);
                     var dbContext = new Coffee_ManagementContext();
@@ -68,8 +67,10 @@ namespace CFM.Controllers
                         table.Status = 1;
                         dbContext.SaveChanges();
                     }
+                    IDetailRepository detailRepository = new DetailRepository();
                     LogDAO dao = new LogDAO();
-                    dao.AddNew(new Log{
+                    dao.AddNew(new Log
+                    {
                         Id = 0,
                         UserId = user.Id,
                         Action = "Đã tạo",
@@ -77,13 +78,6 @@ namespace CFM.Controllers
                         ObjectId = Order.Id,
                     });
                     dbContext.SaveChanges();
-                    IDetailRepository detailRepository = new DetailRepository();
-                    foreach (var detail in details)
-                    {
-                        detail.OrderId = Order.Id;
-                        System.Console.WriteLine(detail);
-                        detailRepository.InsertDetail(detail);
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -132,18 +126,55 @@ namespace CFM.Controllers
             }
         }
 
+        [HttpPost]
         public ActionResult Delete(int id)
         {
+            object response = null;
             try
             {
-                orderRepository.DeleteOrder(id);
-                // Phản hồi về thành công khi xóa thành công
-                return Ok(new { message = "Xóa đơn hàng thành công!" });
+                if (orderRepository.GetOrderByID(id) == null)
+                {
+                    response = new
+                    {
+                        controller = "Order",
+                        title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
+                        status = "danger"
+                    };
+                }
+                else
+                {
+                    orderRepository.DeleteOrder(id);
+                    response = new
+                    {
+                        controller = "Order",
+                        title = "Đã xóa thành công.",
+                        status = "success"
+                    };
+                    var dbContext = new Coffee_ManagementContext();
+                    User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                    LogDAO dao = new LogDAO();
+                    dao.AddNew(new Log
+                    {
+                        Id = 0,
+                        UserId = user.Id,
+                        Action = "Đã xóa",
+                        Object = "Đơn hàng",
+                        ObjectId = id,
+                    });
+                    dbContext.SaveChanges();
+                }
+                return Json(response);
             }
-            catch (Exception ex)
+            catch (System.Exception)
             {
-                return BadRequest(new { message = "Đã xảy ra lỗi khi xóa đơn hàng: " + ex.Message });
+                response = new
+                {
+                    title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
+                    status = "danger"
+                };
+                return Json(response);
             }
+
         }
     }
 }

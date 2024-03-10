@@ -1,6 +1,7 @@
 @model MyLibrary.DataAccess.Order
 @using MyLibrary.DataAccess
 @using Microsoft.AspNetCore.Http
+
 @{
     ViewData["Title"] = "Tạo đơn hàng";
 }
@@ -73,14 +74,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <input type="hidden" id="order-id" name="id">
-                    <button type="button" class="btn btn-success btn-pay me-3">
-                        <i class="bi bi-currency-dollar"></i> Tạo thanh toán
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-floppy"></i> Lưu
-                    </button>
+                <div class="row">
+                    <div class="col-6 d-flex justify-content-start">
+                        <a asp-action="Index" class="btn btn-outline-primary border border-0"><i
+                                class="bi bi-arrow-left-circle h2"></i></a>
+                    </div>
+                    <div class="col-6 d-flex justify-content-end align-items-center">
+                        <button type="button" class="btn btn-success btn-pay me-3">
+                            <i class="bi bi-currency-dollar me-3"></i> Thanh toán
+                        </button>
+                        <button type="submit" class="btn btn-primary fw-bold py-2 px-4">Tạo</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -115,32 +119,34 @@
                 $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
                 const index = $('.order-product').length;
                 $.get('/Product/Load', function (data) {
-                    var str = `
-                                            <div class="row order-detail mb-2">
-                                                <div class="col-12 col-lg-4">
-                                                    <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
-                                                        <option value="" selected hidden disabled>Chọn món</option>`;
+                    var str = `<div class="row order-detail mb-2">
+                                                                <div class="col-12 col-lg-4">
+                                                                    <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
+                                                                        <option value="" selected hidden disabled>Chọn món</option>`;
                     $.each(data.products, function (key, product) {
                         str += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
                     });
                     str += ` </select>
-                                            </div>
-                                            <div class="col-4 col-lg-2">
-                                                <input type="hidden" name="details[${index}].OrderId" value="1">
-                                                <span type="text" name="details[${index}].Price" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" autocomplete="off"><span>
-                                            </div>
-                                            <div class="col-2 col-lg-2">
-                                                <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
-                                            </div>
-                                            <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end display-price"></div>
-                                            <div class="col-3 col-lg-2 d-flex">
-                                                <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3" disabled><i class="bi bi-printer"></i></button>
-                                                <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex align-items-center mb-5">
-                                            <input type="text" name="details[${index}].Note" class="form-control small order-note w-100" placeholder="Ghi chú">
-                                        </div>`
+                                                                </div>
+                                                                <div class="col-4 col-lg-2">
+                                                                    <input type="hidden" name="details[${index}].OrderId" value="1">
+                                                                    <span type="text" name="details[${index}].Price" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" autocomplete="off"><span>
+                                                                </div>
+                                                                <div class="col-2 col-lg-2">
+                                                                    <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
+                                                                </div>
+                                                                <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end">
+                                                                    <div class="display-price"></div>
+                                                                    <input type="hidden" name="details[${index}].Price" id="order-price-${index + 1}" value="0" class="form-control border border-0 text-end order-price ps-0" autocomplete="off" readonly>
+                                                                </div>
+                                                                <div class="col-3 col-lg-2 d-flex">
+                                                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3" disabled><i class="bi bi-printer"></i></button>
+                                                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex align-items-center mb-5">
+                                                                <input type="text" name="details[${index}].Note" class="form-control small order-note w-100" placeholder="Ghi chú">
+                                                            </div>`
                     $('#order-details').append(str)
                 })
             })
@@ -156,14 +162,14 @@
                 calcBill();
             });
 
-            $(document).on('change keyup', '.order-quantity', function() {
+            $(document).on('change keyup', '.order-quantity', function () {
                 $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
                 var inputValue = $(this).val();
                 $(this).val((inputValue >= 1) ? inputValue : 1)
                 calcBill()
             });
 
-            $(document).on('click', '.btn-cancel', function() {
+            $(document).on('click', '.btn-cancel', function () {
                 $(this).parents('.order-detail').next().remove();
                 $(this).parents('.order-detail').remove();
                 calcBill();

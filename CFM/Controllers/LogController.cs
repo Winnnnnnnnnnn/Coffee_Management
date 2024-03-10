@@ -6,24 +6,25 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyLibrary.DataAccess;
+using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
+    [Authentication]
     public class LogController : Controller
     {
         LogDAO dao = new LogDAO();
 
         public ActionResult Index()
         {
-            ViewBag.IsActive = "order";
+            ViewBag.IsActive = "log";
             return View();
         }
-    public IActionResult Load()
+        public IActionResult Load()
         {
             var logs = dao.GetLogList();
             var data = logs.Select(o => new
             {
-                checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + o?.Id + "'>",
                 id = o?.Id,
                 user_id = o.getUserName(),
                 action = o.Action,
@@ -34,7 +35,7 @@ namespace CFM.Controllers
             return Json(new { data = data });
         }
     }
-    
+
 
 
 }

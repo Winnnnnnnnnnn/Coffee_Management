@@ -32,7 +32,7 @@ namespace MyLibrary.DataAccess
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    return context.Tables.ToList();
+                    return context.Tables.Where(t => t.Name != "Deleted").ToList();
                 }
             }
             catch (Exception ex)
@@ -106,6 +106,7 @@ namespace MyLibrary.DataAccess
 
         public void Remove(int tableId)
         {
+            System.Console.WriteLine("DAO " + tableId);
             try
             {
                 var tableToRemove = GetTableByID(tableId);
@@ -113,6 +114,11 @@ namespace MyLibrary.DataAccess
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
+                        var orders = context.Orders.Where(o => o.TableId == tableId);
+                        foreach (var order in orders)
+                        {
+                            order.TableId = null;
+                        }
                         context.Tables.Remove(tableToRemove);
                         context.SaveChanges();
                     }

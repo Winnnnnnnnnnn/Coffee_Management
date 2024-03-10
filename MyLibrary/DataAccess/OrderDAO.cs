@@ -42,6 +42,24 @@ namespace MyLibrary.DataAccess
             }
         }
 
+        public IEnumerable<Order> GetOrderList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (var context = new Coffee_ManagementContext())
+                {
+                    var orders = context.Orders
+                        .Where(order => order.CreatedAt >= startDate && order.CreatedAt <= endDate)
+                        .ToList();
+                    return orders;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving Order list: " + ex.Message);
+            }
+        }
+
         public Order GetOrderByID(int Id)
         {
             try
@@ -116,6 +134,13 @@ namespace MyLibrary.DataAccess
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
+                        var detailsToDelete = context.Details.Where(d => d.OrderId == Id).ToList();
+                        context.Details.RemoveRange(detailsToDelete);
+                        var tableToUpdate = context.Tables.FirstOrDefault(t => t.Id == OrderToRemove.TableId);
+                        if (tableToUpdate != null)
+                        {
+                            tableToUpdate.Status = 0;
+                        }
                         context.Orders.Remove(OrderToRemove);
                         context.SaveChanges();
                     }
@@ -152,6 +177,21 @@ namespace MyLibrary.DataAccess
             {
                 throw new Exception("Error removing Orders: " + ex.Message);
             }
+        }
+
+        public decimal getNumberProduct(List<int> ints)
+        {
+            int numberProduct = 0;
+            var context = new Coffee_ManagementContext();
+            var details = context.Details.ToList();
+            foreach (var item in details)
+            {
+                if (ints.Contains(item.OrderId))
+                {
+                    numberProduct += item.Quantity;
+                }
+            }
+            return numberProduct;
         }
     }
 }

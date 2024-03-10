@@ -16,7 +16,9 @@
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@12"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="shortcut icon" href="~/img/favicon.jpg" type="image/x-icon">
 </head>
 
 <body class="bg-light">
@@ -29,8 +31,7 @@
                         <div class="d-flex justify-content-between">
                             <div class="d-flex justify-content-center logo w-100">
                                 <a asp-controller="Home" asp-action="Index">
-                                    <img src="~/img/logo.jpg" alt="logo" srcset="" class="img-logo rounded-circle"
-                                        style="object-fit: cover ; width: 10rem; height: 10rem;">
+                                    <img src="~/img/logo.jpg" alt="logo" srcset="" class="img-logo">
                                 </a>
                             </div>
                             <div class="toggler">
@@ -133,7 +134,7 @@
                                             </div>
                                             <div class="user-img d-flex align-items-center">
                                                 <div class="avatar avatar-md">
-                                                    <img src="~/img/avatar.png" alt="Ảnh nè">
+                                                    <img src="~/img/avatar_admin.png" alt="Ảnh nè">
                                                 </div>
                                             </div>
                                         </div>
@@ -210,8 +211,8 @@
         let total = 0;
         $('.order-detail').each(function () {
             let sum = $(this).find('.order-product').find(':selected').attr('data-price') * $(this).find('.order-quantity').val();
-            console.log(sum);
             $(this).find('.display-price').text(number_format(sum));
+            $(this).find('.order-price').val(sum);
             total += sum;
         })
         $.each($('.order-fee-amount-val'), function () {
@@ -271,7 +272,17 @@
                         url: form.attr("action"),
                         method: form.attr("method"),
                         success: function (response) {
+                            Toastify({
+                                text: response.title,
+                                duration: 1000,
+                                close: true,
+                                gravity: "top",
+                                position: "center",
+                                backgroundColor: "var(--bs-" + response.status + ")",
+                            }).showToast();
                             window.location.href = "\\" + response.controller + "\\Index";
+                        },
+                        error: function (response) {
                             Toastify({
                                 text: response.title,
                                 duration: 1000,

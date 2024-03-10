@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyLibrary.DataAccess;
 using MyLibrary.Repository;
+using MyMVC.Models.Authentication;
 
 namespace CFM.Controllers
 {
+    [Authentication]
     public class SettingController : Controller
     {
         ISettingRepository settingRepository = null;

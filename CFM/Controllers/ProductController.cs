@@ -11,10 +11,11 @@ using Microsoft.Extensions.Logging;
 using MyLibrary.DataAccess;
 using MyLibrary.Repository;
 using MyMVC.Models.Authentication;
+using Newtonsoft.Json;
 
 namespace CFM.Controllers
 {
-    // [Authentication]
+    [Authentication]
     public class ProductController : Controller
     {
         // IProductRepository productRepository = null;
@@ -49,9 +50,9 @@ namespace CFM.Controllers
                 name = "<a class='btn btn-link text-decoration-none' href='/Product/Edit/" + p.Id + "'>" + p.Name + " </ a >",
                 unit = p.Unit,
                 price = p.Price,
-                catalogue_id = p.Catalogue,
+                catalogue_id = p.getCatalogueName(),
                 image = p.Image,
-                action = "<form action='/Product/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + p.Id + "' data-id='" + p.Id + "'/> <button type='button' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
+                action = "<form action='/Product/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + p.Id + "' data-id='" + p.Id + "'/> <button type='button' class='btn btn-link text-decoration-none btn-remove-product'><i class='bi bi-trash3'></i></button></form>"
             });
 
             var language = new
@@ -112,14 +113,26 @@ namespace CFM.Controllers
                             imageFile.CopyTo(fileStream);
                         }
                         // Lưu đường dẫn của ảnh vào trường Image của đối tượng Product
-                        product.Image = "/img/" + uniqueFileName;
-                    }else{
-                        product.Image = "/img/haohan.jpg";
-
+                        product.Image = "~/img/" + uniqueFileName;
                     }
-
+                    else
+                    {
+                        product.Image = "~/img/placeholder.jpg";
+                    }
+                    productRepository.InsertProduct(product);
+                    User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                    var dbContext = new Coffee_ManagementContext();
+                    LogDAO dao = new LogDAO();
+                    dao.AddNew(new Log
+                    {
+                        Id = 0,
+                        UserId = user.Id,
+                        Action = "Đã tạo",
+                        Object = "Sản phẩm",
+                        ObjectId = product.Id,
+                    });
+                    dbContext.SaveChanges();
                 }
-                productRepository.InsertProduct(product);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -168,7 +181,7 @@ namespace CFM.Controllers
                     }
 
                     // Cập nhật đường dẫn hình ảnh mới cho sản phẩm
-                    product.Image = "/img/" + uniqueFileName;
+                    product.Image = "~/img/" + uniqueFileName;
                 }
                 else
                 {
@@ -179,9 +192,19 @@ namespace CFM.Controllers
                         product.Image = existingProduct.Image;
                     }
                 }
-
-                // Tiến hành cập nhật thông tin vai trò
                 productRepository.UpdateProduct(product);
+                User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var dbContext = new Coffee_ManagementContext();
+                LogDAO dao = new LogDAO();
+                dao.AddNew(new Log
+                {
+                    Id = 0,
+                    UserId = user.Id,
+                    Action = "Đã cập nhật",
+                    Object = "Sản phẩm",
+                    ObjectId = product.Id,
+                });
+                dbContext.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -209,13 +232,27 @@ namespace CFM.Controllers
                 }
                 else
                 {
+                    ProductDAO DAO = new ProductDAO();
+                    DAO.DeleteDetailsByProductId(id);
+                    productRepository.DeleteProduct(id);
+                    User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
                     response = new
                     {
                         controller = "Product",
                         title = "Đã xóa thành công.",
                         status = "success"
                     };
-                    productRepository.DeleteProduct(id);
+                    var dbContext = new Coffee_ManagementContext();
+                    LogDAO dao = new LogDAO();
+                    dao.AddNew(new Log
+                    {
+                        Id = 0,
+                        UserId = user.Id,
+                        Action = "Đã xóa",
+                        Object = "Sản phẩm",
+                        ObjectId = id,
+                    });
+                    dbContext.SaveChanges();
                 }
                 return Json(response);
             }

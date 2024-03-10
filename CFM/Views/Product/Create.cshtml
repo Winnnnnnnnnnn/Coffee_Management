@@ -1,5 +1,9 @@
 @model MyLibrary.DataAccess.Product
 
+@{
+    ViewData["Title"] = "Tạo sản phẩm";
+}
+
 <section class="row justify-content-center align-items-center">
     <div class="col-7">
         <div class="container card me-5 p-5 shadow-lg">
@@ -27,8 +31,13 @@
                             <span asp-validation-for="Price" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label asp-for="Catalogue" class="form-label fw-bold">Danh mục</label>
-                            <input type="text" class="form-control" asp-for="Catalogue" placeholder="Nhập danh mục">
+                            <label asp-for="Catalogue" class="form-label fw-bold">Loại sản phẩm</label>
+                            <select asp-for="Catalogue" class="form-select">
+                                <option selected hidden disable>-- Chọn loại sản phẩm --</option>
+                                <option value="1">Đồ uống</option>
+                                <option value="2">Đồ ăn</option>
+                                <option value="3">Món khác</option>
+                            </select>
                             <span asp-validation-for="Catalogue" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
@@ -36,9 +45,14 @@
                             <input type="file" class="form-control" name="imageFile" accept="image/*" asp-for="Image">
                         </div>
                     </div>
-                    <div class="d-flex justify-content-end me-5 mb-3">
-                        <button type="submit" id="product-submit" class="btn btn-primary">Tạo</button>
-                        <a asp-action="Index" class="btn btn-secondary ms-3">Trở về</a>
+                    <div class="row mt-3">
+                        <div class="col-6 d-flex justify-content-start">
+                            <a asp-action="Index" class="btn btn-outline-primary border border-0"><i
+                                    class="bi bi-arrow-left-circle h2"></i></a>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end align-items-center">
+                            <button type="submit" class="btn btn-primary fw-bold py-2 px-4">Tạo</button>
+                        </div>
                     </div>
                 </div>
             </form>

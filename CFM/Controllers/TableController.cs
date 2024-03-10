@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyLibrary.DataAccess;
 using MyLibrary.Repository;
+using MyMVC.Models.Authentication;
+using Newtonsoft.Json;
 
 namespace CFM.Controllers
 {
+    [Authentication]
     public class TableController : Controller
     {
         ITableRepository tableRepository = null;
@@ -35,6 +39,22 @@ namespace CFM.Controllers
             if (ModelState.IsValid)
             {
                 tableRepository.InsertTable(table);
+                User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var dbContext = new Coffee_ManagementContext();
+                LogDAO dao = new LogDAO();
+                dao.AddNew(new Log
+                {
+                    Id = 0,
+                    UserId = user.Id,
+                    Action = "Đã tạo",
+                    Object = "Bàn",
+                    ObjectId = table.Id,
+                });
+                dbContext.SaveChanges();
+            }
+            else
+            {
+                return View();
             }
             ViewBag.IsActive = "table";
             return RedirectToAction(nameof(Index));
@@ -68,6 +88,18 @@ namespace CFM.Controllers
             try
             {
                 tableRepository.UpdateTable(table);
+                User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var dbContext = new Coffee_ManagementContext();
+                LogDAO dao = new LogDAO();
+                dao.AddNew(new Log
+                {
+                    Id = 0,
+                    UserId = user.Id,
+                    Action = "Đã cập nhật",
+                    Object = "Bàn",
+                    ObjectId = table.Id,
+                });
+                dbContext.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -88,6 +120,7 @@ namespace CFM.Controllers
                 {
                     response = new
                     {
+                        controller = "Table",
                         title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
                         status = "danger"
                     };
@@ -102,13 +135,27 @@ namespace CFM.Controllers
                         status = "success"
                     };
                     tableRepository.DeleteTable(id);
+                    User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                    var dbContext = new Coffee_ManagementContext();
+                    LogDAO dao = new LogDAO();
+                    dao.AddNew(new Log
+                    {
+                        Id = 0,
+                        UserId = user.Id,
+                        Action = "Đã xóa",
+                        Object = "Bàn",
+                        ObjectId = id,
+                    });
+                    dbContext.SaveChanges();
                 }
-                return Json(response);
+                return View("Index", response);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                System.Console.WriteLine(ex);
                 response = new
                 {
+                    controller = "Table",
                     title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
                     status = "danger"
                 };

@@ -156,7 +156,22 @@ namespace MyLibrary.DataAccess
             }
         }
 
-
+        public void DeleteDetailsByProductId(int productId)
+        {
+            try
+            {
+                using (var context = new Coffee_ManagementContext())
+                {
+                    var detailsToDelete = context.Details.Where(d => d.ProductId == productId).ToList();
+                    context.Details.RemoveRange(detailsToDelete);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error deleting details by product ID: " + ex.Message);
+            }
+        }
 
     }
 }
