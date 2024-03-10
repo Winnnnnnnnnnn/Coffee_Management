@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyLibrary.DataAccess;
@@ -14,8 +17,20 @@ namespace CFM.Controllers
     // [Authentication]
     public class ProductController : Controller
     {
-        IProductRepository productRepository = null;
-        public ProductController() => productRepository = new ProductRepository();
+        // IProductRepository productRepository = null;
+
+
+        // public ProductController() => productRepository = new ProductRepository();
+
+        private readonly IProductRepository productRepository;
+        private readonly IWebHostEnvironment hostingEnvironment;
+
+        public ProductController(IWebHostEnvironment environment)
+        {
+            hostingEnvironment = environment;
+            productRepository = new ProductRepository();
+        }
+
 
         public ActionResult Index()
         {
@@ -35,6 +50,7 @@ namespace CFM.Controllers
                 unit = p.Unit,
                 price = p.Price,
                 catalogue_id = p.Catalogue,
+                image = p.Image,
                 action = "<form action='/Product/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + p.Id + "' data-id='" + p.Id + "'/> <button type='button' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
             });
 
@@ -75,7 +91,7 @@ namespace CFM.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(Product product)
+        public ActionResult Create(Product product, IFormFile imageFile)
         {
             try
             {
@@ -85,9 +101,26 @@ namespace CFM.Controllers
                 }
                 else
                 {
-                    productRepository.InsertProduct(product);
-                    return RedirectToAction("Index");
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        // Lưu ảnh vào thư mục wwwroot/images
+                        var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "img");
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            imageFile.CopyTo(fileStream);
+                        }
+                        // Lưu đường dẫn của ảnh vào trường Image của đối tượng Product
+                        product.Image = "/img/" + uniqueFileName;
+                    }else{
+                        product.Image = "/img/haohan.jpg";
+
+                    }
+
                 }
+                productRepository.InsertProduct(product);
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
@@ -95,6 +128,8 @@ namespace CFM.Controllers
                 return View(product);
             }
         }
+
+
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -112,16 +147,39 @@ namespace CFM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Product product)
+        public ActionResult Edit(int id, Product product, IFormFile newImageFile)
         {
             try
             {
                 // Kiểm tra tính hợp lệ của dữ liệu đầu vào
                 if (!ModelState.IsValid)
                 {
-
                     return View("Index", product);
                 }
+                if (newImageFile != null && newImageFile.Length > 0)
+                {
+                    // Lưu ảnh vào thư mục wwwroot/images
+                    var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "img");
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + newImageFile.FileName;
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        newImageFile.CopyTo(fileStream);
+                    }
+
+                    // Cập nhật đường dẫn hình ảnh mới cho sản phẩm
+                    product.Image = "/img/" + uniqueFileName;
+                }
+                else
+                {
+                    // Nếu không có hình ảnh mới được tải lên, giữ nguyên đường dẫn hình ảnh cũ
+                    var existingProduct = productRepository.GetProductByID(id);
+                    if (existingProduct != null)
+                    {
+                        product.Image = existingProduct.Image;
+                    }
+                }
+
                 // Tiến hành cập nhật thông tin vai trò
                 productRepository.UpdateProduct(product);
                 return RedirectToAction(nameof(Index));
