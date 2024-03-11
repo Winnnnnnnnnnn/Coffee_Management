@@ -69,6 +69,13 @@ namespace CFM.Controllers
             });
         }
 
+        public IActionResult Get(int id)
+        {
+            User user = userRepository.GetUserByID(id);
+            ViewBag.IsActive = "user";
+            return Json(user);
+        }
+
         public IActionResult Create()
         {
             ViewBag.IsActive = "user";

@@ -239,7 +239,6 @@
 
     $(document).ready(function () {
         $.get('/User/GetUserInfo', function (data) {
-            console.log('ok');
             $('.auth-name').text(data.name)
             switch (data.role) {
                 case 1:
