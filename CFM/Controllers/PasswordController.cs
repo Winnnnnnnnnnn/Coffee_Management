@@ -164,13 +164,12 @@ namespace CoffeeManagement.Controllers
         [HttpPost]
         public IActionResult UpdatePassword(string email, string Password, string confirmPassword)
         {
-
             var user = _db.Users.FirstOrDefault(u => u.Email == email);
             ViewData["Message"] = user.Email;
             if (Password != confirmPassword)
             {
                 ViewData["Password"] = "Password and confirm password do not match!";
-                return View("UpdatePassword");
+                return View();
             }
             else
             {

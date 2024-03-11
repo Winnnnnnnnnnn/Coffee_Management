@@ -1,0 +1,161 @@
+@model MyLibrary.DataAccess.MainModel
+
+@{
+    ViewData["Title"] = "Đặt món";
+}
+<div class="row">
+    <div class="col-12">
+        <!-- Slider main container -->
+        <div class="tables-swiper">
+            <!-- Additional required wrapper -->
+            <div class="swiper-wrapper py-2">
+                <!-- Slides -->
+                @foreach (var table in Model.TableList)
+                {
+                    <div class="swiper-slide table-slide">
+                        <label for="table-select-@table.Id">
+                            <input type="radio" name="table" id="table-select-@table.Id" value="@table.Id" data-status="@table.Status"
+                                class="d-none table-select">
+                            <div class="card table-card rounded-4 rounded-lg-5" data-id="@table.Id">
+                                <span class="text-overlay"></span>
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase"></h5>
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="table-count" data-id="@table.Id">
+                                <button type="button" class="btn btn-success btn-lg rounded-pill"></button>
+                            </div>
+                        </label>
+                        <div class="dropstart table-menu" data-id="@table.Id">
+                            <button class="btn btn-link mb-0 px-2 py-1" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu p-2">
+                                <li>
+                                    <a class="cursor-pointer dropdown-item btn-update-table" data-id="@table.Id">
+                                        <small><i class="bi bi-pencil-square"></i> Sửa bàn</small>
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider" />
+                                </li>
+                                <li>
+                                    <form action="" method="post" class="save-form">
+                                        <input type="hidden" name="choices[]" value="">
+                                        <button type="submit" class="cursor-pointer text-danger dropdown-item btn-remove">
+                                            <small><i class="bi bi-trash3"></i> Xóa bàn</small>
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="swiper-slide table-slide">
+                        <label for="table-select-@table.Id">
+                            <input type="radio" name="table" id="table-select-@table.Id" value="@table.Id" data-status=""
+                                class="d-none table-select-@table.Id">
+                            <div class="card table-card rounded-4 rounded-lg-5" data-id="@table.Id">
+                                <span class="text-overlay"></span>
+                                <div class="card-body">
+                                    <h5 class="card-title text-uppercase">@table.Name</h5>
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="table-count" data-id="@table.Id">
+                                <button type="button" class="btn btn-success btn-lg rounded-pill"></button>
+                            </div>
+                        </label>
+                        <div class="dropstart table-menu" data-id="@table.Id">
+                            <button class="btn btn-link mb-0 px-2 py-1" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu p-2">
+                                <li>
+                                    <a class="cursor-pointer dropdown-item btn-update-table" data-id="@table.Id">
+                                        <small><i class="bi bi-pencil-square"></i> Sửa bàn</small>
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider" />
+                                </li>
+                                <li>
+                                    <form action="" method="post" class="save-form">
+                                        <input type="hidden" name="choices[]" value="@table.Id">
+                                        <button type="submit" class="cursor-pointer text-danger dropdown-item btn-remove">
+                                            <small><i class="bi bi-trash3"></i> Xóa bàn</small>
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+@* <div class="row">
+    <div class="col-12">
+        <!-- Slider main container -->
+        <div class="tables-swiper">
+            <!-- Additional required wrapper -->
+            <div class="swiper-wrapper py-2">
+                <!-- Slides -->
+                @foreach ($options['tables'] as $table)
+                <div class="swiper-slide table-slide">
+                    <label for="table-select-@table.Id">
+                        <input type="radio" name="table" id="table-select-@table.Id" value="@table.Id"
+                            data-status="{{ $table->status() }}" data-sort="{{ $table->sortPad() }}"
+                            class="d-none table-select">
+                        <div class="card table-card rounded-4 rounded-lg-5 {{ $table->status() ? 'table-busy' : 'table-free' }}"
+                            data-id="@table.Id@table.Id">
+                            <span class="text-overlay">{{ $table->sortPad() }}</span>
+                            <div class="card-body">
+                                <h5 class="card-title text-uppercase">{{ $table->name }}</h5>
+                                <small>{!! $table->statusName() !!}</small>
+                            </div>
+                        </div>
+                        <div class="table-count {{ $table->count ? '' : 'd-none' }}" data-id="@table.Id@table.Id">
+                            <button type="button" class="btn btn-success btn-lg rounded-pill">{{ $table->count
+                                }}</button>
+                        </div>
+                    </label>
+                    <div class="dropstart table-menu" data-id="@table.Id@table.Id">
+                        <button class="btn btn-link mb-0 px-2 py-1" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu p-2">
+                            <li>
+                                <a class="cursor-pointer dropdown-item btn-update-table" data-id="@table.Id@table.Id">
+                                    <small><i class="bi bi-pencil-square"></i> Sửa bàn</small>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider" />
+                            </li>
+                            <li>
+                                <form action="{{ route('table.remove') }}" method="post" class="save-form">
+                                    @csrf
+                                    <input type="hidden" name="choices[]" value="@table.Id">
+                                    <button type="submit" class="cursor-pointer text-danger dropdown-item btn-remove">
+                                        <small><i class="bi bi-trash3"></i> Xóa bàn</small>
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div> *@
