@@ -144,7 +144,8 @@
                     $('.numProducts').text(numProduct);
                 }).done(function () {
                     $.each(revenueMap, function (date, revenue) {
-                        let newDate = moment(date).format('DD-MM-YYYY');
+                        console.log(date);
+                        let newDate = moment(date).format('DD/MM/YYYY');
                         console.log("date" + newDate);
                         var year = moment(newDate).format('YYYY'),
                             month = moment(newDate).format('MM'),
