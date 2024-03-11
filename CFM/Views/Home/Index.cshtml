@@ -15,6 +15,20 @@
             <input type="text" id="dateRange" name="dateRange" class="btn btn-outline-primary mt-0 mb-0"
                 style="opacity: 1;">
         </div>
+        <div class="d-flex justify-content-end align-items-center my-3 moment-type">
+            <div class="btn-group">
+                <input type="radio" name="moment" checked value="1" id="moment-day" class="btn-check">
+                <label class="btn btn-outline-primary" for="moment-day">Ngày</label>
+                <input type="radio" name="moment" value="2" id="moment-week" class="btn-check">
+                <label class="btn btn-outline-primary" for="moment-week">Tuần</label>
+                <input type="radio" name="moment" value="3" id="moment-month" class="btn-check">
+                <label class="btn btn-outline-primary" for="moment-month">Tháng</label>
+                <input type="radio" name="moment" value="4" id="moment-quarter" class="btn-check">
+                <label class="btn btn-outline-primary" for="moment-quarter">Quý</label>
+                <input type="radio" name="moment" value="5" id="moment-year" class="btn-check">
+                <label class="btn btn-outline-primary" for="moment-year">Năm</label>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -67,7 +81,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <h6 class="text-muted font-semibold">Số sản phẩm</h6>
-                                    <h6 class="font-extrabold mb-0 saleProducts">0</h6>
+                                    <h6 class="font-extrabold mb-0 numProducts">0</h6>
                                 </div>
                             </div>
                         </div>
@@ -104,31 +118,81 @@
                 }
             });
             reloadChart();
-            Revenue();
+
+            $(document).on('change', '.moment-type', function () {
+                reloadChart();
+            })
 
             $(document).on('change', 'input[name="dateRange"]', function () {
                 reloadChart();
-                Revenue();
             })
             function reloadChart() {
-                let revenuesArrayNew = [],
-                    timesArrayNew = [], productNumber = 0, orderNumber = 0;
-                let range = $('input[name="dateRange"]').val();
+                var revenueMapBy_mm = {}, sumRevenue = 0, numProduct = 0, numOrder = 0, revenueMap = {};
                 $.get(`/Home/Load/?range=${$('input[name="dateRange"]').val()}`, function (data) {
-                    $.each(data.dailiRevenues, function (index, order) {
-                        orderNumber += 1;
-                        revenuesArrayNew.push(order.totalPrice);
-                        timesArrayNew.push(moment(order.createdAt).format('DD/MM/YYYY'));
+                    numProduct = data.numberProducts;
+                    $.each(data.dailiRevenues, function (i, order) {
+                        ++numOrder;
+                        sumRevenue += order.totalPrice;
+                        if (revenueMap.hasOwnProperty(moment(order.createdAt).format('DD-MM-YYYY'))) {
+                            revenueMap[moment(order.createdAt).format('DD-MM-YYYY')] += order.totalPrice;
+                        } else {
+                            revenueMap[moment(order.createdAt).format('DD-MM-YYYY')] = order.totalPrice;
+                        }
                     })
-                    $('.totalOrders').text(orderNumber);
-                    $('.saleProducts').text(data.numberProduct);
-                    drawChart(timesArrayNew, revenuesArrayNew);
-                })
-            }
-
-            function Revenue() {
-                $.get(`/Home/Load1/?range=${$('input[name="dateRange"]').val()}`, function (data) {
-                    $('.revenues').text(data);
+                    $('.revenues').text(sumRevenue);
+                    $('.totalOrders').text(numOrder);
+                    $('.numProducts').text(numProduct);
+                }).done(function () {
+                    $.each(revenueMap, function (date, revenue) {
+                        let newDate = moment(date).format('DD-MM-YYYY');
+                        console.log("date" + newDate);
+                        var year = moment(newDate).format('YYYY'),
+                            month = moment(newDate).format('MM'),
+                            quarter = Math.ceil(moment(newDate).format('MM') / 3),
+                            week = Math.ceil(moment(newDate).format('DD') / 7);
+                        switch ($('[name="moment"]:checked').val()) {
+                            case '5':
+                                if (revenueMapBy_mm['Năm ' + year]) {
+                                    revenueMapBy_mm['Năm ' + year] += revenue;
+                                } else {
+                                    revenueMapBy_mm['Năm ' + year] = revenue;
+                                }
+                                break;
+                            case '4':
+                                if (revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year]) {
+                                    revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year] += revenue;
+                                } else {
+                                    revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year] = revenue;
+                                }
+                                break;
+                            case '3':
+                                if (revenueMapBy_mm['Tháng ' + month + ' Năm ' + year]) {
+                                    revenueMapBy_mm['Tháng ' + month + ' Năm ' + year] += revenue;
+                                } else {
+                                    revenueMapBy_mm['Tháng ' + month + ' Năm ' + year] = revenue;
+                                }
+                                break;
+                            case '2':
+                                // Nếu tuần đã tồn tại trong map, cộng thêm vào tổng doanh thu
+                                if (revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year]) {
+                                    revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year] += revenue;
+                                } else {
+                                    // Nếu tuần chưa tồn tại tạo mới và gán giá trị ban đầu
+                                    revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year] = revenue;
+                                }
+                                break;
+                            case '1':
+                                // Nếu tuần đã tồn tại trong map, cộng thêm vào tổng doanh thu
+                                if (revenueMapBy_mm['Ngày ' + date]) {
+                                    revenueMapBy_mm['Ngày ' + date] += revenue;
+                                } else {
+                                    // Nếu Ngày chưa tồn tại tạo mới và gán giá trị ban đầu
+                                    revenueMapBy_mm['Ngày ' + date] = revenue;
+                                }
+                                break;
+                        };
+                    });
+                    drawChart(Object.keys(revenueMapBy_mm), Object.values(revenueMapBy_mm));
                 })
             }
 
