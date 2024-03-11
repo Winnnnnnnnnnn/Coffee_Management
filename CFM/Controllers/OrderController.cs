@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -89,40 +90,52 @@ namespace CFM.Controllers
         }
 
 
-        public object Edit(int? id)
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var Order = orderRepository.GetOrderByID(id.Value);
-            if (Order == null)
+            var order = orderRepository.GetOrderByID(id.Value);
+            if (order == null)
             {
                 return NotFound();
             }
-            return Json(Order);
+            ViewBag.IsActive = "order";
+            return View(order);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Order Order)
+        public ActionResult Edit(int id, Order order)
         {
             try
             {
                 // Kiểm tra tính hợp lệ của dữ liệu đầu vào
                 if (!ModelState.IsValid)
                 {
-                    return View("_ModalEditOrder", Order);
+                    return View("Index", order);
                 }
-                // Tiến hành cập nhật thông tin người dùng
-                orderRepository.UpdateOrder(Order);
+                orderRepository.UpdateOrder(order);
+                User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                var dbContext = new Coffee_ManagementContext();
+                LogDAO dao = new LogDAO();
+                dao.AddNew(new Log
+                {
+                    Id = 0,
+                    UserId = user.Id,
+                    Action = "Đã cập nhật",
+                    Object = "Sản phẩm",
+                    ObjectId = order.Id,
+                });
+                dbContext.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 // Xử lý lỗi và trả về phản hồi phù hợp
                 ViewBag.Message = ex.Message;
-                return View(Order);
+                return View(order);
             }
         }
 

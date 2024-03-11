@@ -36,10 +36,6 @@ namespace ShopManagement.Controllers
 
             if (authenticatedUser != null)
             {
-                HttpContext.Session.SetInt32("AuthId", authenticatedUser.Id);
-                HttpContext.Session.SetString("AuthName", authenticatedUser.Name);
-                HttpContext.Session.SetString("AuthRole", userRepository.GetRole(authenticatedUser));
-
                 // Lấy ISession
                 HttpContext context = HttpContext;
                 var session = context.Session;
