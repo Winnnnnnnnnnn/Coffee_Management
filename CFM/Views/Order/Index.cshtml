@@ -26,7 +26,7 @@
 <hr>
 <div class="page-content">
     <div class="card">
-        <div class="card-header">
+        <div class="card-header bg-white">
             <a class="btn btn-primary me-2" asp-controller="Order" asp-action="Create">
                 <i class="bi bi-plus-circle-dotted"></i>
                 Thêm
@@ -108,30 +108,6 @@
                     name: 'action'
                 },
                 ],
-                language: {
-                    "sProcessing": "Đang xử lý...",
-                    "sLengthMenu": "_MENU_   dòng / trang",
-                    "sZeroRecords": "Nội dung trong.",
-                    "sInfo": "Từ _START_ đến _END_ của _TOTAL_ mục",
-                    "sInfoEmpty": "Không có mục nào",
-                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
-                    'searchPlaceholder': "Tìm kiếm dữ liệu",
-                    "sInfoPostFix": "",
-                    "sSearch": "",
-                    "sUrl": "",
-                    "oPaginate": {
-                        "sFirst": "&laquo;",
-                        "sPrevious": "&lsaquo;",
-                        "sNext": "&rsaquo;",
-                        "sLast": "&raquo;",
-                    },
-                },
-                columnDefs: [{
-                    target: 0,
-                    sortable: false,
-                    searchable: false,
-                }]
-
             })
         })
     </script>
