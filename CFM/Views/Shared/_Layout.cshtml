@@ -15,6 +15,8 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -189,6 +191,7 @@
         src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.min.js"></script>
     <script type="text/javascript" charset="utf8"
         src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 <script>
@@ -238,6 +241,8 @@
     }
 
     $(document).ready(function () {
+        $(".submenu-item.active").parents(".submenu").addClass("d-block active").parents(".has-sub").addClass("active");
+
         $.get('/User/GetUserInfo', function (data) {
             $('.auth-name').text(data.name)
             switch (data.role) {
@@ -254,7 +259,8 @@
             $('.hello-auth').text('Chào bạn, ' + data.name)
         })
 
-        $(document).on('click', '.btn-remove', function () {
+        $(document).on('click', '.btn-remove', function (e) {
+            e.preventDefault();
             let form = $(this).parent();
             Swal.fire({
                 title: "Lưu ý!",

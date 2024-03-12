@@ -89,6 +89,24 @@ namespace CFM.Controllers
             }
         }
 
+        public ActionResult getOrder(int id)
+        {
+            var order = orderRepository.GetOrderByID(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            var context = new Coffee_ManagementContext();
+            ViewBag.IsActive = "order";
+            return Json(new
+            {
+                order = order,
+                table = order.GetTable(),
+                user = order.GetUser(),
+                details = order.GetDetail(),
+                products = context.Products.ToList(),
+            });
+        }
 
         public ActionResult Edit(int? id)
         {
@@ -101,6 +119,7 @@ namespace CFM.Controllers
             {
                 return NotFound();
             }
+
             ViewBag.IsActive = "order";
             return View(order);
         }
@@ -114,11 +133,27 @@ namespace CFM.Controllers
                 // Kiểm tra tính hợp lệ của dữ liệu đầu vào
                 if (!ModelState.IsValid)
                 {
+                    foreach (var modelState in ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            System.Console.WriteLine("Error: " + error.ErrorMessage);
+                        }
+                    }
                     return View("Index", order);
                 }
-                orderRepository.UpdateOrder(order);
-                User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                Order ord = orderRepository.GetOrderByID(id);
+                order.CreatedAt = ord.CreatedAt;
+                order.RemoveDetails();
                 var dbContext = new Coffee_ManagementContext();
+                if (ord.TableId != order.TableId)
+                {
+                    dbContext.Tables.FirstOrDefault(t => t.Id == ord.TableId).Status = 0;
+                    dbContext.Tables.FirstOrDefault(t => t.Id == order.TableId).Status = 1;
+                }
+                User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                order.UserId = user.Id;
+                orderRepository.UpdateOrder(order);
                 LogDAO dao = new LogDAO();
                 dao.AddNew(new Log
                 {
@@ -182,6 +217,7 @@ namespace CFM.Controllers
             {
                 response = new
                 {
+                    controller = "Table",
                     title = "Đã có lỗi xảy ra trong quá trình xóa! Vui lòng thử lại sau.",
                     status = "danger"
                 };

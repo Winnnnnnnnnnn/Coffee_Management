@@ -27,9 +27,3 @@ if (typeof PerfectScrollbar == "function") {
         wheelPropagation: false,
     });
 }
-
-$(".submenu-item.active")
-    .parents(".submenu")
-    .addClass("d-block active")
-    .parents(".has-sub")
-    .addClass("active");

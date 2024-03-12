@@ -20,8 +20,8 @@
                             <div class="row justify-content-end align-items-center">
                                 <div class="col-6 col-lg-3 d-flex align-items-center">
                                     <h5 class="text-primary my-0">Mã đơn</h5>
-                                    <input type="text" asp-for="Id" class="form-control fs-5 border border-0 w-50"
-                                        readonly>
+                                    <input type="text" id="order-id" asp-for="Id"
+                                        class="form-control fs-5 border border-0 w-50" readonly>
                                 </div>
                                 <div class="col-6 col-lg-4 d-flex align-items-center">
                                     <h5 class="text-primary my-0">Thu ngân</h5>
@@ -81,9 +81,9 @@
                     </div>
                     <div class="col-6 d-flex justify-content-end align-items-center">
                         <button type="button" class="btn btn-success btn-pay me-3">
-                            <i class="bi bi-currency-dollar me-3"></i> Thanh toán
+                            <i class="bi bi-currency-dollar me-1"></i> Thanh toán
                         </button>
-                        <button type="submit" class="btn btn-primary fw-bold py-2 px-4">Tạo</button>
+                        <button type="submit" class="btn btn-primary fw-bold py-2">Xác nhận</button>
                     </div>
                 </div>
             </form>
@@ -95,49 +95,89 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
         $(document).ready(function () {
-            console.log('ok');
-
-            $.get('/Table/GetTableFree', function (data) {
+            var id = $('#order-id').val()
+            $.get('/Order/GetOrder/?id=' + id, function (data) {
+                $('#cashier-name').text(data.user.name);
                 $(`[name=TableId]`).empty();
-                var str = `<option selected hidden disabled>Chọn bàn</option>`
-                $.each(data, function (index, table) {
-                    str += `<option value="${table.id}">${table.name}</option>`
-                });
-                $(`[name=TableId]`).append(str);
+                if (data.table != null) {
+                    $(`[name=TableId]`).append(`<option value="${data.table.id}" selected>${data.table.name}</option>`);
+                } else {
+                    $(`[name=TableId]`).append(`<option selected disabled>Mang đi</option>`);
+                }
+                $.each(data.details, function (index, detail) {
+                    var note = (detail.note) ? detail.note : "";
+                    var str = `<div class="row order-detail mb-2" data-index="${index}">
+                                                    <div class="col-12 col-lg-4">
+                                                        <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
+                                                            <option value="" selected hidden disabled>Chọn món</option>`
+                    $.each(data.products, function (key, product) {
+                        str += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
+                    })
+                    str += `</select>
+                                                    </div>
+                                                    <div class="col-4 col-lg-2">
+                                                        <input type="hidden" name="details[${index}].OrderId" value="${id}"  class="detail-order-id">
+                                                        <input type="text" id="order-prices-${index + 1}" value="${detail.price}" class="form-control border border-0 text-end order-price ps-0" inputmode="numeric"  autocomplete="off">
+                                                    </div>
+                                                    <div class="col-2 col-lg-2">
+                                                        <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}"  value="${detail.quantity}" class="form-control border border-0 text-end order-quantity px-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng">
+                                                    </div>
+                                                    <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end">
+                                                        <div class="display-price"></div>
+                                                        <input type="hidden" name="details[${index}].Price" id="order-price-${index + 1}" value="0" class="form-control border border-0 text-end order-price ps-0" autocomplete="off" readonly>
+                                                    </div>
+                                                    <div class="col-3 col-lg-2 d-flex">
+                                                        <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3"><i class="bi bi-printer"></i></button>
+                                                        <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center mb-5">
+                                                    <input type="text" name="details[${index}].Note" value="${note}" class="form-control small order-note w-100" placeholder="Ghi chú">
+                                                                            </div>`
+                    $('#order-form').find('#order-details').append(str).find(`#order-products-${index + 1}`).val(detail.productId)
+                })
+                calcBill();
+                $.get('/Table/GetTableFree', function (data) {
+                    var str = ``
+                    $.each(data, function (index, table) {
+                        str += `<option value="${table.id}">${table.name}</option>`
+                    });
+                    $(`[name=TableId]`).append(str);
+                })
             })
 
             $(document).on('click', '.btn-add-product', function () {
                 $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
                 const index = $('.order-product').length;
                 $.get('/Product/Load', function (data) {
-                    var str = `<div class="row order-detail mb-2">
-                                    <div class="col-12 col-lg-4">
-                                        <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
-                                            <option value="" selected hidden disabled>Chọn món</option>`;
+                    var str = `<div class="row order-detail mb-2" data-index="${index}">
+                                                            <div class="col-12 col-lg-4">
+                                                                <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
+                                                                    <option value="" selected hidden disabled>Chọn món</option>`;
                     $.each(data.products, function (key, product) {
                         str += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
                     });
                     str += ` </select>
-                                </div>
-                                <div class="col-4 col-lg-2">
-                                    <input type="hidden" name="details[${index}].OrderId" value="1">
-                                    <span type="text" name="details[${index}].Price" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" autocomplete="off"><span>
-                                </div>
-                                <div class="col-2 col-lg-2">
-                                    <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
-                                </div>
-                                <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end">
-                                    <div class="display-price"></div>
-                                    <input type="hidden" name="details[${index}].Price" id="order-price-${index + 1}" value="0" class="form-control border border-0 text-end order-price ps-0" autocomplete="off" readonly>
-                                </div>
-                                <div class="col-3 col-lg-2 d-flex">
-                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3" disabled><i class="bi bi-printer"></i></button>
-                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center mb-5">
-                                <input type="text" name="details[${index}].Note" class="form-control small order-note w-100" placeholder="Ghi chú">
-                            </div>`
+                                                                    </div>
+                                                        <div class="col-4 col-lg-2">
+                                                            <input type="hidden" name="details[${index}].OrderId" value="1" class="detail-order-id">
+                                                            <span type="text" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" autocomplete="off"><span>
+                                                        </div>
+                                                        <div class="col-2 col-lg-2">
+                                                            <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
+                                                        </div>
+                                                        <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end">
+                                                            <div class="display-price"></div>
+                                                            <input type="hidden" name="details[${index}].Price" id="order-price-${index + 1}" value="0" class="form-control border border-0 text-end order-price ps-0" autocomplete="off" readonly>
+                                                        </div>
+                                                        <div class="col-3 col-lg-2 d-flex">
+                                                            <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3" disabled><i class="bi bi-printer"></i></button>
+                                                            <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center mb-5">
+                                                        <input type="text" name="details[${index}].Note" class="form-control small order-note w-100" placeholder="Ghi chú">
+                                                    </div>`
                     $('#order-details').append(str)
                 })
             })
@@ -161,8 +201,20 @@
             });
 
             $(document).on('click', '.btn-cancel', function () {
+                var index = $(this).parents('.order-detail').attr('data-index');
                 $(this).parents('.order-detail').next().remove();
                 $(this).parents('.order-detail').remove();
+                $('.order-detail').each(function () {
+                    var index_current = parseInt($(this).attr('data-index'));
+                    if (index_current > index) {
+                        $(this).attr('data-index', index_current - 1);
+                        $(this).find('.order-product').attr('name', `details[${index_current - 1}].ProductId`);
+                        $(this).find('.detail-order-id').attr('name', `details[${index_current - 1}].OrderId`);
+                        $(this).find('.order-quantity').attr('name', `details[${index_current - 1}].Quantity`);
+                        $(this).find('.display-price').next().attr('name', `details[${index_current - 1}].Price`);
+                        $(this).next().find('.order-note').attr('name', `details[${index_current - 1}].Note`);
+                    }
+                })
                 calcBill();
             })
         });

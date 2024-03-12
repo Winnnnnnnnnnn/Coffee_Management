@@ -48,9 +48,45 @@ namespace MyLibrary.DataAccess
 
         public string getUserName()
         {
-            UserDAO table = new UserDAO();
-            var name = table.GetUserByID(this.UserId).Name;
+            UserDAO dao = new UserDAO();
+            var name = dao.GetUserByID(this.UserId).Name;
             return name;
+        }
+
+        public Table GetTable()
+        {
+            if (this.TableId != null)
+            {
+                TableDAO dao = new TableDAO();
+                var table = dao.GetTableByID(this.TableId);
+                return table;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public IEnumerable<Detail> GetDetail()
+        {
+            var context = new Coffee_ManagementContext();
+            var details = context.Details.Where(d => d.OrderId == this.Id).ToList();
+            return details;
+        }
+
+        public User GetUser()
+        {
+            UserDAO dao = new UserDAO();
+            var user = dao.GetUserByID(this.UserId);
+            return user;
+        }
+
+        public void RemoveDetails()
+        {
+            var context = new Coffee_ManagementContext();
+            var details = context.Details.Where(d => d.OrderId == this.Id).Select(d => d.Id).ToList();
+            DetailDAO dao = new DetailDAO();
+            dao.RemoveMultiple(details);
         }
 
         public virtual Table Table { get; set; }
