@@ -37,6 +37,36 @@ namespace CFM.Controllers
         [HttpPost]
         public IActionResult ChangePassword(string Password, string newPassword, string confirmPassword)
         {
+            if (Password == null && newPassword == null && confirmPassword == null)
+            {
+                ViewData["allPassword"] = "Không thể để trống";
+                return View("ChangePassword");
+            }
+
+            if (newPassword == null && confirmPassword == null)
+            {
+                ViewData["ncPassword"] = "Không thể để trống";
+                return View("ChangePassword");
+            }
+
+            if (Password == null)
+            {
+                ViewData["oldPassword"] = "Không thể để trống";
+                return View("ChangePassword");
+            }
+            if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 8)
+            {
+                ViewData["newPassword"] = "Mật khẩu phải có ít nhất 8 kí tự";
+                return View("ChangePassword");
+            }
+            if (confirmPassword == null)
+            {
+                ViewData["confirmPassword"] = "Không thể để trống";
+                return View("ChangePassword");
+            }
+
+
+
             User user = Helper.UserInfo(HttpContext);
             string passMD5;
 
@@ -56,19 +86,12 @@ namespace CFM.Controllers
 
             Password = passMD5;
             User userUpdate = _db.Users.FirstOrDefault(u => u.Password == Password && u.Id == user.Id);
-            if (newPassword == "")
-            {
-                ViewData["newPassword"] = "Không thể để trống";
-                return View("ChangePassword");
-            }
-            if (confirmPassword == "")
-            {
-                ViewData["confirmPassword"] = "Không thể để trống";
-                return View("ChangePassword");
-            }
+
+
+
             if (newPassword != confirmPassword)
             {
-                ViewData["confirmPassword"] = "Mật khẩu không trùng khớp";
+                ViewData["invalidPassword"] = "Mật khẩu không trùng khớp";
                 return View("ChangePassword");
             }
             else
@@ -131,10 +154,8 @@ namespace CFM.Controllers
                 {
                     return RedirectToAction("Index", "Login");
                 }
-                // Kiểm tra tính hợp lệ của dữ liệu đầu vào
                 user.Id = userSession.Id;
                 user.Password = userSession.Password;
-                // Tiến hành cập nhật thông tin người dùng
                 using (var db_context = new Coffee_ManagementContext())
                 {
                     db_context.Users.Update(user);

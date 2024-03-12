@@ -28,7 +28,8 @@
                                     <h6 class="mb-0">Tên đầy đủ</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    <input required type="text" asp-for="Name" class="form-control">
+                                    <input type="text" asp-for="Name" class="form-control" disabled readonly>
+                                    <span asp-validation-for="Name" class="text-danger"></span>
                                 </div>
                             </div>
                             <hr>
@@ -37,7 +38,8 @@
                                     <h6 class="mb-0">Email</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    <input required type="text" asp-for="Email" class="form-control">
+                                    <input type="text" asp-for="Email" class="form-control">
+                                    <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                             </div>
                             <hr>
@@ -46,7 +48,8 @@
                                     <h6 class="mb-0">Điện thoại</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    <input required type="text" asp-for="Phone" class="form-control">
+                                    <input type="text" asp-for="Phone" class="form-control">
+                                    <span asp-validation-for="Phone" class="text-danger"></span>
                                 </div>
                             </div>
                             <hr>

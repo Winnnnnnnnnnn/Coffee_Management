@@ -45,7 +45,7 @@ namespace MyLibrary.DataAccess
                 [RegularExpression("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", ErrorMessage = "Email không đúng định dạng!")]
                 public string Email { get; set; }
 
-                // [Required(ErrorMessage = "Mật khẩu không được trống")]
+                [Required(ErrorMessage = "Mật khẩu không được trống")]
                 // [StringLength(20, MinimumLength = 5, ErrorMessage = "Mật khẩu phải từ 5 đến 20 ký tự")]
                 public string Password { get; set; }
 

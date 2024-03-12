@@ -193,5 +193,24 @@ namespace MyLibrary.DataAccess
             }
             return numberProduct;
         }
+        public decimal GetDailyRevenues(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (var context = new Coffee_ManagementContext())
+                {
+                    // Tính tổng giá trị đơn đặt hàng trong khoảng thời gian từ startDate đến endDate
+                    decimal? totalRevenue = context.Orders
+                        .Where(order => order.CreatedAt >= startDate && order.CreatedAt <= endDate)
+                        .Sum(order => order.TotalPrice);
+
+                    return totalRevenue ?? 0;  // Provide a default value if totalRevenue is null
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving daily revenues: " + ex.Message);
+            }
+        }
     }
 }

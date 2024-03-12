@@ -15,12 +15,10 @@ namespace MyLibrary.Repository
         public void DeleteOrder(int OrderId) => OrderDAO.Instance.Remove(OrderId);
         public void DeleteOrders(List<int> idsToDelete) => OrderDAO.Instance.RemoveMultiple(idsToDelete);
         public void UpdateOrder(Order Order) => OrderDAO.Instance.Update(Order);
-
         public IEnumerable<Order> GetOrderRange(DateTime startDate, DateTime endDate)
         {
             return OrderDAO.Instance.GetOrderList(startDate, endDate);
         }
-
         public decimal GetDailyRevenues(DateTime startDate, DateTime endDate)
         {
             try
