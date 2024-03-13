@@ -23,7 +23,7 @@
 </div>
 <hr>
 <div class="page-content">
-    <div class="card">
+    <div class="card p-4">
         <div class="card-header bg-white">
             <a asp-controller="Table" asp-action="Create" type="button" class="btn btn-primary me-2"><i
                     class="bi bi-plus-circle-dotted"></i>Thêm</a>
@@ -44,6 +44,7 @@
                                 <th>Khu vực</th>
                                 <th>Ghi chú</th>
                                 <th>Status</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,40 +113,5 @@
                     }
                 }
             });
-
-            $('#all-choices').change(function (e) {
-                e.preventDefault();
-                $('.choice').prop('checked', $(this).prop('checked')).change();
-            });
-
-            $(document).on('change', '.choice', function (e) {
-                e.preventDefault();
-                if ($('.choice:checked').length) {
-                    $('.btn-remove-table').removeClass('d-none');
-                } else {
-                    $('.btn-remove-table').addClass('d-none');
-                }
-            });
-
-
-            $('.btn-create-table').click(function (e) {
-                $('.save-form').trigger('reset');
-                e.preventDefault();
-                $('#table-modal').modal('show');
-            });
-
-
-            $(document).on('change', '.choice', function (e) {
-                e.preventDefault();
-                if ($('.choice:checked').length) {
-                    $('.btn-remove-table').removeClass('d-none');
-                } else {
-                    $('.btn-remove-table').addClass('d-none');
-                }
-            });
-
-        });
-
-
     </script>
 }

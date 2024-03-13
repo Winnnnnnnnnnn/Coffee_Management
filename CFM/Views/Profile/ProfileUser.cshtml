@@ -9,26 +9,19 @@
     <section class="section">
         <div class="row gutters-sm">
             <div class="col-md-4">
-                <img src="~/img/avatar.png" alt="avatar" class="img-logo w-100 h-100 rounded-4"
+                <img src="~/img/avatar_admin.png" alt="avatar" class="img-logo w-100 h-100 rounded-4"
                     style="object-fit: cover">
             </div>
             <div class="col-md-8">
                 <div class="card mb-3 h-100">
                     <div class="card-body">
-                        <h2>
-                            @{
-                                var errorMessage = ViewBag.Message as string;
-                            }
-                            @errorMessage
-
-                        </h2>
                         <form asp-controller="Profile" asp-action="ProfileUser" method="post">
                             <div class="row">
                                 <div class="col-sm-3">
                                     <h6 class="mb-0">Tên đầy đủ</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                    <input type="text" asp-for="Name" class="form-control" disabled readonly>
+                                    <input type="text" asp-for="Name" class="form-control">
                                     <span asp-validation-for="Name" class="text-danger"></span>
                                 </div>
                             </div>
