@@ -89,6 +89,7 @@ namespace CoffeeManagement.Controllers
             }
             catch (Exception ex)
             {
+                System.Console.WriteLine(ex);
                 return RedirectToAction("ForgotPassword", "Password");
             }
         }

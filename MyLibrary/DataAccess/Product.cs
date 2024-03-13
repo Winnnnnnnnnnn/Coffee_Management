@@ -35,10 +35,10 @@ namespace MyLibrary.DataAccess
             switch (this.Catalogue)
             {
                 case 1:
-                    name = "Đồ ăn";
+                    name = "Đồ uống";
                     break;
                 case 2:
-                    name = "Đồ uống";
+                    name = "Đồ ăn";
                     break;
                 default:
                     name = "Món khác";
