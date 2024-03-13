@@ -70,6 +70,20 @@ namespace CFM.Controllers
                 }
                 else
                 {
+                    if (userRepository.IsEmailExists(user.Email))
+                    {
+                        ModelState.AddModelError("Email", "Email đã tồn tại");
+                    }
+
+                    if (userRepository.IsPhoneExists(user.Phone))
+                    {
+                        ModelState.AddModelError("Phone", "Số điện thoại đã tồn tại");
+                    }
+
+                    if (userRepository.IsEmailExists(user.Email) || userRepository.IsPhoneExists(user.Phone))
+                    {
+                        return View(user);
+                    }
                     user.Password = Helper.HashPassword(user.Password);
                     userRepository.InsertUser(user);
                     User auth = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
@@ -115,6 +129,23 @@ namespace CFM.Controllers
         {
             try
             {
+                var existingUser = userRepository.GetUserByID(id);
+
+                // Kiểm tra xem người dùng đã thay đổi số điện thoại hoặc email hay không
+                if (existingUser.Email != user.Email && userRepository.IsEmailExists(user.Email))
+                {
+                    ModelState.AddModelError("Email", "Email đã tồn tại");
+                    return View(user);
+                }
+                if (existingUser.Phone != user.Phone && userRepository.IsPhoneExists(user.Phone))
+                {
+                    ModelState.AddModelError("Phone", "Số điện thoại đã tồn tại");
+                    return View(user);
+                }
+
+                // Cập nhật thông tin người dùng
+                user.Password = existingUser.Password;
+                userRepository.UpdateUser(user);
                 user.Password = userRepository.GetUserByID(id).Password;
                 // Tiến hành cập nhật thông tin vai trò
                 userRepository.UpdateUser(user);
@@ -125,8 +156,8 @@ namespace CFM.Controllers
                 {
                     Id = 0,
                     UserId = auth.Id,
-                    Action = "Đã tạo",
-                    Object = "Sản phẩm",
+                    Action = "Đã cập nhật",
+                    Object = "Tài khoản",
                     ObjectId = user.Id,
                 });
                 dbContext.SaveChanges();
