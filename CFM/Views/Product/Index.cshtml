@@ -68,7 +68,7 @@
         $(document).ready(function () {
             const table = $('#data-table').DataTable({
                 processing: true,
-                serverSide: true,
+                serverSide: false,
                 ajax:
                 {
                     url: `/Product/Load`,
@@ -106,8 +106,8 @@
                             return data;
                         }
                     }, {
-                        data: 'catalogue_id',
-                        name: 'catalogue_id'
+                        data: 'catalogue',
+                        name: 'catalogue'
                     },
                     {
                         data: 'image',
@@ -125,12 +125,30 @@
                         name: 'action'
                     },
                     ],
-                columnDefs:
-                    [{
-                        target: 0,
-                        sortable: false,
-                        searchable: false,
-                    }]
+                language: {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "_MENU_   dòng / trang",
+                    "sZeroRecords": "Nội dung trong.",
+                    "sInfo": "Từ _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Không có mục nào",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    'searchPlaceholder': "Tìm kiếm dữ liệu",
+                    "sInfoPostFix": "",
+                    "sSearch": "",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "&laquo;",
+                        "sPrevious": "&lsaquo;",
+                        "sNext": "&rsaquo;",
+                        "sLast": "&raquo;",
+                    },
+                },
+                columnDefs: [{
+                    target: [0, 7],
+                    sortable: false,
+                    searchable: false,
+                },],
+                lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "Tất cả"]]
             })
 
             $(document).on('click', '.btn-remove-product', function () {

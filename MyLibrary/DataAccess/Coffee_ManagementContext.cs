@@ -30,7 +30,7 @@ namespace MyLibrary.DataAccess
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost;Database=Coffee_Management;uid=sa;pwd=hoangthang_2003ss;encrypt=true;trustServerCertificate=true;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=Coffee_Management;uid=sa;pwd=haidang1210;encrypt=true;trustServerCertificate=true;");
             }
         }
 
@@ -69,11 +69,11 @@ namespace MyLibrary.DataAccess
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Detail__DeletedA__4222D4EF");
 
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.Details)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Detail__product___4316F928");
+                // entity.HasOne(d => d.Product)
+                //     .WithMany(p => p.Details)
+                //     .HasForeignKey(d => d.ProductId)
+                //     .OnDelete(DeleteBehavior.ClientSetNull)
+                //     .HasConstraintName("FK__Detail__product___4316F928");
             });
 
             modelBuilder.Entity<Factor>(entity =>

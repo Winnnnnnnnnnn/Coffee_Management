@@ -29,7 +29,6 @@ namespace CFM.Controllers
         public IActionResult Load()
         {
             var users = userRepository.GetUsers();
-            int recordsTotal = users.Count();
             var data = users.Select(u => new
             {
                 checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + u.Id + "'>",
@@ -40,32 +39,10 @@ namespace CFM.Controllers
                 phone = "" + u.Phone,
                 action = "<form action='/User/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + u.Id + "' data-id='" + u.Id + "'/> <button type='button' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
             });
-            var language = new
-            {
-                sProcessing = "Đang xử lý...",
-                sLengthMenu = "_MENU_ dòng /  trang",
-                emptyTable = "Không có dữ liệu",
-                sZeroRecords = "Không có kết quả nào được tìm thấy",
-                sInfo = "Hiển thị từ _START_ đến _END_ của _TOTAL_ mục",
-                sInfoEmpty = "Hiển thị từ 0 đến 0 của 0 mục",
-                sInfoFiltered = "(đã lọc từ _MAX_ mục)",
-                sInfoPostFix = "",
-                sSearch = "Tìm kiếm:",
-                sUrl = "",
-                oPaginate = new
-                {
-                    sFirst = "&laquo;",
-                    sLast = "&raquo;",
-                    sNext = "&rsaquo;",
-                    sPrevious = "&lsaquo;"
-                }
-            };
 
             return Json(new
             {
-                recordsTotal = recordsTotal,
                 data = data,
-                language = language
             });
         }
 

@@ -101,130 +101,130 @@
     </section>
 </div>
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            var now = new Date();
-            var endDate = moment(now).format('DD/MM/YYYY');
-            var startDate = moment(now.getTime() - 7 * 24 * 60 * 60 * 1000).format('DD/MM/YYYY');
-            $('input[name="dateRange"]').daterangepicker({
-                "startDate": startDate,
-                "endDate": endDate,
-                opens: 'left',
-                locale: {
-                    format: 'DD/MM/YYYY'
-                }
-            });
-            reloadChart();
-
-            $(document).on('change', '.moment-type', function () {
-                reloadChart();
-            })
-
-            $(document).on('change', 'input[name="dateRange"]', function () {
-                reloadChart();
-            })
-            function reloadChart() {
-                var revenueMapBy_mm = {}, sumRevenue = 0, numProduct = 0, numOrder = 0, revenueMap = {};
-                $.get(`/Home/Load/?range=${$('input[name="dateRange"]').val()}`, function (data) {
-                    numProduct = data.numberProducts;
-                    $.each(data.dailiRevenues, function (i, order) {
-                        ++numOrder;
-                        sumRevenue += order.totalPrice;
-                        if (revenueMap.hasOwnProperty(moment(order.createdAt).format('DD-MM-YYYY'))) {
-                            revenueMap[moment(order.createdAt).format('DD-MM-YYYY')] += order.totalPrice;
-                        } else {
-                            revenueMap[moment(order.createdAt).format('DD-MM-YYYY')] = order.totalPrice;
-                        }
-                    })
-                    $('.revenues').text(sumRevenue);
-                    $('.totalOrders').text(numOrder);
-                    $('.numProducts').text(numProduct);
-                }).done(function () {
-                    $.each(revenueMap, function (date, revenue) {
-                        console.log(date);
-                        let newDate = moment(date).format('DD/MM/YYYY');
-                        console.log("date" + newDate);
-                        var year = moment(newDate).format('YYYY'),
-                            month = moment(newDate).format('MM'),
-                            quarter = Math.ceil(moment(newDate).format('MM') / 3),
-                            week = Math.ceil(moment(newDate).format('DD') / 7);
-                        switch ($('[name="moment"]:checked').val()) {
-                            case '5':
-                                if (revenueMapBy_mm['Năm ' + year]) {
-                                    revenueMapBy_mm['Năm ' + year] += revenue;
-                                } else {
-                                    revenueMapBy_mm['Năm ' + year] = revenue;
-                                }
-                                break;
-                            case '4':
-                                if (revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year]) {
-                                    revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year] += revenue;
-                                } else {
-                                    revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year] = revenue;
-                                }
-                                break;
-                            case '3':
-                                if (revenueMapBy_mm['Tháng ' + month + ' Năm ' + year]) {
-                                    revenueMapBy_mm['Tháng ' + month + ' Năm ' + year] += revenue;
-                                } else {
-                                    revenueMapBy_mm['Tháng ' + month + ' Năm ' + year] = revenue;
-                                }
-                                break;
-                            case '2':
-                                // Nếu tuần đã tồn tại trong map, cộng thêm vào tổng doanh thu
-                                if (revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year]) {
-                                    revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year] += revenue;
-                                } else {
-                                    // Nếu tuần chưa tồn tại tạo mới và gán giá trị ban đầu
-                                    revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year] = revenue;
-                                }
-                                break;
-                            case '1':
-                                // Nếu tuần đã tồn tại trong map, cộng thêm vào tổng doanh thu
-                                if (revenueMapBy_mm['Ngày ' + date]) {
-                                    revenueMapBy_mm['Ngày ' + date] += revenue;
-                                } else {
-                                    // Nếu Ngày chưa tồn tại tạo mới và gán giá trị ban đầu
-                                    revenueMapBy_mm['Ngày ' + date] = revenue;
-                                }
-                                break;
-                        };
-                    });
-                    drawChart(Object.keys(revenueMapBy_mm), Object.values(revenueMapBy_mm));
-                })
-            }
-
-            //Vẽ biểu đổ với 2 tham số
-            function drawChart(times, revenues) {
-                var optionsProfileVisit = {
-                    annotations: {
-                        position: 'back'
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    chart: {
-                        type: 'bar',
-                        height: 300,
-                    },
-                    fill: {
-                        opacity: 1
-                    },
-                    plotOptions: {},
-                    series: [{
-                        name: 'sales',
-                        data: revenues,
-                    }],
-                    colors: `var(--bs-primary)`,
-                    xaxis: {
-                        categories: times,
-                    },
-                }
-                var chartProfileVisit = new ApexCharts(document.querySelector("#chart-profile-visit"),
-                    optionsProfileVisit);
-                chartProfileVisit.render();
-                chartProfileVisit.updateOptions(optionsProfileVisit, true);
+<script>
+    $(document).ready(function () {
+        var now = new Date();
+        var endDate = moment(now).format('DD/MM/YYYY');
+        var startDate = moment(now.getTime() - 7 * 24 * 60 * 60 * 1000).format('DD/MM/YYYY');
+        $('input[name="dateRange"]').daterangepicker({
+            "startDate": startDate,
+            "endDate": endDate,
+            opens: 'left',
+            locale: {
+                format: 'DD/MM/YYYY'
             }
         });
-    </script>
+        reloadChart();
+
+        $(document).on('change', '.moment-type', function () {
+            reloadChart();
+        })
+
+        $(document).on('change', 'input[name="dateRange"]', function () {
+            reloadChart();
+        })
+        function reloadChart() {
+            var revenueMapBy_mm = {}, sumRevenue = 0, numProduct = 0, numOrder = 0, revenueMap = {};
+            $.get(`/Home/Load/?range=${$('input[name="dateRange"]').val()}`, function (data) {
+                console.log(data);
+                numProduct = data.numberProducts;
+                $.each(data.dailiRevenues, function (i, order) {
+                    ++numOrder;
+                    sumRevenue += order.totalPrice;
+                    if (revenueMap.hasOwnProperty(moment(order.createdAt).format('DD-MM-YYYY'))) {
+                        revenueMap[moment(order.createdAt).format('DD-MM-YYYY')] += order.totalPrice;
+                    } else {
+                        revenueMap[moment(order.createdAt).format('DD-MM-YYYY')] = order.totalPrice;
+                    }
+                })
+                $('.revenues').text(sumRevenue);
+                $('.totalOrders').text(numOrder);
+                $('.numProducts').text(numProduct);
+            }).done(function () {
+                $.each(revenueMap, function (date, revenue) {
+                    let newDate = moment(date).format('DD/MM/YYYY');
+                    console.log("date" + newDate);
+                    var year = moment(newDate).format('YYYY'),
+                        month = moment(newDate).format('MM'),
+                        quarter = Math.ceil(moment(newDate).format('MM') / 3),
+                        week = Math.ceil(moment(newDate).format('DD') / 7);
+                    switch ($('[name="moment"]:checked').val()) {
+                        case '5':
+                            if (revenueMapBy_mm['Năm ' + year]) {
+                                revenueMapBy_mm['Năm ' + year] += revenue;
+                            } else {
+                                revenueMapBy_mm['Năm ' + year] = revenue;
+                            }
+                            break;
+                        case '4':
+                            if (revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year]) {
+                                revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year] += revenue;
+                            } else {
+                                revenueMapBy_mm['Quý ' + quarter + ' Năm ' + year] = revenue;
+                            }
+                            break;
+                        case '3':
+                            if (revenueMapBy_mm['Tháng ' + month + ' Năm ' + year]) {
+                                revenueMapBy_mm['Tháng ' + month + ' Năm ' + year] += revenue;
+                            } else {
+                                revenueMapBy_mm['Tháng ' + month + ' Năm ' + year] = revenue;
+                            }
+                            break;
+                        case '2':
+                            // Nếu tuần đã tồn tại trong map, cộng thêm vào tổng doanh thu
+                            if (revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year]) {
+                                revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year] += revenue;
+                            } else {
+                                // Nếu tuần chưa tồn tại tạo mới và gán giá trị ban đầu
+                                revenueMapBy_mm['Tuần ' + week + ' Tháng ' + month + ' Năm ' + year] = revenue;
+                            }
+                            break;
+                        case '1':
+                            // Nếu tuần đã tồn tại trong map, cộng thêm vào tổng doanh thu
+                            if (revenueMapBy_mm['Ngày ' + date]) {
+                                revenueMapBy_mm['Ngày ' + date] += revenue;
+                            } else {
+                                // Nếu Ngày chưa tồn tại tạo mới và gán giá trị ban đầu
+                                revenueMapBy_mm['Ngày ' + date] = revenue;
+                            }
+                            break;
+                    };
+                });
+                drawChart(Object.keys(revenueMapBy_mm), Object.values(revenueMapBy_mm));
+            })
+        }
+
+        //Vẽ biểu đổ với 2 tham số
+        function drawChart(times, revenues) {
+            var optionsProfileVisit = {
+                annotations: {
+                    position: 'back'
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                chart: {
+                    type: 'bar',
+                    height: 300,
+                },
+                fill: {
+                    opacity: 1
+                },
+                plotOptions: {},
+                series: [{
+                    name: 'sales',
+                    data: revenues,
+                }],
+                colors: `var(--bs-primary)`,
+                xaxis: {
+                    categories: times,
+                },
+            }
+            var chartProfileVisit = new ApexCharts(document.querySelector("#chart-profile-visit"),
+                optionsProfileVisit);
+            chartProfileVisit.render();
+            chartProfileVisit.updateOptions(optionsProfileVisit, true);
+        }
+    });
+</script>
 }

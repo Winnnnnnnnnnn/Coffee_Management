@@ -73,10 +73,11 @@
                                     </td>
 
                                     <td>
-                                        <form action="/Table/Delete" method="POST" class="save-form"><input type="hidden"
-                                                name="id" value="@table.Id" data-id=" @table.Id" /> <button type="button"
-                                                class="btn btn-link text-decoration-none btn-remove"><i
-                                                    class="bi bi-trash3"></i></button></form>
+                                        <form action="/Table/Delete" method="POST" class="save-form">
+                                            <input type="hidden" name="id" value="@table.Id" data-id=" @table.Id" />
+                                            <button type="button" class="btn btn-link text-decoration-none btn-remove">
+                                                <i class="bi bi-trash3"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
                             }
@@ -110,8 +111,15 @@
                         "sLast": "&raquo;",
                         "sNext": "&rsaquo;",
                         "sPrevious": "&lsaquo;"
-                    }
+                    },
+                    columnDefs: [{
+                        target: [0, 6],
+                        sortable: false,
+                        searchable: false,
+                    }],
+                    lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "Tất cả"]]
                 }
             });
+        });
     </script>
 }

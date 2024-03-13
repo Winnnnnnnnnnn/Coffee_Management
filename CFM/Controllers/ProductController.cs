@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace CFM.Controllers
 {
-    [Authentication]
+    // [Authentication]
     public class ProductController : Controller
     {
         // IProductRepository productRepository = null;
@@ -42,7 +42,6 @@ namespace CFM.Controllers
         public IActionResult Load()
         {
             var products = productRepository.GetProducts();
-            int recordsTotal = products.Count();
             var data = products.Select(p => new
             {
                 checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + p.Id + "'>",
@@ -50,38 +49,14 @@ namespace CFM.Controllers
                 name = "<a class='btn btn-link text-decoration-none' href='/Product/Edit/" + p.Id + "'>" + p.Name + " </ a >",
                 unit = p.Unit,
                 price = p.Price,
-                catalogue_id = p.getCatalogueName(),
+                catalogue = p.getCatalogueName(),
                 image = p.Image,
                 action = "<form action='/Product/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + p.Id + "' data-id='" + p.Id + "'/> <button type='button' class='btn btn-link text-decoration-none btn-remove-product'><i class='bi bi-trash3'></i></button></form>"
             });
 
-            var language = new
-            {
-                sProcessing = "Đang xử lý...",
-                sLengthMenu = "_MENU_ dòng /  trang",
-                emptyTable = "Không có dữ liệu",
-                sZeroRecords = "Không có kết quả nào được tìm thấy",
-                sInfo = "Hiển thị từ _START_ đến _END_ của _TOTAL_ mục",
-                sInfoEmpty = "Hiển thị từ 0 đến 0 của 0 mục",
-                sInfoFiltered = "(đã lọc từ _MAX_ mục)",
-                sInfoPostFix = "",
-                sSearch = "Tìm kiếm:",
-                sUrl = "",
-                oPaginate = new
-                {
-                    sFirst = "&laquo;",
-                    sLast = "&raquo;",
-                    sNext = "&rsaquo;",
-                    sPrevious = "&lsaquo;"
-                }
-            };
-
             return Json(new
             {
-                products = products,
-                recordsTotal = recordsTotal,
                 data = data,
-                language = language
             });
         }
 

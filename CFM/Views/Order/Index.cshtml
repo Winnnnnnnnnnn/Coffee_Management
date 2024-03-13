@@ -46,7 +46,7 @@
                                 </th>
                                 <th>Id</th>
                                 <th>Bàn</th>
-                                <th>Nhân viên</th>
+                                <th>Người tạo đơn</th>
                                 <th>Giá</th>
                                 <th>Ghi chú</th>
                                 <th>Thời gian tạo</th>
@@ -66,7 +66,7 @@
         $(document).ready(function () {
             const table = $('#data-table').DataTable({
                 processing: true,
-                serverSide: true,
+                serverSide: false,
                 ajax: {
                     url: `/Order/Load`,
                     error: function (err) {
@@ -106,8 +106,31 @@
                 }, {
                     data: 'action',
                     name: 'action'
+                },],
+                language: {
+                    "sProcessing": "Đang xử lý...",
+                    "sLengthMenu": "_MENU_   dòng / trang",
+                    "sZeroRecords": "Nội dung trong.",
+                    "sInfo": "Từ _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Không có mục nào",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    'searchPlaceholder': "Tìm kiếm dữ liệu",
+                    "sInfoPostFix": "",
+                    "sSearch": "",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "&laquo;",
+                        "sPrevious": "&lsaquo;",
+                        "sNext": "&rsaquo;",
+                        "sLast": "&raquo;",
+                    },
                 },
-                ],
+                columnDefs: [{
+                    target: [0, 8],
+                    sortable: false,
+                    searchable: false,
+                }],
+                lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "Tất cả"]]
             })
         })
     </script>
