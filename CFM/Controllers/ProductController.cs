@@ -113,11 +113,11 @@ namespace CFM.Controllers
                             imageFile.CopyTo(fileStream);
                         }
                         // Lưu đường dẫn của ảnh vào trường Image của đối tượng Product
-                        product.Image = "~/img/" + uniqueFileName;
+                        product.Image = "/img/" + uniqueFileName;
                     }
                     else
                     {
-                        product.Image = "~/img/placeholder.jpg";
+                        product.Image = "/img/placeholder.jpg";
                     }
                     productRepository.InsertProduct(product);
                     User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
@@ -137,11 +137,11 @@ namespace CFM.Controllers
             }
             catch (Exception ex)
             {
+                System.Console.WriteLine(ex);
                 ViewBag.Message = ex.Message;
                 return View(product);
             }
         }
-
 
         public ActionResult Edit(int? id)
         {
@@ -160,7 +160,7 @@ namespace CFM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Product product, IFormFile newImageFile)
+        public ActionResult Edit(int id, Product product, IFormFile imageFile)
         {
             try
             {
@@ -169,19 +169,19 @@ namespace CFM.Controllers
                 {
                     return View("Index", product);
                 }
-                if (newImageFile != null && newImageFile.Length > 0)
+                if (imageFile != null && imageFile.Length > 0)
                 {
                     // Lưu ảnh vào thư mục wwwroot/images
                     var uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "img");
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + newImageFile.FileName;
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
                     var filePath = Path.Combine(uploadsFolder, uniqueFileName);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        newImageFile.CopyTo(fileStream);
+                        imageFile.CopyTo(fileStream);
                     }
 
                     // Cập nhật đường dẫn hình ảnh mới cho sản phẩm
-                    product.Image = "~/img/" + uniqueFileName;
+                    product.Image = "/img/" + uniqueFileName;
                 }
                 else
                 {
@@ -192,8 +192,8 @@ namespace CFM.Controllers
                         product.Image = existingProduct.Image;
                     }
                 }
-                productRepository.UpdateProduct(product);
                 User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                productRepository.UpdateProduct(product);
                 var dbContext = new Coffee_ManagementContext();
                 LogDAO dao = new LogDAO();
                 dao.AddNew(new Log
@@ -209,7 +209,7 @@ namespace CFM.Controllers
             }
             catch (Exception ex)
             {
-                // Xử lý lỗi và trả về phản hồi phù hợp
+                System.Console.WriteLine(ex);
                 ViewBag.Message = ex.Message;
                 return View(product);
             }
