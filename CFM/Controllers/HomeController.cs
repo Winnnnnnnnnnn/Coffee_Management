@@ -18,7 +18,6 @@ namespace CFM.Controllers
     public class HomeController : Controller
     {
         IOrderRepository orderRepository = null;
-        IProductRepository productRepository = null;
         public HomeController() => orderRepository = new OrderRepository();
 
         public IActionResult Index()

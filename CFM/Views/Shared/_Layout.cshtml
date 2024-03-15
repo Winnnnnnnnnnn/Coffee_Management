@@ -46,7 +46,7 @@
                     <div class="sidebar-menu">
                         <ul class="menu">
                             <li class="sidebar-item main active">
-                                <a asp-controller="Home" asp-action="Index" class='sidebar-link'>
+                                <a asp-controller="Main" asp-action="Index" class='sidebar-link'>
                                     <i class="bi bi-pin-angle-fill"></i>
                                     <span>Đặt món</span>
                                 </a>
@@ -74,12 +74,6 @@
                                 <a asp-controller="Product" asp-action="Index" class='sidebar-link'>
                                     <i class="icon-mid d-flex algin-items-center bi bi-cup-hot-fill"></i>
                                     <span>Quản lý sản phẩm</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item @(ViewBag.IsActive == "image" ? "active" : "")">
-                                <a asp-controller="Home" asp-action="Index" class='sidebar-link'>
-                                    <i class="icon-mid d-flex algin-items-center bi bi-images"></i>
-                                    <span>Hình ảnh</span>
                                 </a>
                             </li>
                             <li class="sidebar-item has-sub">
