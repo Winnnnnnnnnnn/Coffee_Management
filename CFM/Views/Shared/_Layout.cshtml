@@ -76,7 +76,7 @@
                                     <span>Quản lý sản phẩm</span>
                                 </a>
                             </li>
-                            <li class="sidebar-item has-sub">
+                            <li class="sidebar-item has-sub setting">
                                 <a class='sidebar-link cursor-pointer'>
                                     <i class="bi bi-gear-fill"></i>
                                     <span>Cài đặt</span>
@@ -270,52 +270,100 @@
                     break;
                 default:
                     $('.auth-role').text('Nhân viên');
+                    $('.setting').empty();
                     break;
             }
             $('.hello-auth').text('Chào bạn, ' + data.name)
         })
 
+        $(document).on('click', '.btn-add-product', function () {
+            $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
+            const index = $('.order-product').length;
+            $.get('/Product/Load', function (data) {
+                var str = `<div class="row order-detail mb-2" data-index="${index}">
+                                                                <div class="col-12 col-lg-4">
+                                                                    <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
+                                                                        <option value="" selected hidden disabled>Chọn món</option>`;
+                $.each(data.products, function (key, product) {
+                    str += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
+                });
+                str += ` </select>
+                            </div>
+                                <div class="col-4 col-lg-2">
+                                    <input type="hidden" name="details[${index}].OrderId" value="1" class="detail-order-id">
+                                    <span type="text" id="order-prices-${index + 1}" class="form-control border border-0 text-end order-price px-0" autocomplete="off"><span>
+                                </div>
+                                <div class="col-2 col-lg-2">
+                                    <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}" value="0" class="form-control border border-0 text-end order-quantity ps-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng" disabled>
+                                </div>
+                                <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end">
+                                    <div class="display-price"></div>
+                                    <input type="hidden" name="details[${index}].Price" id="order-price-${index + 1}" value="0" class="form-control border border-0 text-end order-price ps-0" autocomplete="off" readonly>
+                                </div>
+                                <div class="col-3 col-lg-2 d-flex">
+                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3" disabled><i class="bi bi-printer"></i></button>
+                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-5">
+                                <input type="text" name="details[${index}].Note" class="form-control small order-note w-100" placeholder="Ghi chú">
+                            </div>`
+                $('#order-details').append(str)
+            })
+        })
+
         $(document).on('click', '.btn-remove', function (e) {
             e.preventDefault();
             let form = $(this).parent();
-            Swal.fire({
-                title: "Lưu ý!",
-                text: "Bạn có chắc chắn xóa?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Vâng, xóa đi!",
-                cancelButtonText: "Không, hủy bỏ!",
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        data: form.serializeArray(),
-                        url: form.attr("action"),
-                        method: form.attr("method"),
-                        success: function (response) {
-                            Toastify({
-                                text: response.title,
-                                duration: 1000,
-                                close: true,
-                                gravity: "top",
-                                position: "center",
-                                backgroundColor: "var(--bs-" + response.status + ")",
-                            }).showToast();
-                            window.location.href = "\\" + response.controller + "\\Index";
-                        },
-                        error: function (response) {
-                            Toastify({
-                                text: response.title,
-                                duration: 1000,
-                                close: true,
-                                gravity: "top",
-                                position: "center",
-                                backgroundColor: "var(--bs-" + response.status + ")",
-                            }).showToast();
-                        }
-                    });
-                }
-            });
+            console.log($('.auth-role').text());
+            if ($('.auth-role').text() == 'Nhân viên') {
+                Swal.fire({
+                    title: "Lưu ý!",
+                    text: "Bạn không có quyền hạn thực hiện thao tác này!",
+                    icon: "warning",
+                    showConfirmButton: true,
+                    confirmButtonText: "OK, Đã hiểu!",
+                })
+            } else {
+                Swal.fire({
+                    title: "Lưu ý!",
+                    text: "Bạn có chắc chắn xóa?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Vâng, xóa đi!",
+                    cancelButtonText: "Không, hủy bỏ!",
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            data: form.serializeArray(),
+                            url: form.attr("action"),
+                            method: form.attr("method"),
+                            success: function (response) {
+                                Toastify({
+                                    text: response.title,
+                                    duration: 1000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "center",
+                                    backgroundColor: "var(--bs-" + response.status + ")",
+                                }).showToast();
+                                window.location.href = "\\" + response.controller + "\\Index";
+                            },
+                            error: function (response) {
+                                Toastify({
+                                    text: response.title,
+                                    duration: 1000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "center",
+                                    backgroundColor: "var(--bs-" + response.status + ")",
+                                }).showToast();
+                            }
+                        });
+                    }
+                });
+            }
         })
     })
 </script>

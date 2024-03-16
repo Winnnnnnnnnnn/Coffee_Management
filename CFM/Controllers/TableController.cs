@@ -22,8 +22,21 @@ namespace CFM.Controllers
         public ActionResult Index()
         {
             ViewBag.IsActive = "table";
-            var tableList = tableRepository.GetTables();
-            return View("~/Views/Table/Index.cshtml", tableList);
+            return View();
+        }
+
+        public IActionResult Load()
+        {
+            var tables = tableRepository.GetTables();
+            var data = tables.Select(t => new
+            {
+                name = t?.Name,
+                area = t?.Area,
+                note = t?.Note,
+                status = t?.GetStatus(),
+                action = "<form action='/Table/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + t?.Id + "' data-id='" + t?.Id + "'/> <button type='submit' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
+            });
+            return Json(new { data = data });
         }
 
         public IActionResult Create()
@@ -128,12 +141,6 @@ namespace CFM.Controllers
                 }
                 else
                 {
-                    response = new
-                    {
-                        controller = "Table",
-                        title = "Đã xóa thành công.",
-                        status = "success"
-                    };
                     tableRepository.DeleteTable(id);
                     User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
                     var dbContext = new Coffee_ManagementContext();
@@ -147,8 +154,14 @@ namespace CFM.Controllers
                         ObjectId = id,
                     });
                     dbContext.SaveChanges();
+                    response = new
+                    {
+                        controller = "Table",
+                        title = "Đã xóa thành công.",
+                        status = "success"
+                    };
                 }
-                return View("Index", response);
+                return Json(response);
             }
             catch (Exception ex)
             {

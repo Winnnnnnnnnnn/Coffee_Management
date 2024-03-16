@@ -23,5 +23,12 @@ namespace MyLibrary.DataAccess
         public int? Status { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
+
+        public string GetStatus()
+        {
+            var stt = (this.Status == 0) ? "Trống" : "Có khách";
+            return stt;
+
+        }
     }
 }

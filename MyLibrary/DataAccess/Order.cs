@@ -12,7 +12,6 @@ namespace MyLibrary.DataAccess
         public Order()
         {
             Details = new HashSet<Detail>();
-            Factors = new HashSet<Factor>();
         }
 
         public int Id { get; set; }
@@ -92,6 +91,5 @@ namespace MyLibrary.DataAccess
         public virtual Table Table { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<Detail> Details { get; set; }
-        public virtual ICollection<Factor> Factors { get; set; }
     }
 }

@@ -11,10 +11,12 @@ using MyMVC.Models.Authentication;
 using MyLibrary.Repository;
 using System.Globalization;
 using MyLibrary.DataAccess;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace CFM.Controllers
 {
-    // [Authentication]
+    [Authentication]
     public class HomeController : Controller
     {
         IOrderRepository orderRepository = null;

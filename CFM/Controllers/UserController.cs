@@ -31,8 +31,6 @@ namespace CFM.Controllers
             var users = userRepository.GetUsers();
             var data = users.Select(u => new
             {
-                checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + u.Id + "'>",
-                id = u.Id,
                 name = "<a class='btn btn-link text-decoration-none' href='/User/Edit/" + u.Id + "'>" + u.Name + " </ a > ",
                 role = u.getRoleName(),
                 email = u.Email,

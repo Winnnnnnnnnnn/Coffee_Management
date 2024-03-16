@@ -31,7 +31,6 @@ namespace CFM.Controllers
             var orders = orderRepository.GetOrders();
             var data = orders.Select(o => new
             {
-                checkbox = "<input type='checkbox' class='form-check-input choice' name='choices[]' value='" + o?.Id + "'>",
                 id = o?.Id,
                 table_id = "<a class='btn btn-link text-decoration-none' href='/Order/Edit/" + o?.Id + "'>" + o?.getTableName() + " </ a > ",
                 user_id = o.getUserName(),
@@ -39,7 +38,7 @@ namespace CFM.Controllers
                 note = o?.Note,
                 created_at = o?.CreatedAt.Value.ToString("HH:mm:ss dd/MM/yyyy"),
                 status = "<span class=" + (o.Status == 0 ? "text-danger" : "text-success") + ">" + o?.getStatus() + "</span>",
-                action = "<form action='/Order/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + o?.Id + "' data-id='" + o?.Id + "'/> <button type='submit' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form>"
+                action = "<div class='d-flex'><a class='btn text-dark btn-print-bill me-2' data-id='" + o?.Id + "'><i class='bi bi-printer'></i></a><a class='btn text-success btn-pay me-2' data-id='" + o?.Id + "'><i class='bi bi-currency-dollar'></i></a><form action='/Order/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + o?.Id + "' data-id='" + o?.Id + "'/> <button type='submit' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form></div>"
             });
             return Json(new { data = data });
         }
@@ -222,6 +221,42 @@ namespace CFM.Controllers
                     status = "danger"
                 };
                 return Json(response);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Pay(int id, int payment)
+        {
+            try
+            {
+                Order order = orderRepository.GetOrderByID(id);
+                order.Status = payment;
+                orderRepository.UpdateOrder(order);
+                User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                order.UserId = user.Id;
+                orderRepository.UpdateOrder(order);
+                var dbContext = new Coffee_ManagementContext();
+                if (order.TableId != null)
+                {
+                    var table = dbContext.Tables.FirstOrDefault(t => t.Id == order.TableId);
+                    table.Status = 0;
+                    dbContext.SaveChanges();
+                }
+                LogDAO dao = new LogDAO();
+                dao.AddNew(new Log
+                {
+                    Id = 0,
+                    UserId = user.Id,
+                    Action = "Đã thanh toán",
+                    Object = "Đơn hàng",
+                    ObjectId = order.Id,
+                });
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Lỗi server");
             }
         }
     }

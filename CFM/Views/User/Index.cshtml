@@ -1,5 +1,3 @@
-@model MyLibrary.DataAccess.User
-
 @{
     ViewData["Title"] = "Quản lý tài khoản";
 }
@@ -41,12 +39,8 @@
                     <table class="table table-hover" id="data-table">
                         <thead>
                             <tr>
-                                <th>
-                                    <input type="checkbox" class="form-check-input cursor-pointer all-choices">
-                                </th>
-                                <th>Id</th>
                                 <th>Tên tài khoản</th>
-                                <th>Nhóm quyền</th>
+                                <th>Vai trò</th>
                                 <th>Email</th>
                                 <th>Số điện thoại</th>
                                 <th></th>
@@ -77,28 +71,23 @@
                         }
                     },
                 },
-                columns: [{
-                    data: 'checkbox',
-                    name: 'checkbox'
-                }, {
-                    data: 'id',
-                    name: 'id'
-                }, {
-                    data: 'name',
-                    name: 'name'
-                }, {
-                    data: 'role',
-                    name: 'role'
-                }, {
-                    data: 'email',
-                    name: 'email'
-                }, {
-                    data: 'phone',
-                    name: 'phone'
-                }, {
-                    data: 'action',
-                    name: 'action'
-                },
+                columns: [
+                    {
+                        data: 'name',
+                        name: 'name'
+                    }, {
+                        data: 'role',
+                        name: 'role'
+                    }, {
+                        data: 'email',
+                        name: 'email'
+                    }, {
+                        data: 'phone',
+                        name: 'phone'
+                    }, {
+                        data: 'action',
+                        name: 'action'
+                    },
                 ],
                 language: {
                     "sProcessing": "Đang xử lý...",
@@ -119,12 +108,11 @@
                     },
                 },
                 columnDefs: [{
-                    target: [0, 6],
+                    target: 4,
                     sortable: false,
                     searchable: false,
                 }],
-                lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "Tất cả"]]
-
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]]
             })
         })
     </script>

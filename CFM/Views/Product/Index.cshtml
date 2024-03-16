@@ -29,14 +29,10 @@
 <div class="page-content">
     <div class="card p-4">
         <div class="card-header bg-white">
-            <a class="btn btn-primary me-2" asp-controller="Product" asp-action="Create">
+            <a class="btn btn-primary me-2 btn-create" asp-controller="Product" asp-action="Create">
                 <i class="bi bi-plus-circle-dotted"></i>
                 Thêm
             </a>
-            <button type="button" class="btn btn-danger btn-removes d-none">
-                <i class="bi bi-trash"></i>
-                Xóa
-            </button>
         </div>
         <div class="card-body">
             <form method="post" id="batch-form">
@@ -44,15 +40,11 @@
                     <table class="table table-hover" id="data-table">
                         <thead>
                             <tr>
-                                <th>
-                                    <input type="checkbox" class="form-check-input cursor-pointer all-choices">
-                                </th>
-                                <th>Id</th>
                                 <th>Tên sản phẩm</th>
                                 <th>Đơn vị tính</th>
                                 <th>Giá</th>
                                 <th>Danh mục</th>
-                                <th></th>
+                                <th>Hình ảnh</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -66,6 +58,17 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+
+            $.get('/User/GetUserInfo', function (data) {
+                switch (data.role) {
+                    case 3:
+                        $('.btn-create').remove();
+                        break;
+                    default:
+                        break;
+                }
+            })
+
             const table = $('#data-table').DataTable({
                 processing: true,
                 serverSide: false,
@@ -85,12 +88,6 @@
                 },
                 columns:
                     [{
-                        data: 'checkbox',
-                        name: 'checkbox'
-                    }, {
-                        data: 'id',
-                        name: 'id'
-                    }, {
                         data: 'name',
                         name: 'name'
                     }, {
@@ -144,7 +141,7 @@
                     },
                 },
                 columnDefs: [{
-                    target: [0, 7],
+                    target: 5,
                     sortable: false,
                     searchable: false,
                 },],
@@ -153,43 +150,53 @@
 
             $(document).on('click', '.btn-remove-product', function () {
                 let form = $(this).parent();
-                Swal.fire({
-                    title: "Lưu ý!",
-                    text: "Sản phẩm này sẽ bị xóa khỏi các đơn hàng nó có mặt! Vẫn xác nhận xóa?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: "Vâng, xóa đi!",
-                    cancelButtonText: "Không, hủy bỏ!",
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            data: form.serializeArray(),
-                            url: form.attr("action"),
-                            method: form.attr("method"),
-                            success: function (response) {
-                                Toastify({
-                                    text: response.title,
-                                    duration: 1000,
-                                    close: true,
-                                    gravity: "top",
-                                    position: "center",
-                                    backgroundColor: "var(--bs-" + response.status + ")",
-                                }).showToast();
-                            },
-                            error: function (response) {
-                                Toastify({
-                                    text: response.title,
-                                    duration: 1000,
-                                    close: true,
-                                    gravity: "top",
-                                    position: "center",
-                                    backgroundColor: "var(--bs-" + response.status + ")",
-                                }).showToast();
-                            }
-                        });
-                    }
-                });
+                if ($('.auth-role').text() == 'Nhân viên') {
+                    Swal.fire({
+                        title: "Lưu ý!",
+                        text: "Bạn không có quyền hạn thực hiện thao tác này!",
+                        icon: "warning",
+                        showConfirmButton: true,
+                        confirmButtonText: "OK, Đã hiểu!",
+                    })
+                } else {
+                    Swal.fire({
+                        title: "Lưu ý!",
+                        text: "Sản phẩm này sẽ bị xóa khỏi các đơn hàng nó có mặt! Vẫn xác nhận xóa?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Vâng, xóa đi!",
+                        cancelButtonText: "Không, hủy bỏ!",
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                data: form.serializeArray(),
+                                url: form.attr("action"),
+                                method: form.attr("method"),
+                                success: function (response) {
+                                    Toastify({
+                                        text: response.title,
+                                        duration: 1000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "center",
+                                        backgroundColor: "var(--bs-" + response.status + ")",
+                                    }).showToast();
+                                },
+                                error: function (response) {
+                                    Toastify({
+                                        text: response.title,
+                                        duration: 1000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "center",
+                                        backgroundColor: "var(--bs-" + response.status + ")",
+                                    }).showToast();
+                                }
+                            });
+                        }
+                    });
+                }
             })
         })
     </script>

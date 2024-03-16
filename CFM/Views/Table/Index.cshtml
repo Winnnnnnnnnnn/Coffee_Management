@@ -1,5 +1,3 @@
-@model IEnumerable<MyLibrary.DataAccess.Table>
-
 @{
     ViewData["Title"] = "Quản lý bàn";
 }
@@ -36,52 +34,13 @@
                     <table class="table table-hover" id="data-table">
                         <thead>
                             <tr>
-                                <th>
-                                    <input class="form-check-input" type="checkbox" id="all-choices">
-                                </th>
-                                <th>ID</th>
                                 <th>Tên bàn</th>
                                 <th>Khu vực</th>
                                 <th>Ghi chú</th>
-                                <th>Status</th>
+                                <th>Trạng thái</th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach (var table in Model)
-                            {
-                                <tr>
-                                    <td><input asp-class="form-check-input choice" type="checkbox" name="selectedIds"
-                                            value="@table.Id"></td>
-                                    <td class="tableId">@table.Id</td>
-                                    <td>
-                                        <a asp-controller="Table" asp-action="Edit" asp-route-id="@table.Id"
-                                            style="cursor: pointer;" class="btn-update-table"
-                                            data-bs-target="#edittableModal" data-id="@table.Id">@table.Name</a>
-                                    </td>
-                                    <td>@table.Area</td>
-                                    <td>@table.Note</td>
-                                    <td>
-                                        @if (table.Status == 1)
-                                        {
-                                            <span>Có khách</span>
-                                        }
-                                        else
-                                        {
-                                            <span>Trống</span>
-                                        }
-                                    </td>
-
-                                    <td>
-                                        <form action="/Table/Delete" method="POST" class="save-form">
-                                            <input type="hidden" name="id" value="@table.Id" data-id=" @table.Id" />
-                                            <button type="button" class="btn btn-link text-decoration-none btn-remove">
-                                                <i class="bi bi-trash3"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
                     </table>
                 </div>
             </form>
@@ -90,36 +49,68 @@
 </div>
 
 @section Scripts {
-    <!-- Data table link-->
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.7.1.js"></script>d
     <script>
         $(document).ready(function () {
-            $('#data-table').DataTable({
-                "language": {
+            const table = $('#data-table').DataTable({
+                processing: true,
+                serverSide: false,
+                ajax:
+                {
+                    url: `/Table/Load`,
+                    error: function (err) {
+                        if (err.status == 401 || err.status == 419) {
+                            console.warn(err.responseJSON.errors);
+                            window.location.href = "/Login/Index";
+                        }
+                        else {
+                            console.log('Error:', err);
+                            swal(`{ { __("ĐÃ CÓ LỖI XẢY RA!") } }`, err.responseJSON.$message, 'error');
+                        }
+                    },
+                },
+                columns:
+                    [{
+                        data: 'name',
+                        name: 'name'
+                    }, {
+                        data: 'area',
+                        name: 'area'
+                    }, {
+                        data: 'note',
+                        name: 'note'
+                    }, {
+                        data: 'status',
+                        name: 'status',
+                    }, {
+                        data: 'action',
+                        name: 'action'
+                    },
+                    ],
+                language: {
                     "sProcessing": "Đang xử lý...",
-                    "sLengthMenu": "_MENU_ dòng /  trang",
-                    "emptyTable": "Không có dữ liệu",
-                    "sZeroRecords": "Không có kết quả nào được tìm thấy",
-                    "sInfo": "Hiển thị từ _START_ đến _END_ của _TOTAL_ mục",
-                    "sInfoEmpty": "Hiển thị từ 0 đến 0 của 0 mục",
-                    "sInfoFiltered": "(đã lọc từ _MAX_ mục)",
+                    "sLengthMenu": "_MENU_   dòng / trang",
+                    "sZeroRecords": "Nội dung trong.",
+                    "sInfo": "Từ _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Không có mục nào",
+                    "sInfoFiltered": "(được lọc từ _MAX_ mục)",
+                    'searchPlaceholder': "Tìm kiếm dữ liệu",
                     "sInfoPostFix": "",
-                    "sSearch": "Tìm kiếm:",
+                    "sSearch": "",
                     "sUrl": "",
                     "oPaginate": {
                         "sFirst": "&laquo;",
-                        "sLast": "&raquo;",
+                        "sPrevious": "&lsaquo;",
                         "sNext": "&rsaquo;",
-                        "sPrevious": "&lsaquo;"
+                        "sLast": "&raquo;",
                     },
-                    columnDefs: [{
-                        target: [0, 6],
-                        sortable: false,
-                        searchable: false,
-                    }],
-                    lengthMenu: [[5, 10, 15, -1], [5, 10, 15, "Tất cả"]]
-                }
-            });
-        });
+                },
+                columnDefs: [{
+                    target: 4,
+                    sortable: false,
+                    searchable: false,
+                },],
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]]
+            })
+        })
     </script>
 }
