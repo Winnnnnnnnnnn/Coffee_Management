@@ -51,6 +51,17 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+
+            $.get('/User/GetUserInfo', function (data) {
+                switch (data.role) {
+                    case 3:
+                        $('.btn-create').remove();
+                        break;
+                    default:
+                        break;
+                }
+            })
+
             const table = $('#data-table').DataTable({
                 processing: true,
                 serverSide: false,

@@ -57,7 +57,7 @@
         </div>
     </div>
 </div>
-<div class="extra-interface">
+<div class="extra-interface d-none">
     <div class="row text-center justify-content-center">
         <div class="col-lg-4 col-12">
             <svg xmlns="http://www.w3.org/2000/svg" width="260" height="293" viewBox="0 0 586.47858 659.29778"
@@ -259,6 +259,15 @@
                         }
                     });
                 });
+            })
+
+            $(document).on('click', '.btn-print-bill', function () {
+                const id = parseInt($(this).attr('data-id'));
+                window.open(
+                    `Order/Bill?order_id=${id}`,
+                    '_blank',
+                    'toolbar=no,scrollbars=no,menubar=no,status=no,resizable=no,top=150,left=600,width=500,height=650'
+                );
             })
         })
     </script>

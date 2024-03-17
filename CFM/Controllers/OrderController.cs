@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -258,6 +260,12 @@ namespace CFM.Controllers
             {
                 return StatusCode(500, "Lỗi server");
             }
+        }
+
+        public ActionResult Bill(int order_id)
+        {
+            ViewBag.IsActive = order_id + "";
+            return View("Bill");
         }
     }
 }

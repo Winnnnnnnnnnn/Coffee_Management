@@ -59,6 +59,21 @@ namespace CFM.Controllers
             });
         }
 
+        public ActionResult getProduct(int id)
+        {
+            var product = productRepository.GetProductByID(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            var context = new Coffee_ManagementContext();
+            ViewBag.IsActive = "product";
+            return Json(new
+            {
+                product = product,
+            });
+        }
+
         public IActionResult Create()
         {
             ViewBag.IsActive = "product";

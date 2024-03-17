@@ -40,41 +40,42 @@
                     <div class="d-flex justify-content-end mt-4">
                         <button type="button" class="btn btn-outline-success btn-setting-example mx-3">
                             Xem thử mẩu</button>
-                        <button type="button" class="btn btn-warning btn-setting-update">Chỉnh sửa</button>
-                        <button type="submit" class="btn btn-primary d-none btn-setting-save">Xác nhận</button>
+                        <button type="button" class="btn btn-primary btn-setting-update">Chỉnh sửa</button>
+                        <button type="submit" class="btn btn-success d-none btn-setting-save">Xác nhận</button>
                     </div>
                 </div>
             </form>
             @* Cài đặt cửa hàng *@
             <h3 class="fw-bold">Cài đặt cửa hàng</h3>
             <hr>
-            <form asp-controller="Setting" asp-action="ShopUpdate" method="post" id="shop-setting-form" class="save-form" accept-charset="UTF-8">
+            <form asp-controller="Setting" asp-action="ShopUpdate" method="post" id="shop-setting-form"
+                class="save-form" accept-charset="UTF-8">
                 <div class="p-5">
                     <div class="row justify-content-center">
-                        <div class="form-group col-12 col-lg-6">
+                        <div class="form-group col-12">
                             <label class="fw-bold" for="shop_name">Tên cửa hàng</label>
                             <input disabled type="text" class="form-control" id="shop_name" name="shop_name"
                                 placeholder="Nhập tên cửa hàng">
                         </div>
-                        <div class="form-group col-12 col-lg-6">
-                            <label class="fw-bold" for="shop_phone">Số điện thoại</label>
-                            <input disabled type="text" class="form-control" id="shop_phone" name="shop_phone"
-                                placeholder="Nhập số điện thoại">
-                        </div>
-                        <div class="form-group col-12 col-lg-6">
-                            <label class="fw-bold" for="shop_wifi">Mật khẩu wifi</label>
-                            <input disabled type="text" class="form-control" id="shop_wifi" name="shop_wifi"
-                                placeholder="Nhập mật khẩu wifi">
-                        </div>
-                        <div class="form-group col-12 col-lg-6">
+                        <div class="form-group col-12">
                             <label class="fw-bold" for="shop_address">Địa chỉ</label>
                             <input disabled type="text" class="form-control" id="shop_address" name="shop_address"
                                 placeholder="Nhập địa chỉ">
                         </div>
+                        <div class="form-group col-12 col-md-6">
+                            <label class="fw-bold" for="shop_phone">Số điện thoại</label>
+                            <input disabled type="text" class="form-control" id="shop_phone" name="shop_phone"
+                                placeholder="Nhập số điện thoại">
+                        </div>
+                        <div class="form-group col-12 col-md-6">
+                            <label class="fw-bold" for="shop_wifi">Mật khẩu wifi</label>
+                            <input disabled type="text" class="form-control" id="shop_wifi" name="shop_wifi"
+                                placeholder="Nhập mật khẩu wifi">
+                        </div>
                     </div>
                     <div class="d-flex justify-content-end mt-4">
-                        <button type="button" class="btn btn-warning btn-shop-update">Chỉnh sửa</button>
-                        <button type="submit" class="btn btn-primary d-none btn-shop-save">Xác nhận</button>
+                        <button type="button" class="btn btn-primary btn-shop-update">Chỉnh sửa</button>
+                        <button type="submit" class="btn btn-success d-none btn-shop-save">Xác nhận</button>
                     </div>
                 </div>
             </form>
@@ -164,7 +165,7 @@
                     }
                 });
             });
-            
+
             $(document).on('click', '.btn-shop-update', function () {
                 $(this).addClass('d-none');
                 shopForm.find('.btn-shop-save').removeClass('d-none');
