@@ -2,7 +2,7 @@
     ViewData["Title"] = "Quản lý đơn hàng";
 }
 
-<div class="main">
+<div class="main-order-interface">
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
@@ -160,7 +160,7 @@
             $.get('/User/GetUserInfo', function (data) {
                 switch (data.role) {
                     case 1:
-                        $('.main').empty();
+                        $('.main-order-interface').empty();
                         $('.extra-interface').removeClass('d-none');
                         break;
                     default:

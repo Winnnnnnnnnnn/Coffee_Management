@@ -17,12 +17,6 @@
                     <input type="radio" name="status" value="1" id="table-status-1" class="btn-check">
                     <label class="btn btn-outline-primary table-status" for="table-status-1">Có khách</label>
                 </div>
-                @* <div class="btn-group ms-3">
-                <input type="radio" name="area" value="all" id="table-area-0" class="btn-check" checked>
-                <label class="btn btn-outline-primary table-area" for="table-area-0">Tất cả</label>
-                <input type="radio" name="area" value="1" id="table-area-1" class="btn-check">
-                <label class="btn btn-outline-primary table-area" for="table-area-1"></label>
-                </div> *@
             </div>
         </div>
         <div class="row">
@@ -39,7 +33,8 @@
         <div class="row mb-3">
             <div class="col-12 d-flex justify-content-start" style="min-width: 75rem">
                 <div class="btn-group" id="search-product">
-                    <input type="radio" name="catalogue" value="all" id="product-catalogue-all" class="btn-check" checked>
+                    <input type="radio" name="catalogue" value="all" id="product-catalogue-all" class="btn-check"
+                        checked>
                     <label class="btn btn-outline-primary" for="product-catalogue-all">Tất cả</label>
                     <input type="radio" name="catalogue" value="1" id="product-catalogue-1" class="btn-check">
                     <label class="btn btn-outline-primary" for="product-catalogue-1">Đồ uống</label>
@@ -78,6 +73,9 @@
                 <div class="row bill-controls">
                     <div class="col-6 d-flex align-items-center">
                         <small class="text-secondary bill-meta" style="line-height: 1.2rem"></small>
+                        <div
+                            class="border border-2 rounded-3 bg-outline-primary p-2 fw-bold d-flex justify-content-center align-items-center table-name">
+                        </div>
                     </div>
                     <div class="col-6">
                         <div class="row justify-content-end">
@@ -91,32 +89,31 @@
                     </div>
                 </div>
                 <hr class="px-4">
-                <ul class="bill-details">
-                </ul>
-                <hr class="px-4">
-                <ul class="bill-total">
-                </ul>
-                <div class="bill-footer d-grid gap-4">
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-outline-success btn-order">
-                            <h5 class="fw-bold pt-1"><i class="bi bi-receipt"></i>
-                                Tạo đơn
-                            </h5>
-                        </button>
-                        <button type="button" class="btn btn-success btn-pay">
-                            <h5 class="fw-bold pt-1"><i class="bi bi-coin"></i>
-                                Thanh toán đơn
-                            </h5>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <button class="btn btn-outline-primary dropdown-item btn-bill-control btn-bill-cancel">
-                                    Hủy đơn
-                                </button>
-                            </li>
-                        </ul>
+                <form asp-controller="Order" asp-action="Create" method="post" id="order-form" class="save-form"
+                    accept-charset="UTF-8">
+                    <ul class="bill-details">
+                    </ul>
+                    <hr class="px-4">
+                    <div class="d-flex justify-content-between text-dark mt-2">
+                        <p class="fw-bold mb-1">Tổng đơn:</p>
+                        <p class="bill-total mb-1">0</p>
+                        <input type="hidden" class="input-bill-total" value="0">
                     </div>
-                </div>
+                    <div class="bill-footer d-grid gap-4">
+                        <div class="btn-group" role="group">
+                            <button type="submit" class="btn btn-outline-success btn-order">
+                                <h5 class="fw-bold pt-1"><i class="bi bi-receipt"></i>
+                                    Tạo đơn
+                                </h5>
+                            </button>
+                            <button type="button" class="btn btn-success btn-pay">
+                                <h5 class="fw-bold pt-1"><i class="bi bi-coin"></i>
+                                    Thanh toán đơn
+                                </h5>
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -149,7 +146,7 @@
                 let str_table = '';
                 $.get('/Main/Load', function (data) {
                     $.each(data.tables, function (index, table) {
-                        if(valueToChange == 'all'){
+                        if (valueToChange == 'all') {
                             let table_statusStr = ``;
                             if (table.status == 0) {
                                 table_statusStr = '<span class="text-success">Đang trống</span>'
@@ -157,20 +154,20 @@
                                 table_statusStr = '<span class="text-danger">Có khách</span>'
                             }
                             str_table += `
-                            <li class="splide__slide">
-                                <label for="table-${table.id}" class="cursor-pointer table-label">
-                                    <div class="card table-card shadow-sm p-3 text-center rounded-4 rounded-lg-5"
-                                        style="width: 12rem;">
-                                        <span class="text-overlay">${(table.area != null) ? table.area : 'Không có khu vực'}</span>
-                                        <div class="card-body pt-0">
-                                            <h4 class="card-title text-uppercase text-primary">${table.name}</h4>
-                                            <small>${table_statusStr}</small>
-                                        </div>
-                                    </div>
-                                <input type="radio" name="table" id="table-${table.id}" value="${table.id}" data-status="${table.status}" class="d-none table-select" />
-                                </label>
-                            </li>`;
-                        }else if(valueToChange == table.status){
+                                                                                        <li class="splide__slide">
+                                                                                            <label for="table-${table.id}" class="cursor-pointer table-label">
+                                                                                                <div class="card table-card shadow-sm p-3 text-center rounded-4 rounded-lg-5"
+                                                                                                    style="width: 12rem;">
+                                                                                                    <span class="text-overlay">${(table.area != null) ? table.area : 'Không có khu vực'}</span>
+                                                                                                    <div class="card-body pt-0">
+                                                                                                        <h4 class="card-title text-uppercase text-primary">${table.name}</h4>
+                                                                                                        <small>${table_statusStr}</small>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            <input type="radio" name="table" id="table-${table.id}" value="${table.id}" data-status="${table.status}" class="d-none table-select" />
+                                                                                            </label>
+                                                                                        </li>`;
+                        } else if (valueToChange == table.status) {
                             let table_statusStr = ``;
                             if (table.status == 0) {
                                 table_statusStr = '<span class="text-success">Đang trống</span>'
@@ -178,19 +175,19 @@
                                 table_statusStr = '<span class="text-danger">Có khách</span>'
                             }
                             str_table += `
-                            <li class="splide__slide">
-                                <label for="table-${table.id}" class="cursor-pointer table-label">
-                                    <div class="card table-card shadow-sm p-3 text-center rounded-4 rounded-lg-5"
-                                        style="width: 12rem;">
-                                        <span class="text-overlay">${(table.area != null) ? table.area : 'Không có khu vực'}</span>
-                                        <div class="card-body pt-0">
-                                            <h4 class="card-title text-uppercase text-primary">${table.name}</h4>
-                                            <small>${table_statusStr}</small>
-                                        </div>
-                                    </div>
-                                <input type="radio" name="table" id="table-${table.id}" value="${table.id}" data-status="${table.status}" class="d-none table-select" />
-                                </label>
-                            </li>`;
+                                                                                            <li class="splide__slide">
+                                                                                                <label for="table-${table.id}" class="cursor-pointer table-label">
+                                                                                                    <div class="card table-card shadow-sm p-3 text-center rounded-4 rounded-lg-5"
+                                                                                                        style="width: 12rem;">
+                                                                                                        <span class="text-overlay">${(table.area != null) ? table.area : 'Không có khu vực'}</span>
+                                                                                                        <div class="card-body pt-0">
+                                                                                                            <h4 class="card-title text-uppercase text-primary">${table.name}</h4>
+                                                                                                            <small>${table_statusStr}</small>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                <input type="radio" name="table" id="table-${table.id}" value="${table.id}" data-status="${table.status}" class="d-none table-select" />
+                                                                                                </label>
+                                                                                            </li>`;
                         }
                     });
                     $('#table-list').html(str_table);
@@ -202,140 +199,212 @@
                 let str_product = '';
                 $.get('/Main/Load', function (data) {
                     $.each(data.products, function (index, product) {
-                        if(valueToChange == 'all'){
-                        let pro_catalogue = ``;
-                        if (product.catalogue == 1) {
-                            pro_catalogue = 'Đồ uống';
-                        } else if (product.catalogue == 2) {
-                            pro_catalogue = 'Đồ ăn';
-                        } else {
-                            pro_catalogue = 'Món khác';
-                        }
-                        str_product += `
-                            <div class="col-6 col-md-3 col-lg-2 product-col">
-                                <div class="card product-card bg-transparent cursor-pointer" data-id="${product.id}">
-                                    <div class="ratio ratio-16x9 mb-2">
-                                        <img src="${product.image}" class="card-img-top rounded-4 rounded-lg-5 object-fit-cover" alt="${product.name}">
-                                    </div>
-                                    <div class="row px-3 justify-content-start align-items-center">
-                                        <div class="col-12 p-0">
-                                            <p class="text-primary card-title mb-0 fw-bold">${product.name}</p>
-                                        </div>
-                                        <div class="col-8">
-                                            <ul class="card-text ps-0 d-flex text-secondary" style="list-style-type: none;">
-                                                <li><small><i class="bi bi-bookmarks-fill"></i>${pro_catalogue}</small></li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-2 p-0">
-                                            <div class="ratio ratio-1x1 text-center mt-1">
-                                                <span class="text-primary border-primary rounded-3 bg-light-primary align-middle fw-bold fs-5 pt-2">${number_format(product.price / 1000)}</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-2 dropstart btn-group product-menu" data-id="${product.id}">
-                                            <button class="btn btn-link mb-0 px-2 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-three-dots-vertical"></i>
-                                            </button>
-                                            <ul class="dropdown-menu p-2">
-                                                <li>
-                                                    <a class="cursor-pointer dropdown-item btn-update-product" data-id="${product.id}">
-                                                        <small><i class="bi bi-pencil-square"></i> Sửa món</small>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <hr>
-                                                </li>
-                                                <li>
-                                                    <form action="/Product/Delete" method="post" class="save-form">
-                                                        <input type="hidden" name="choices[]" value="${product.id}">
-                                                        <button type="submit" class="cursor-pointer text-danger dropdown-item btn-remove">
-                                                            <small><i class="bi bi-trash3"></i> Xóa món</small>
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                        }else if(product.catalogue == valueToChange){
-                                let pro_catalogue = ``;
-                                if (product.catalogue == 1) {
-                                    pro_catalogue = 'Đồ uống';
-                                } else if (product.catalogue == 2) {
-                                    pro_catalogue = 'Đồ ăn';
-                                } else {
-                                    pro_catalogue = 'Món khác';
-                                }
-                                str_product += `
-                                <div class="col-6 col-md-3 col-lg-2 product-col">
-                                    <div class="card product-card bg-transparent cursor-pointer" data-id="${product.id}">
-                                        <div class="ratio ratio-16x9 mb-2">
-                                            <img src="${product.image}" class="card-img-top rounded-4 rounded-lg-5 object-fit-cover" alt="${product.name}">
-                                        </div>
-                                        <div class="row px-3 justify-content-start align-items-center">
-                                            <div class="col-12 p-0">
-                                                <p class="text-primary card-title mb-0 fw-bold">${product.name}</p>
-                                            </div>
-                                            <div class="col-8">
-                                                <ul class="card-text ps-0 d-flex text-secondary" style="list-style-type: none;">
-                                                    <li><small><i class="bi bi-bookmarks-fill"></i>${pro_catalogue}</small></li>
-                                                </ul>
-                                            </div>
-                                            <div class="col-2 p-0">
-                                                <div class="ratio ratio-1x1 text-center mt-1">
-                                                    <span class="text-primary border-primary rounded-3 bg-light-primary align-middle fw-bold fs-5 pt-2">${number_format(product.price / 1000)}</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-2 dropstart btn-group product-menu" data-id="${product.id}">
-                                                <button class="btn btn-link mb-0 px-2 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu p-2">
-                                                    <li>
-                                                        <a class="cursor-pointer dropdown-item btn-update-product" data-id="${product.id}">
-                                                            <small><i class="bi bi-pencil-square"></i> Sửa món</small>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <hr>
-                                                    </li>
-                                                    <li>
-                                                        <form action="/Product/Delete" method="post" class="save-form">
-                                                            <input type="hidden" name="choices[]" value="${product.id}">
-                                                            <button type="submit" class="cursor-pointer text-danger dropdown-item btn-remove">
-                                                                <small><i class="bi bi-trash3"></i> Xóa món</small>
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>`;
+                        if (valueToChange == 'all') {
+                            let pro_catalogue = ``;
+                            if (product.catalogue == 1) {
+                                pro_catalogue = 'Đồ uống';
+                            } else if (product.catalogue == 2) {
+                                pro_catalogue = 'Đồ ăn';
+                            } else {
+                                pro_catalogue = 'Món khác';
+                            }
+                            str_product += `
+                                                                                        <div class="col-6 col-md-3 col-lg-2 product-col">
+                                                                                            <div class="card product-card bg-transparent cursor-pointer" data-id="${product.id}">
+                                                                                                <div class="ratio ratio-16x9 mb-2">
+                                                                                                    <img src="${product.image}" class="card-img-top rounded-4 rounded-lg-5 object-fit-cover" alt="${product.name}">
+                                                                                                </div>
+                                                                                                <div class="row px-3 justify-content-start align-items-center">
+                                                                                                    <div class="col-12 p-0">
+                                                                                                        <p class="text-primary card-title mb-0 fw-bold">${product.name}</p>
+                                                                                                    </div>
+                                                                                                    <div class="col-8">
+                                                                                                        <ul class="card-text ps-0 d-flex text-secondary" style="list-style-type: none;">
+                                                                                                            <li><small><i class="bi bi-bookmarks-fill"></i>${pro_catalogue}</small></li>
+                                                                                                        </ul>
+                                                                                                    </div>
+                                                                                                    <div class="col-2 p-0">
+                                                                                                        <div class="ratio ratio-1x1 text-center mt-1">
+                                                                                                            <span class="text-primary border-primary rounded-3 bg-light-primary align-middle fw-bold fs-5 pt-2">${number_format(product.price / 1000)}</span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="col-2 dropstart btn-group product-menu" data-id="${product.id}">
+                                                                                                        <button class="btn btn-link mb-0 px-2 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                                                                        </button>
+                                                                                                        <ul class="dropdown-menu p-2">
+                                                                                                            <li>
+                                                                                                                <a class="cursor-pointer dropdown-item btn-update-product" data-id="${product.id}">
+                                                                                                                    <small><i class="bi bi-pencil-square"></i> Sửa món</small>
+                                                                                                                </a>
+                                                                                                            </li>
+                                                                                                            <li>
+                                                                                                                <hr>
+                                                                                                            </li>
+                                                                                                            <li>
+                                                                                                                <form action="/Product/Delete" method="post" class="save-form">
+                                                                                                                    <input type="hidden" name="choices[]" value="${product.id}">
+                                                                                                                    <button type="submit" class="cursor-pointer text-danger dropdown-item btn-remove">
+                                                                                                                        <small><i class="bi bi-trash3"></i> Xóa món</small>
+                                                                                                                    </button>
+                                                                                                                </form>
+                                                                                                            </li>
+                                                                                                        </ul>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>`;
+                        } else if (product.catalogue == valueToChange) {
+                            let pro_catalogue = ``;
+                            if (product.catalogue == 1) {
+                                pro_catalogue = 'Đồ uống';
+                            } else if (product.catalogue == 2) {
+                                pro_catalogue = 'Đồ ăn';
+                            } else {
+                                pro_catalogue = 'Món khác';
+                            }
+                            str_product += `
+                                                                                            <div class="col-6 col-md-3 col-lg-2 product-col">
+                                                                                                <div class="card product-card bg-transparent cursor-pointer" data-id="${product.id}">
+                                                                                                    <div class="ratio ratio-16x9 mb-2">
+                                                                                                        <img src="${product.image}" class="card-img-top rounded-4 rounded-lg-5 object-fit-cover" alt="${product.name}">
+                                                                                                    </div>
+                                                                                                    <div class="row px-3 justify-content-start align-items-center">
+                                                                                                        <div class="col-12 p-0">
+                                                                                                            <p class="text-primary card-title mb-0 fw-bold">${product.name}</p>
+                                                                                                        </div>
+                                                                                                        <div class="col-8">
+                                                                                                            <ul class="card-text ps-0 d-flex text-secondary" style="list-style-type: none;">
+                                                                                                                <li><small><i class="bi bi-bookmarks-fill"></i>${pro_catalogue}</small></li>
+                                                                                                            </ul>
+                                                                                                        </div>
+                                                                                                        <div class="col-2 p-0">
+                                                                                                            <div class="ratio ratio-1x1 text-center mt-1">
+                                                                                                                <span class="text-primary border-primary rounded-3 bg-light-primary align-middle fw-bold fs-5 pt-2">${number_format(product.price / 1000)}</span>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="col-2 dropstart btn-group product-menu" data-id="${product.id}">
+                                                                                                            <button class="btn btn-link mb-0 px-2 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                                                                <i class="bi bi-three-dots-vertical"></i>
+                                                                                                            </button>
+                                                                                                            <ul class="dropdown-menu p-2">
+                                                                                                                <li>
+                                                                                                                    <a class="cursor-pointer dropdown-item btn-update-product" data-id="${product.id}">
+                                                                                                                        <small><i class="bi bi-pencil-square"></i> Sửa món</small>
+                                                                                                                    </a>
+                                                                                                                </li>
+                                                                                                                <li>
+                                                                                                                    <hr>
+                                                                                                                </li>
+                                                                                                                <li>
+                                                                                                                    <form action="/Product/Delete" method="post" class="save-form">
+                                                                                                                        <input type="hidden" name="choices[]" value="${product.id}">
+                                                                                                                        <button type="submit" class="cursor-pointer text-danger dropdown-item btn-remove">
+                                                                                                                            <small><i class="bi bi-trash3"></i> Xóa món</small>
+                                                                                                                        </button>
+                                                                                                                    </form>
+                                                                                                                </li>
+                                                                                                            </ul>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>`;
                         }
                     });
                     $('#product-list').html(str_product);
                 });
             }
 
-            $(document).on('click', '.table-label', function () {
-                $(this).parents('label').trigger('click');
+            $(document).on('click', '.btn-table-delivery', function (e) {
+                e.preventDefault();
+                $('.bill-details').empty();
+                $('.bill-total').empty();
+                var id = $(this).find('[name=table]').val();
+                $.each($('.table-label'), function (index, entity) {
+                    $(this).removeClass('table-selected');
+                    $(entity).find('.card.table-card').removeClass('border border-primary border-3')
+                });
+                $(this).addClass('table-selected');
+                $('.table-name').text("Mang đi");
+                $('#bill-canvas').offcanvas('show');
+
+            });
+
+            $(document).on('click', '.table-label', function (e) {
+                e.preventDefault();
+                $('.bill-details').empty();
+                $('.bill-total').empty();
+                var id = $(this).find('[name=table]').val();
                 $.each($('.table-label'), function (index, entity) {
                     $(this).removeClass('table-selected');
                     $(entity).find('.card.table-card').removeClass('border border-primary border-3')
                 });
                 $(this).addClass('table-selected');
                 $(this).find('.card.table-card').addClass('border border-primary border-3');
+                $('.table-name').addClass('d-none');
                 $('#bill-canvas').offcanvas('show');
+                $.get(`/Main/GetOrderByTableId/?id=${id}`, function (data) {
+                    $('.table-name').text(data.table.name).removeClass('d-none');
+                    $('.btn-print').attr('data-id', data.order.id)
+                    $('.bill-total').text(number_format(data.order.totalPrice));
+                    $('.input-bill-total').val(data.order.totalPrice);
+                    $.each(data.details, function (index, detail) {
+                        $.get('/Product/GetProduct/?id=' + detail.productId, function (response) {
+                            const str = `<div class="text-dark d-flex flex-column align-items-between w-100 ms-1 mt-2 bill-detail" data-id=${response.product.id}>
+                                                                        <div class="text-start px-1 fw-bold">${response.product.name}</div>
+                                                                        <div class="row">
+                                                                            <div class="col-5 text-end pe-5"><span class="me-2">${number_format(response.product.price)}</span></div>
+                                                                            <input type="hidden" class="col-2 text-center px-1 bill-price border border-0" value="${response.product.price}">
+                                                                            <input type="number" class="col-2 text-center px-1 bill-quantity border border-0" value="${detail.quantity}">
+                                                                            <div class="col-5 text-end px-1"><span class="bill-total-price me-2">${number_format(response.product.price * detail.quantity)}</span></div>
+                                                                        </div>
+                                                                    </div>`
+                            $('.bill-details').append(str);
+                        });
+                    });
+                })
             });
 
-            $(document).on('change','#search-table', function(){
+            $(document).on('change', '#search-table', function () {
                 loadTable($(this).find('[name=status]:checked').val());
             });
 
-            $(document).on('change','#search-product', function(){
+            $(document).on('change', '#search-product', function () {
                 loadProduct($(this).find('[name=catalogue]:checked').val());
             });
+
+            $(document).on('click', '.btn-print', function () {
+                const id = parseInt($(this).attr('data-id'));
+                window.open(
+                    `Order/Bill?order_id=${id}`,
+                    '_blank',
+                    'toolbar=no,scrollbars=no,menubar=no,status=no,resizable=no,top=150,left=600,width=500,height=650'
+                );
+            })
+
+            $(document).on('change keyup', '.bill-quantity', function () {
+                $(this).parent().find('.bill-total-price').text(number_format(parseFloat($(this).parent().find('.bill-price').val()) * parseFloat($(this).val())))
+                $('.input-bill-total').val(parseFloat($('.input-bill-total').val()) + parseFloat($(this).parent().find('.bill-price').val()));
+                $('.bill-total').text(number_format(parseFloat($('.input-bill-total').val())));
+                var inputValue = $(this).val();
+                $(this).val((inputValue >= 1) ? inputValue : 1)
+            })
+
+            $(document).on('click', '.product-card', function () {
+                const id = parseInt($(this).attr('data-id'));
+                $.get('/Product/GetProduct/?id=' + id, function (response) {
+                    const str = `<div class="text-dark d-flex flex-column align-items-between w-100 ms-1 mt-2 bill-detail" data-id=${response.product.id}>
+                                                                    <div class="text-start px-1 fw-bold">${response.product.name}</div>
+                                                                    <div class="row">
+                                                                        <div class="col-5 text-end pe-5"><span class="me-2">${number_format(response.product.price)}</span></div>
+                                                                        <input type="hidden" class="col-2 text-center px-1 bill-price border border-0" value="${response.product.price}">
+                                                                        <input type="number" class="col-2 text-center px-1 bill-quantity border border-0" value="1">
+                                                                        <div class="col-5 text-end px-1"><span class="bill-total-price me-2">${number_format(response.product.price)}</span></div>
+                                                                    </input>
+                                                                </div>`
+                    $('.bill-details').append(str);
+                });
+            })
         });
     </script>
 }
