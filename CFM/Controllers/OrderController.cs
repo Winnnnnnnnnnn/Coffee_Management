@@ -199,8 +199,8 @@ namespace CFM.Controllers
                         title = "Đã xóa thành công.",
                         status = "success"
                     };
-                    var dbContext = new Coffee_ManagementContext();
                     User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+                    var dbContext = new Coffee_ManagementContext();
                     LogDAO dao = new LogDAO();
                     dao.AddNew(new Log
                     {
