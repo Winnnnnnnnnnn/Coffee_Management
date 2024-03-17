@@ -14,6 +14,10 @@ namespace MyLibrary.Repository
         void DeleteUser(int userId);
         void DeleteUsers(List<int> userIds);
         void UpdateUser(User user);
+
+        bool IsEmailExists(string email);
+        bool IsPhoneExists(string phone);
         string GetRole(User user);
+
     }
 }

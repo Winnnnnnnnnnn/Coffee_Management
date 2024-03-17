@@ -46,7 +46,7 @@ namespace MyLibrary.DataAccess
                 public string Email { get; set; }
 
                 [Required(ErrorMessage = "Mật khẩu không được trống")]
-                // [StringLength(20, MinimumLength = 5, ErrorMessage = "Mật khẩu phải từ 5 đến 20 ký tự")]
+                [StringLength(20, MinimumLength = 8, ErrorMessage = "Mật khẩu phải từ 8 đến 20 ký tự")]
                 public string Password { get; set; }
 
                 [Required(ErrorMessage = "Số điện thoại không được bỏ trống!")]

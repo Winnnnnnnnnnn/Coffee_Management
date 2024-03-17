@@ -14,6 +14,9 @@ namespace MyLibrary.Repository
         public void DeleteUsers(List<int> idsToDelete) => UserDAO.Instance.RemoveMultiple(idsToDelete);
         public void UpdateUser(User user) => UserDAO.Instance.Update(user);
 
+        public bool IsEmailExists(string email) => UserDAO.Instance.IsUserEmailExists(email);
+        public bool IsPhoneExists(string phone) => UserDAO.Instance.IsUserPhoneExists(phone);
+
         public string GetRole(User user)
         {
             var role = "";

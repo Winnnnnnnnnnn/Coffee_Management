@@ -154,7 +154,35 @@ namespace MyLibrary.DataAccess
             }
         }
 
+        public bool IsUserEmailExists(string email)
+        {
+            try
+            {
+                using (var context = new Coffee_ManagementContext())
+                {
+                    return context.Users.Any(u => u.Email == email);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error checking for existing email: " + ex.Message);
+            }
+        }
 
+        public bool IsUserPhoneExists(string phone)
+        {
+            try
+            {
+                using (var context = new Coffee_ManagementContext())
+                {
+                    return context.Users.Any(u => u.Phone == phone);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error checking for existing phone: " + ex.Message);
+            }
+        }
 
     }
 }
