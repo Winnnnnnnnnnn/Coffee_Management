@@ -180,7 +180,7 @@ namespace MyLibrary.DataAccess
                     .HasColumnName("key");
 
                 entity.Property(e => e.Value)
-                    .HasColumnType("text")
+                    .HasMaxLength(255)
                     .HasColumnName("value");
             });
 

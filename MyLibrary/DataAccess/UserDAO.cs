@@ -27,13 +27,13 @@ namespace MyLibrary.DataAccess
             }
         }
 
-        public IEnumerable<User> GetUserList()
+        public IEnumerable<User> GetUserList(int role = 0)
         {
             try
             {
                 using (var context = new Coffee_ManagementContext())
                 {
-                    return context.Users.ToList();
+                    return context.Users.Where(u => u.Role != role).ToList();
                 }
             }
             catch (Exception ex)
@@ -116,7 +116,8 @@ namespace MyLibrary.DataAccess
                 {
                     using (var context = new Coffee_ManagementContext())
                     {
-                        context.Users.Remove(userToRemove);
+                        userToRemove.Role = 0;
+                        context.Users.Update(userToRemove);
                         context.SaveChanges();
                     }
                 }

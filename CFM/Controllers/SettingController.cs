@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyLibrary.DataAccess;
@@ -34,6 +35,16 @@ namespace CFM.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public IActionResult ShopUpdate(IFormCollection request)
+        {
+            foreach (var key in request.Keys)
+            {
+                UpdateSetting(key, request[key]);
+            }
+            return RedirectToAction("Index");
+        }
+
 
         private void UpdateSetting(string key, string value)
         {
@@ -45,5 +56,6 @@ namespace CFM.Controllers
                 context.SaveChanges();
             }
         }
+
     }
 }
