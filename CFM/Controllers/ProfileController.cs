@@ -37,35 +37,11 @@ namespace CFM.Controllers
         [HttpPost]
         public IActionResult ChangePassword(string Password, string newPassword, string confirmPassword)
         {
-            if (Password == null && newPassword == null && confirmPassword == null)
-            {
-                ViewData["allPassword"] = "Không thể để trống";
-                return View("ChangePassword");
-            }
 
-            if (newPassword == null && confirmPassword == null)
+            if (!IsValid(Password, newPassword, confirmPassword))
             {
-                ViewData["ncPassword"] = "Không thể để trống";
                 return View("ChangePassword");
             }
-
-            if (Password == null)
-            {
-                ViewData["oldPassword"] = "Không thể để trống";
-                return View("ChangePassword");
-            }
-            if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 8)
-            {
-                ViewData["newPassword"] = "Mật khẩu phải có ít nhất 8 kí tự";
-                return View("ChangePassword");
-            }
-            if (confirmPassword == null)
-            {
-                ViewData["confirmPassword"] = "Không thể để trống";
-                return View("ChangePassword");
-            }
-
-
 
             User user = Helper.UserInfo(HttpContext);
             string passMD5;
@@ -87,35 +63,25 @@ namespace CFM.Controllers
             Password = passMD5;
             User userUpdate = _db.Users.FirstOrDefault(u => u.Password == Password && u.Id == user.Id);
 
-
-
-            if (newPassword != confirmPassword)
+            // Hash the password using MD5
+            string hashedPassword;
+            using (MD5 md5 = MD5.Create())
             {
-                ViewData["invalidPassword"] = "Mật khẩu không trùng khớp";
-                return View("ChangePassword");
-            }
-            else
-            {
+                byte[] inputBytes = Encoding.ASCII.GetBytes(newPassword);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
 
-                // Hash the password using MD5
-                string hashedPassword;
-                using (MD5 md5 = MD5.Create())
+                // Convert the byte array to hexadecimal string
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
                 {
-                    byte[] inputBytes = Encoding.ASCII.GetBytes(newPassword);
-                    byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-                    // Convert the byte array to hexadecimal string
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < hashBytes.Length; i++)
-                    {
-                        sb.Append(hashBytes[i].ToString("x2"));
-                    }
-                    hashedPassword = sb.ToString();
+                    sb.Append(hashBytes[i].ToString("x2"));
                 }
-                userUpdate.Password = hashedPassword;
-                _db.SaveChanges();
-                return RedirectToAction("Index", "Login");
+                hashedPassword = sb.ToString();
             }
+            userUpdate.Password = hashedPassword;
+            _db.SaveChanges();
+            return RedirectToAction("Index", "Login");
+
         }
 
         public IActionResult ProfileUser()
@@ -169,6 +135,36 @@ namespace CFM.Controllers
                 ViewBag.Message = ex.InnerException.Message;
                 return View(user);
             }
+        }
+
+        public bool IsValid(string Password, string newPassword, string confirmPassword)
+        {
+            if (Password == null)
+            {
+                ViewData["allPassword"] = "Mật khẩu không được để trống";
+                return false;
+            }
+            if (newPassword == null)
+            {
+                ViewData["ncPassword"] = "Mật khẩu mới không được để trống";
+                return false;
+            }
+            if (confirmPassword == null)
+            {
+                ViewData["confirmPassword"] = "Xác nhận mật khẩu không được để trống";
+                return false;
+            }
+            if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 8)
+            {
+                ViewData["newPassword"] = "Mật khẩu phải có ít nhất 8 kí tự";
+                return false;
+            }
+            if (newPassword != confirmPassword)
+            {
+                ViewData["invalidPassword"] = "Mật khẩu không trùng khớp";
+                return false;
+            }
+            return true;
         }
 
     }
