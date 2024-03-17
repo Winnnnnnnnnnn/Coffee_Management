@@ -37,34 +37,11 @@ namespace CFM.Controllers
         [HttpPost]
         public IActionResult ChangePassword(string Password, string newPassword, string confirmPassword)
         {
-            if (Password == null && newPassword == null && confirmPassword == null)
-            {
-                ViewData["allPassword"] = "Không thể để trống";
-                return View("ChangePassword");
-            }
 
-            if (newPassword == null && confirmPassword == null)
+            if (!IsValid(Password, newPassword, confirmPassword))
             {
-                ViewData["ncPassword"] = "Không thể để trống";
                 return View("ChangePassword");
             }
-
-            if (Password == null)
-            {
-                ViewData["oldPassword"] = "Không thể để trống";
-                return View("ChangePassword");
-            }
-            if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 8)
-            {
-                ViewData["newPassword"] = "Mật khẩu phải có ít nhất 8 kí tự";
-                return View("ChangePassword");
-            }
-            if (confirmPassword == null)
-            {
-                ViewData["confirmPassword"] = "Không thể để trống";
-                return View("ChangePassword");
-            }
-
 
 
             User user = Helper.UserInfo(HttpContext);
@@ -85,18 +62,21 @@ namespace CFM.Controllers
             }
 
             Password = passMD5;
+            if (Password != user.Password)
+            {
+                ViewData["checkOldPassword"] = "Mật khẩu cũ không đúng! Vui lòng nhập lại";
+                return View("ChangePassword");
+            }
+
             User userUpdate = _db.Users.FirstOrDefault(u => u.Password == Password && u.Id == user.Id);
-
-
 
             if (newPassword != confirmPassword)
             {
-                ViewData["invalidPassword"] = "Mật khẩu không trùng khớp";
+                ViewData["invalidPassword"] = "Mật khẩu mới và mật khẩu xác nhận không trùng khớp";
                 return View("ChangePassword");
             }
             else
             {
-
                 // Hash the password using MD5
                 string hashedPassword;
                 using (MD5 md5 = MD5.Create())
@@ -169,6 +149,50 @@ namespace CFM.Controllers
                 ViewBag.Message = ex.InnerException.Message;
                 return View(user);
             }
+        }
+
+        public bool IsValid(string Password, string newPassword, string confirmPassword)
+        {
+            if (Password == null && newPassword == null && confirmPassword == null)
+            {
+                ViewData["allPassword"] = "Vui lòng nhập thông tin!";
+                ViewData["newPasswordValue"] = newPassword;
+                ViewData["confirmPasswordValue"] = confirmPassword;
+                return false;
+            }
+
+            if (newPassword == null && confirmPassword == null)
+            {
+                ViewData["ncPassword"] = "Vui lòng nhập thông tin!";
+                ViewData["PasswordValue"] = Password;
+                return false;
+            }
+
+            if (Password == null)
+            {
+                ViewData["oldPassword"] = "Vui lòng nhập thông tin!";
+                ViewData["newPasswordValue"] = newPassword;
+                ViewData["confirmPasswordValue"] = confirmPassword;
+                return false;
+            }
+            if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 8)
+            {
+                ViewData["newPassword"] = "Mật khẩu phải có ít nhất 8 kí tự";
+                ViewData["PasswordValue"] = Password;
+                ViewData["confirmPasswordValue"] = confirmPassword;
+                return false;
+            }
+            if (confirmPassword == null)
+            {
+                ViewData["confirmPassword"] = "Vui lòng nhập thông tin!";
+                ViewData["PasswordValue"] = Password;
+                ViewData["newPasswordValue"] = newPassword;
+                return false;
+            }
+
+
+
+            return true;
         }
 
     }

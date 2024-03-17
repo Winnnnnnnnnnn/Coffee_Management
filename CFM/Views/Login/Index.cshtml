@@ -33,11 +33,13 @@
         <h3>Win Coffee</h3>
 
         <label for="Email">Email</label>
-        <input required type="text" asp-for="Email" placeholder="Email">
+        <input 
+         type="text" asp-for="Email" placeholder="Email">
 
         <label for="Password">Mật khẩu</label>
         <div class="d-flex align-items-center">
-            <input required type="password" asp-for="Password" placeholder=" Mật khẩu" class="mb-3 visibility">
+            <input 
+             type="password" asp-for="Password" placeholder=" Mật khẩu" class="mb-3 visibility">
             <label for="checkVisible" style="margin-left: -10%; margin-bottom: 10%;"><i
                     class="bi bi-eye-fill cursor-pointer"></i></label>
             <input type="checkbox" class="d-none" id="checkVisible" onclick="visibilityFunction()">
