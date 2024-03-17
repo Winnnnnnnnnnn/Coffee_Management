@@ -18,7 +18,14 @@ namespace CFM.Controllers
     public class OrderController : Controller
     {
         IOrderRepository orderRepository = null;
-        public OrderController() => orderRepository = new OrderRepository();
+        private Coffee_ManagementContext dbContext = null;
+
+        public OrderController()
+        {
+            orderRepository = new OrderRepository();
+            dbContext = new Coffee_ManagementContext();
+        }
+
 
         public ActionResult Index()
         {
@@ -61,7 +68,6 @@ namespace CFM.Controllers
                     User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
                     Order.UserId = user.Id;
                     orderRepository.InsertOrder(Order);
-                    var dbContext = new Coffee_ManagementContext();
                     var table = dbContext.Tables.FirstOrDefault(t => t.Id == Order.TableId);
                     if (table != null)
                     {
@@ -105,6 +111,14 @@ namespace CFM.Controllers
                 user = order.GetUser(),
                 details = order.GetDetail(),
                 products = context.Products.ToList(),
+            });
+        }
+
+        public ActionResult GetOrderByTableId(int id)
+        {
+            var order = dbContext.Orders.FirstOrDefault(o => o.TableId == id);
+            return Json(new {
+                order = order,
             });
         }
 

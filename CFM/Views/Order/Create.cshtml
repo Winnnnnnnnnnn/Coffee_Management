@@ -141,9 +141,8 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-center mb-5">
-                                <input type="text" name="details[${index}].Note" class="form-control small order-note w-100" placeholder="Ghi chú">
-                                                    </div>`
-                    $('#order-details').append(str)
+                            <input type="text" name="details[${index}].Note" class="form-control small order-note w-100" placeholder="Ghi chú"></div>`
+                    $('#order-details').append(str);
                 })
             })
 
@@ -154,7 +153,6 @@
                 detail.find('.order-price').text(number_format(value));
                 detail.find('.order-quantity').removeAttr('disabled').val(1);
                 detail.find('.btn-print').removeAttr('disabled');
-
                 calcBill();
             });
 

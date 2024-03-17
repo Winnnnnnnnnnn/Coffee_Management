@@ -57,6 +57,7 @@ namespace CFM.Controllers
             return Json(new
             {
                 data = data,
+                products = products,
             });
         }
 
