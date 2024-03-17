@@ -84,7 +84,6 @@ namespace CFM.Controllers
                     }
                     user.Password = Helper.HashPassword(user.Password);
                     userRepository.InsertUser(user);
-                    User auth = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
                     var dbContext = new Coffee_ManagementContext();
                     LogDAO dao = new LogDAO();
                     dao.AddNew(new Log

@@ -81,58 +81,58 @@
 </section>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        $(document).ready(function () {
-            $.get('/User/GetUserInfo', function (data) {
-                var form = $('#order-form')
-                form.find('#cashier-name').text(data.name)
-                form.find('#cashier-id').val(data.id)
-            })
-
-            $.get('/Table/GetTableFree', function (data) {
-                $(`[name=TableId]`).empty();
-                var str = `<option selected hidden disabled>Chọn bàn</option>`
-                $.each(data, function (index, table) {
-                    str += `<option value="${table.id}">${table.name}</option>`
-                });
-                $(`[name=TableId]`).append(str);
-            })
-
-            $(document).on('change', '.order-product', function () {
-                $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
-                const detail = $(this).parents('.order-detail');
-                const value = $(this).find(':selected').attr('data-price')
-                detail.find('.order-price').text(number_format(value));
-                detail.find('.order-quantity').removeAttr('disabled').val(1);
-                detail.find('.btn-print').removeAttr('disabled');
-                calcBill();
-            });
-
-            $(document).on('change keyup', '.order-quantity', function () {
-                $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
-                var inputValue = $(this).val();
-                $(this).val((inputValue >= 1) ? inputValue : 1)
-                calcBill()
-            });
-
-            $(document).on('click', '.btn-cancel', function () {
-                var index = $(this).parents('.order-detail').attr('data-index');
-                $(this).parents('.order-detail').next().remove();
-                $(this).parents('.order-detail').remove();
-                $('.order-detail').each(function () {
-                    var index_current = parseInt($(this).attr('data-index'));
-                    if (index_current > index) {
-                        $(this).attr('data-index', index_current - 1);
-                        $(this).find('.order-product').attr('name', `details[${index_current - 1}].ProductId`);
-                        $(this).find('.detail-order-id').attr('name', `details[${index_current - 1}].OrderId`);
-                        $(this).find('.order-quantity').attr('name', `details[${index_current - 1}].Quantity`);
-                        $(this).find('.display-price').next().attr('name', `details[${index_current - 1}].Price`);
-                        $(this).next().find('.order-note').attr('name', `details[${index_current - 1}].Note`);
-                    }
+        <partial name="_ValidationScriptsPartial" />
+        <script>
+            $(document).ready(function () {
+                $.get('/User/GetUserInfo', function (data) {
+                    var form = $('#order-form')
+                    form.find('#cashier-name').text(data.name)
+                    form.find('#cashier-id').val(data.id)
                 })
-                calcBill();
-            })
-        });
-    </script>
+
+                $.get('/Table/GetTableFree', function (data) {
+                    $(`[name=TableId]`).empty();
+                    var str = `<option selected hidden disabled>Chọn bàn</option>`
+                    $.each(data, function (index, table) {
+                        str += `<option value="${table.id}">${table.name}</option>`
+                    });
+                    $(`[name=TableId]`).append(str);
+                })
+
+                $(document).on('change', '.order-product', function () {
+                    $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
+                    const detail = $(this).parents('.order-detail');
+                    const value = $(this).find(':selected').attr('data-price')
+                    detail.find('.order-price').text(number_format(value));
+                    detail.find('.order-quantity').removeAttr('disabled').val(1);
+                    detail.find('.btn-print').removeAttr('disabled');
+                    calcBill();
+                });
+
+                $(document).on('change keyup', '.order-quantity', function () {
+                    $(this).parents('#order-form').find('.btn-pay').addClass('d-none');
+                    var inputValue = $(this).val();
+                    $(this).val((inputValue >= 1) ? inputValue : 1)
+                    calcBill()
+                });
+
+                $(document).on('click', '.btn-cancel', function () {
+                    var index = $(this).parents('.order-detail').attr('data-index');
+                    $(this).parents('.order-detail').next().remove();
+                    $(this).parents('.order-detail').remove();
+                    $('.order-detail').each(function () {
+                        var index_current = parseInt($(this).attr('data-index'));
+                        if (index_current > index) {
+                            $(this).attr('data-index', index_current - 1);
+                            $(this).find('.order-product').attr('name', `details[${index_current - 1}].ProductId`);
+                            $(this).find('.detail-order-id').attr('name', `details[${index_current - 1}].OrderId`);
+                            $(this).find('.order-quantity').attr('name', `details[${index_current - 1}].Quantity`);
+                            $(this).find('.display-price').next().attr('name', `details[${index_current - 1}].Price`);
+                            $(this).next().find('.order-note').attr('name', `details[${index_current - 1}].Note`);
+                        }
+                    })
+                    calcBill();
+                })
+            });
+        </script>
 }
