@@ -269,7 +269,9 @@
                         });
                         modalEx.modal('show');
                     }
-                    @* $.ajax({
+                    setTimeout(function() {
+
+                    $.ajax({
                         url: '/Order/Pay',
                         type: 'POST',
                         data: { id: id, payment: paymentMethod },
@@ -279,7 +281,9 @@
                         error: function (xhr, status, error) {
                             console.error(xhr.responseText);
                         }
-                    }); *@
+                    });
+                        
+                    }, 3000);
                 });
             })
 

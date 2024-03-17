@@ -252,12 +252,11 @@
                     $('.numProducts').text(numProduct);
                 }).done(function () {
                     $.each(revenueMap, function (date, revenue) {
-                        let newDate = moment(date).format('DD/MM/YYYY');
-                        console.log("date" + newDate);
-                        var year = moment(newDate).format('YYYY'),
-                            month = moment(newDate).format('MM'),
-                            quarter = Math.ceil(moment(newDate).format('MM') / 3),
-                            week = Math.ceil(moment(newDate).format('DD') / 7);
+                        let newDate = moment(date, "DD-MM-YYYY").format('DD/MM/YYYY');
+                        var year = moment(newDate, "DD-MM-YYYY").format('YYYY');
+                        var month = moment(newDate, "DD-MM-YYYY").format('MM');
+                        var quarter = Math.ceil(moment(newDate, "DD-MM-YYYY").format('MM') / 3);
+                        var week = Math.ceil(moment(newDate, "DD-MM-YYYY").format('DD') / 7);
                         switch ($('[name="moment"]:checked').val()) {
                             case '5':
                                 if (revenueMapBy_mm['Năm ' + year]) {
