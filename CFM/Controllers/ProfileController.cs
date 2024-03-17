@@ -43,6 +43,7 @@ namespace CFM.Controllers
                 return View("ChangePassword");
             }
 
+
             User user = Helper.UserInfo(HttpContext);
             string passMD5;
 
@@ -61,27 +62,40 @@ namespace CFM.Controllers
             }
 
             Password = passMD5;
+            if (Password != user.Password)
+            {
+                ViewData["checkOldPassword"] = "Mật khẩu cũ không đúng! Vui lòng nhập lại";
+                return View("ChangePassword");
+            }
+
             User userUpdate = _db.Users.FirstOrDefault(u => u.Password == Password && u.Id == user.Id);
 
-            // Hash the password using MD5
-            string hashedPassword;
-            using (MD5 md5 = MD5.Create())
+            if (newPassword != confirmPassword)
             {
-                byte[] inputBytes = Encoding.ASCII.GetBytes(newPassword);
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-                // Convert the byte array to hexadecimal string
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < hashBytes.Length; i++)
-                {
-                    sb.Append(hashBytes[i].ToString("x2"));
-                }
-                hashedPassword = sb.ToString();
+                ViewData["invalidPassword"] = "Mật khẩu mới và mật khẩu xác nhận không trùng khớp";
+                return View("ChangePassword");
             }
-            userUpdate.Password = hashedPassword;
-            _db.SaveChanges();
-            return RedirectToAction("Index", "Login");
+            else
+            {
+                // Hash the password using MD5
+                string hashedPassword;
+                using (MD5 md5 = MD5.Create())
+                {
+                    byte[] inputBytes = Encoding.ASCII.GetBytes(newPassword);
+                    byte[] hashBytes = md5.ComputeHash(inputBytes);
 
+                    // Convert the byte array to hexadecimal string
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < hashBytes.Length; i++)
+                    {
+                        sb.Append(hashBytes[i].ToString("x2"));
+                    }
+                    hashedPassword = sb.ToString();
+                }
+                userUpdate.Password = hashedPassword;
+                _db.SaveChanges();
+                return RedirectToAction("Index", "Login");
+            }
         }
 
         public IActionResult ProfileUser()
@@ -139,31 +153,45 @@ namespace CFM.Controllers
 
         public bool IsValid(string Password, string newPassword, string confirmPassword)
         {
+            if (Password == null && newPassword == null && confirmPassword == null)
+            {
+                ViewData["allPassword"] = "Vui lòng nhập thông tin!";
+                ViewData["newPasswordValue"] = newPassword;
+                ViewData["confirmPasswordValue"] = confirmPassword;
+                return false;
+            }
+
+            if (newPassword == null && confirmPassword == null)
+            {
+                ViewData["ncPassword"] = "Vui lòng nhập thông tin!";
+                ViewData["PasswordValue"] = Password;
+                return false;
+            }
+
             if (Password == null)
             {
-                ViewData["allPassword"] = "Mật khẩu không được để trống";
-                return false;
-            }
-            if (newPassword == null)
-            {
-                ViewData["ncPassword"] = "Mật khẩu mới không được để trống";
-                return false;
-            }
-            if (confirmPassword == null)
-            {
-                ViewData["confirmPassword"] = "Xác nhận mật khẩu không được để trống";
+                ViewData["oldPassword"] = "Vui lòng nhập thông tin!";
+                ViewData["newPasswordValue"] = newPassword;
+                ViewData["confirmPasswordValue"] = confirmPassword;
                 return false;
             }
             if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 8)
             {
                 ViewData["newPassword"] = "Mật khẩu phải có ít nhất 8 kí tự";
+                ViewData["PasswordValue"] = Password;
+                ViewData["confirmPasswordValue"] = confirmPassword;
                 return false;
             }
-            if (newPassword != confirmPassword)
+            if (confirmPassword == null)
             {
-                ViewData["invalidPassword"] = "Mật khẩu không trùng khớp";
+                ViewData["confirmPassword"] = "Vui lòng nhập thông tin!";
+                ViewData["PasswordValue"] = Password;
+                ViewData["newPasswordValue"] = newPassword;
                 return false;
             }
+
+
+
             return true;
         }
 
