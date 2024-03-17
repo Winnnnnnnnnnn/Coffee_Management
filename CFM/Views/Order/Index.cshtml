@@ -237,6 +237,7 @@
 
             $(document).on('click', '.btn-pay', function () {
                 const id = parseInt($(this).attr('data-id'));
+                const priceIMG = $(this).closest('td').prev('td').prev('td').prev('td').prev('td').text();
                 Swal.fire({
                     title: "Thanh toán",
                     text: "Vui lòng chọn phương thức thanh toán",
@@ -246,8 +247,29 @@
                     cancelButtonText: "Chuyển khoản",
                     reverseButtons: true
                 }).then((result) => {
-                    let paymentMethod = result.isConfirmed ? 1 : 2;
-                    $.ajax({
+                    let paymentMethod = result.isConfirmed ? 1 : 2, totalPrice_img = 0;
+                    if(!result.isConfirmed){
+                        let modalEx = $('#setting-example'), str = `https://img.vietqr.io/image/`;
+                        $.get(`/Setting/Load`, function (settingList) {
+                            $.each(settingList, function (index, setting) {
+                                if (setting.key == "bank_number") {
+                                    str += setting.value + '-';
+                                } if (setting.key == "bank_id") {
+                                    str += setting.value + '-';
+                                }
+                                if (setting.key == "bank_template") {
+                                    str += setting.value + `.png?amount=${priceIMG}&addInfo=`;
+                                }
+                                if (setting.key == "bank_content") {
+                                    str += setting.value;
+                                }
+                            });
+                            console.log(str)
+                            modalEx.find('img').attr('src', str);
+                        });
+                        modalEx.modal('show');
+                    }
+                    @* $.ajax({
                         url: '/Order/Pay',
                         type: 'POST',
                         data: { id: id, payment: paymentMethod },
@@ -257,7 +279,7 @@
                         error: function (xhr, status, error) {
                             console.error(xhr.responseText);
                         }
-                    });
+                    }); *@
                 });
             })
 
