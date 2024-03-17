@@ -59,7 +59,6 @@ namespace CFM.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Create(Order Order, List<Detail> details)
         {
             try
@@ -96,14 +95,13 @@ namespace CFM.Controllers
             }
         }
 
-        public ActionResult getOrder(int id)
+        public ActionResult getOrder(int? id)
         {
-            var order = orderRepository.GetOrderByID(id);
+            var order = orderRepository.GetOrderByID(id.Value);
             if (order == null)
             {
                 return NotFound();
             }
-            var context = new Coffee_ManagementContext();
             ViewBag.IsActive = "order";
             return Json(new
             {
@@ -111,15 +109,7 @@ namespace CFM.Controllers
                 table = order.GetTable(),
                 user = order.GetUser(),
                 details = order.GetDetail(),
-                products = context.Products.ToList(),
-            });
-        }
-
-        public ActionResult GetOrderByTableId(int id)
-        {
-            var order = dbContext.Orders.FirstOrDefault(o => o.TableId == id);
-            return Json(new {
-                order = order,
+                products = dbContext.Products.ToList(),
             });
         }
 
@@ -140,7 +130,6 @@ namespace CFM.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Order order)
         {
             try

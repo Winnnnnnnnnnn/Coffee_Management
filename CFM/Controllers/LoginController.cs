@@ -58,7 +58,7 @@ namespace ShopManagement.Controllers
                     string userJson = Newtonsoft.Json.JsonConvert.SerializeObject(authenticatedUser);
                     session.SetString(key_access, userJson);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Main");
                 }
                 ViewData["Message"] = "Đăng nhập thất bại! Mật khẩu hoặc email không đúng!";
                 return View("~/Views/Login/Index.cshtml");
