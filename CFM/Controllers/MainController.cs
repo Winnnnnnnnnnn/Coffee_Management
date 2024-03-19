@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyLibrary.DataAccess;
 using MyLibrary.Repository;
 using MyMVC.Models.Authentication;
+using Newtonsoft.Json;
 
 namespace CFM.Controllers
 {
@@ -16,12 +18,16 @@ namespace CFM.Controllers
     {
         private Coffee_ManagementContext dbContext = null;
         private readonly IProductRepository productRepository;
+        private readonly IDetailRepository detailRepository;
         private readonly ITableRepository tableRepository;
+        IOrderRepository orderRepository = null;
         public MainController()
         {
             dbContext = new Coffee_ManagementContext();
             productRepository = new ProductRepository();
             tableRepository = new TableRepository();
+            detailRepository = new DetailRepository();
+            orderRepository = new OrderRepository();
         }
         public IActionResult Index()
         {
@@ -36,6 +42,43 @@ namespace CFM.Controllers
                 tables = tableRepository.GetTables(),
             });
         }
+
+        public object Create(IFormCollection request){
+            int totalP = 0;
+            Order order = new Order();
+            User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+            order.UserId = user.Id;
+            order.Status = 0;
+            order.TableId = int.Parse(request["table_id"]);
+            for (int i = 0; i < request["quantity[]"].Count(); i++)
+            {
+               totalP = int.Parse(request["quantity[]"][i]) * int.Parse(request["price[]"][i]);
+            }
+            order.TotalPrice = totalP;
+            orderRepository.InsertOrder(order);
+
+            //Tạo detail
+            for (int i = 0; i < request["quantity[]"].Count(); i++)
+            {
+                Detail detail = new Detail();
+                detail.OrderId = order.Id;
+                detail.ProductId = int.Parse(request["id[]"][i]);
+                detail.Quantity = int.Parse(request["quantity[]"][i]);
+                detail.Price = int.Parse(request["price[]"][i]);
+                detailRepository.InsertDetail(detail);
+            }
+            var table = dbContext.Tables.FirstOrDefault(t => t.Id == order.TableId);
+            if (table != null)
+            {
+                table.Status = 1;
+                dbContext.SaveChanges();
+            }
+            return Json(new{
+                msg = "Đã tạo đơn hàng",
+                status = "success",
+            });
+        }
+
         public object GetOrderByTableId(int id)
         {
             Order order = dbContext.Orders.FirstOrDefault(o => o.TableId == id && o.Status == 0);

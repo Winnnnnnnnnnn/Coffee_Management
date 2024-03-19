@@ -214,7 +214,7 @@
             })
 
             var now = new Date();
-            var endDate = moment(now).format('DD/MM/YYYY');
+            var endDate = moment(now.getTime() + 24 * 60 * 60 * 1000).format('DD/MM/YYYY');
             var startDate = moment(now.getTime() - 7 * 24 * 60 * 60 * 1000).format('DD/MM/YYYY');
             $('input[name="dateRange"]').daterangepicker({
                 "startDate": startDate,

@@ -247,7 +247,7 @@
                     cancelButtonText: "Chuyển khoản",
                     reverseButtons: true
                 }).then((result) => {
-                    let paymentMethod = result.isConfirmed ? 1 : 2, totalPrice_img = 0;
+                    let totalPrice_img = 0;
                     if(!result.isConfirmed){
                         let modalEx = $('#setting-example'), str = `https://img.vietqr.io/image/`;
                         $.get(`/Setting/Load`, function (settingList) {
@@ -268,22 +268,32 @@
                             modalEx.find('img').attr('src', str);
                         });
                         modalEx.modal('show');
+                        modalEx.on('hidden.bs.modal', function (e) {
+                            $.ajax({
+                                url: '/Order/Pay',
+                                type: 'POST',
+                                data: { id: id, payment: '2' },
+                                success: function () {
+                                    window.location.href = "/Order/Index";
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        });
+                    }else{
+                        $.ajax({
+                            url: '/Order/Pay',
+                            type: 'POST',
+                            data: { id: id, payment: '1' },
+                            success: function () {
+                                window.location.href = "/Order/Index";
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(xhr.responseText);
+                            }
+                        });
                     }
-                    setTimeout(function() {
-
-                    $.ajax({
-                        url: '/Order/Pay',
-                        type: 'POST',
-                        data: { id: id, payment: paymentMethod },
-                        success: function () {
-                            window.location.href = "/Order/Index";
-                        },
-                        error: function (xhr, status, error) {
-                            console.error(xhr.responseText);
-                        }
-                    });
-                        
-                    }, 3000);
                 });
             })
 

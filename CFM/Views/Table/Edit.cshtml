@@ -13,12 +13,12 @@
                 accept-charset="UTF-8" enctype="multipart/form-data">
                 <div class="p-5">
                     <div class="row">
-                        <input type="hidden" asp-for="Id" value="0">
+                        <input type="hidden" asp-for="Id">
                         <span asp-validation-for="Id" class="text-danger"></span>
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label fw-bold">Tên bàn</label>
                             <input required type="text" class="form-control" asp-for="Name" placeholder="Nhập tên bàn">
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <span asp-validation-for="Name" class="text-danger"></span> 
                         </div>
                         <div class="mb-3">
                             <label asp-for="Area" class="form-label fw-bold">Khu vực</label>

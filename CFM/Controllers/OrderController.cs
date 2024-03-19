@@ -261,6 +261,7 @@ namespace CFM.Controllers
             }
             catch (Exception ex)
             {
+                System.Console.WriteLine(ex);
                 return StatusCode(500, "Lỗi server");
             }
         }

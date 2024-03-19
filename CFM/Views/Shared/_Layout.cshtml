@@ -326,7 +326,8 @@
 
         $(document).on('click', '.btn-remove', function (e) {
             e.preventDefault();
-            let form = $(this).parent();
+            let form = $(this).parent(), status = $(this).closest('td').prev('td').text();
+            console.log(status);
             console.log($('.auth-role').text());
             if ($('.auth-role').text() == 'Nhân viên') {
                 Swal.fire({
@@ -336,6 +337,14 @@
                     showConfirmButton: true,
                     confirmButtonText: "OK, Đã hiểu!",
                 })
+            } else if (status == "Chưa thanh toán") {
+                Swal.fire({
+                    title: "Lưu ý!",
+                    text: "Đơn hàng chưa thanh toán không thể xóa!",
+                    icon: "warning",
+                    showConfirmButton: true,
+                    confirmButtonText: "OK, Đã hiểu!",
+                });
             } else {
                 Swal.fire({
                     title: "Lưu ý!",
