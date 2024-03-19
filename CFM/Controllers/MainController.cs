@@ -43,18 +43,14 @@ namespace CFM.Controllers
             });
         }
 
-        public object Create(IFormCollection request){
-            int totalP = 0;
+        public object Create(IFormCollection request)
+        {
             Order order = new Order();
             User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
             order.UserId = user.Id;
             order.Status = 0;
             order.TableId = int.Parse(request["table_id"]);
-            for (int i = 0; i < request["quantity[]"].Count(); i++)
-            {
-               totalP = int.Parse(request["quantity[]"][i]) * int.Parse(request["price[]"][i]);
-            }
-            order.TotalPrice = totalP;
+            order.TotalPrice = int.Parse(request["total_price"]);
             orderRepository.InsertOrder(order);
 
             //Tạo detail
@@ -73,7 +69,8 @@ namespace CFM.Controllers
                 table.Status = 1;
                 dbContext.SaveChanges();
             }
-            return Json(new{
+            return Json(new
+            {
                 msg = "Đã tạo đơn hàng",
                 status = "success",
             });

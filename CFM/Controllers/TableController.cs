@@ -30,7 +30,7 @@ namespace CFM.Controllers
             var tables = tableRepository.GetTables();
             var data = tables.Select(t => new
             {
-                name ="<a class='btn btn-link text-decoration-none' href='/Table/Edit/" + t?.Id + "'>" +  t?.Name + " </ a > ",
+                name = "<a class='btn btn-link text-decoration-none' href='/Table/Edit/" + t?.Id + "'>" + t?.Name + " </ a > ",
                 area = t?.Area,
                 note = t?.Note,
                 status = t?.GetStatus(),
@@ -100,13 +100,14 @@ namespace CFM.Controllers
         {
             try
             {
+                System.Console.WriteLine(id + " " + Json(table));
                 table.Id = id;
                 User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
                 var dbContext = new Coffee_ManagementContext();
                 tableRepository.UpdateTable(table);
                 LogDAO dao = new LogDAO();
-            System.Console.WriteLine(table.Area);
-            System.Console.WriteLine(table.Id);
+                System.Console.WriteLine(table.Area);
+                System.Console.WriteLine(table.Id);
                 dao.AddNew(new Log
                 {
                     Id = 0,

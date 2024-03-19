@@ -225,12 +225,6 @@
             $(this).find('.order-price').val(sum);
             total += sum;
         })
-        $.each($('.order-fee-amount-val'), function () {
-            total += parseInt($(this).val())
-        })
-        $.each($('.order-discount-amount-val'), function () {
-            total -= parseInt($(this).val())
-        })
         $('.bill-total').val(total)
         $('span.order-summary').text(number_format(total))
     }
@@ -293,9 +287,9 @@
             const index = $('.order-product').length;
             $.get('/Product/Load', function (data) {
                 var str = `<div class="row order-detail mb-2" data-index="${index}">
-                                                                <div class="col-12 col-lg-4">
-                                                                    <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
-                                                                        <option value="" selected hidden disabled>Chọn món</option>`;
+                            <div class="col-12 col-lg-4">
+                                <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
+                                    <option value="" selected hidden disabled>Chọn món</option>`;
                 $.each(data.products, function (key, product) {
                     str += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
                 });
@@ -313,7 +307,6 @@
                                     <input type="hidden" name="details[${index}].Price" id="order-price-${index + 1}" value="0" class="form-control border border-0 text-end order-price ps-0" autocomplete="off" readonly>
                                 </div>
                                 <div class="col-3 col-lg-2 d-flex">
-                                    <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3" disabled><i class="bi bi-printer"></i></button>
                                     <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
                                 </div>
                             </div>
@@ -326,9 +319,7 @@
 
         $(document).on('click', '.btn-remove', function (e) {
             e.preventDefault();
-            let form = $(this).parent(), status = $(this).closest('td').prev('td').text();
-            console.log(status);
-            console.log($('.auth-role').text());
+            let form = $(this).parent(), status = $(this).parents('tr').find('.status').text();
             if ($('.auth-role').text() == 'Nhân viên') {
                 Swal.fire({
                     title: "Lưu ý!",
@@ -341,6 +332,14 @@
                 Swal.fire({
                     title: "Lưu ý!",
                     text: "Đơn hàng chưa thanh toán không thể xóa!",
+                    icon: "warning",
+                    showConfirmButton: true,
+                    confirmButtonText: "OK, Đã hiểu!",
+                });
+            } else if (status == "Có khách") {
+                Swal.fire({
+                    title: "Lưu ý!",
+                    text: "Hiện tại bàn đang có khách, không thể xóa!",
                     icon: "warning",
                     showConfirmButton: true,
                     confirmButtonText: "OK, Đã hiểu!",

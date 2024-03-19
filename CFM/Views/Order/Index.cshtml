@@ -171,6 +171,7 @@
             const table = $('#data-table').DataTable({
                 processing: true,
                 serverSide: false,
+                "order": [[0, "desc"]],
                 ajax: {
                     url: `/Order/Load`,
                     error: function (err) {
@@ -237,7 +238,7 @@
 
             $(document).on('click', '.btn-pay', function () {
                 const id = parseInt($(this).attr('data-id'));
-                const priceIMG = $(this).closest('td').prev('td').prev('td').prev('td').prev('td').text();
+                const priceIMG = $(this).parents('tr').find('.price').text();
                 Swal.fire({
                     title: "Thanh toán",
                     text: "Vui lòng chọn phương thức thanh toán",
@@ -248,7 +249,7 @@
                     reverseButtons: true
                 }).then((result) => {
                     let totalPrice_img = 0;
-                    if(!result.isConfirmed){
+                    if (!result.isConfirmed) {
                         let modalEx = $('#setting-example'), str = `https://img.vietqr.io/image/`;
                         $.get(`/Setting/Load`, function (settingList) {
                             $.each(settingList, function (index, setting) {
@@ -281,7 +282,7 @@
                                 }
                             });
                         });
-                    }else{
+                    } else {
                         $.ajax({
                             url: '/Order/Pay',
                             type: 'POST',

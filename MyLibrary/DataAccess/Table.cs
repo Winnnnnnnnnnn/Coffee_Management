@@ -26,7 +26,7 @@ namespace MyLibrary.DataAccess
 
         public string GetStatus()
         {
-            var stt = (this.Status == 0) ? "Trống" : "Có khách";
+            var stt = (this.Status == 0) ? "<p class='text-success status'>Trống</p>" : "<p class='text-danger status'>Có khách</p>";
             return stt;
 
         }

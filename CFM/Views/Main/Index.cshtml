@@ -97,7 +97,7 @@
                     <div class="d-flex justify-content-between text-dark mt-2">
                         <p class="fw-bold mb-1">Tổng đơn:</p>
                         <p class="bill-total mb-1">0</p>
-                        <input type="hidden" class="input-bill-total" value="0">
+                        <input type="hidden" name="total_price" class="input-bill-total" value="0">
                     </div>
                     <input type="hidden" name="table_id">
                     <div class="bill-footer d-grid gap-4">
@@ -320,7 +320,7 @@
             $(document).on('click', '.btn-table-delivery', function (e) {
                 e.preventDefault();
                 $('.bill-details').empty();
-                $('.bill-total').empty();
+                $('.bill-total').text(0);
                 var id = $(this).find('[name=table]').val();
                 $.each($('.table-label'), function (index, entity) {
                     $(this).removeClass('table-selected');
@@ -369,12 +369,10 @@
 
             });
 
-
-
             $(document).on('click', '.table-label', function (e) {
                 e.preventDefault();
                 $('.bill-details').empty();
-                $('.bill-total').empty();
+                $('.bill-total').text(0);
                 var id = $(this).find('[name=table]').val();
                 $('#main-form').find('input[name="table_id"]').val(id);
                 $.each($('.table-label'), function (index, entity) {
@@ -388,6 +386,7 @@
                 $.get(`/Main/GetOrderByTableId/?id=${id}`, function (data) {
                     $('.table-name').text(data.table.name).removeClass('d-none');
                     $('.btn-print').attr('data-id', data.order.id)
+                    $('.btn-pay').attr('data-id', data.order.id)
                     $('.bill-total').text(number_format(data.order.totalPrice));
                     $('.input-bill-total').val(data.order.totalPrice);
                     $.each(data.details, function (index, detail) {
@@ -426,11 +425,9 @@
             })
 
             $(document).on('change keyup', '.bill-quantity', function () {
-                $(this).parent().find('.bill-total-price').text(number_format(parseFloat($(this).parent().find('.bill-price').val()) * parseFloat($(this).val())))
-                $('.input-bill-total').val(parseFloat($('.input-bill-total').val()) + parseFloat($(this).parent().find('.bill-price').val()));
-                $('.bill-total').text(number_format(parseFloat($('.input-bill-total').val())));
                 var inputValue = $(this).val();
                 $(this).val((inputValue >= 1) ? inputValue : 1)
+                calcBillMain()
             })
 
             $(document).on('click', '.product-card', function () {
@@ -447,8 +444,83 @@
                                                 </input>
                                             </div>`
                     $('.bill-details').append(str);
+                    calcBillMain()
+                });
+            })
+
+            $(document).on('click', '.btn-pay', function () {
+                const id = parseInt($(this).attr('data-id'));
+                const priceIMG = $(this).parents('form').find('.input-bill-total').val();
+                console.log(priceIMG);
+                Swal.fire({
+                    title: "Thanh toán",
+                    text: "Vui lòng chọn phương thức thanh toán",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Tiền mặt",
+                    cancelButtonText: "Chuyển khoản",
+                    reverseButtons: true
+                }).then((result) => {
+                    let totalPrice_img = 0;
+                    if (!result.isConfirmed) {
+                        let modalEx = $('#setting-example'), str = `https://img.vietqr.io/image/`;
+                        $.get(`/Setting/Load`, function (settingList) {
+                            $.each(settingList, function (index, setting) {
+                                if (setting.key == "bank_number") {
+                                    str += setting.value + '-';
+                                } if (setting.key == "bank_id") {
+                                    str += setting.value + '-';
+                                }
+                                if (setting.key == "bank_template") {
+                                    str += setting.value + `.png?amount=${priceIMG}&addInfo=`;
+                                }
+                                if (setting.key == "bank_content") {
+                                    str += setting.value;
+                                }
+                            });
+                            console.log(str)
+                            modalEx.find('img').attr('src', str);
+                        });
+                        modalEx.modal('show');
+                        modalEx.on('hidden.bs.modal', function (e) {
+                            $.ajax({
+                                url: '/Order/Pay',
+                                type: 'POST',
+                                data: { id: id, payment: '2' },
+                                success: function () {
+                                    window.location.href = "/Main/Index";
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        });
+                    } else {
+                        $.ajax({
+                            url: '/Order/Pay',
+                            type: 'POST',
+                            data: { id: id, payment: '1' },
+                            success: function () {
+                                window.location.href = "/Order/Index";
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(xhr.responseText);
+                            }
+                        });
+                    }
                 });
             })
         });
+
+        function calcBillMain() {
+            let total = 0;
+            $('#main-form .bill-detail').each(function () {
+                let sum = $(this).find('.bill-price').val() * $(this).find('.bill-quantity').val();
+                $(this).find('.bill-total-price').text(number_format(sum));
+                total += sum;
+            })
+            $('#main-form').find('.input-bill-total').val(total)
+            $('#main-form').find('.bill-total').text(number_format(total))
+        }
     </script>
 }

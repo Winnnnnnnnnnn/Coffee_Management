@@ -43,10 +43,10 @@ namespace CFM.Controllers
                 id = o?.Id,
                 table_id = "<a class='btn btn-link text-decoration-none' href='/Order/Edit/" + o?.Id + "'>" + o?.getTableName() + " </ a > ",
                 user_id = o.getUserName(),
-                total_price = o?.TotalPrice,
+                total_price = "<span class='price'>" + (int)o?.TotalPrice + "</span>",
                 note = o?.Note,
                 created_at = o?.CreatedAt.Value.ToString("HH:mm:ss dd/MM/yyyy"),
-                status = "<span class=" + (o.Status == 0 ? "text-danger" : "text-success") + ">" + o?.getStatus() + "</span>",
+                status = "<span class='status " + (o.Status == 0 ? "text-danger" : "text-success") + "'>" + o?.getStatus() + "</span>",
                 action = "<div class='d-flex'><a class='btn text-dark btn-print-bill me-2' data-id='" + o?.Id + "'><i class='bi bi-printer'></i></a><a class='btn text-success btn-pay me-2' data-id='" + o?.Id + "'><i class='bi bi-currency-dollar'></i></a><form action='/Order/Delete' method='POST' class='save-form'><input type='hidden' name='id' value='" + o?.Id + "' data-id='" + o?.Id + "'/> <button type='submit' class='btn btn-link text-decoration-none btn-remove'><i class='bi bi-trash3'></i></button></form></div>"
             });
             return Json(new { data = data });

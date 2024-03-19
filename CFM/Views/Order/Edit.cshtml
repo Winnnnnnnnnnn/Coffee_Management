@@ -96,33 +96,32 @@
                 $.each(data.details, function (index, detail) {
                     var note = (detail.note) ? detail.note : "";
                     var str = `<div class="row order-detail mb-2" data-index="${index}">
-                                                                        <div class="col-12 col-lg-4">
-                                                                            <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
-                                                                                <option value="" selected hidden disabled>Chọn món</option>`
+                                    <div class="col-12 col-lg-4">
+                                        <select name="details[${index}].ProductId" id="order-products-${index + 1}" class="form-control form-select rounded-2 order-product mb-1 mb-lg-0">
+                                            <option value="" selected hidden disabled>Chọn món</option>`
                     $.each(data.products, function (key, product) {
                         str += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`
                     })
                     str += `</select>
-                                        </div>
-                                        <div class="col-4 col-lg-2">
-                                            <input type="hidden" name="details[${index}].OrderId" value="${id}"  class="detail-order-id">
-                                            <input type="text" id="order-prices-${index + 1}" value="${detail.price}" class="form-control border border-0 text-end order-price ps-0" inputmode="numeric"  autocomplete="off">
-                                        </div>
-                                        <div class="col-2 col-lg-2">
-                                            <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}"  value="${detail.quantity}" class="form-control border border-0 text-end order-quantity px-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng">
-                                        </div>
-                                        <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end">
-                                            <div class="display-price"></div>
-                                            <input type="hidden" name="details[${index}].Price" id="order-price-${index + 1}" value="0" class="form-control border border-0 text-end order-price ps-0" autocomplete="off" readonly>
-                                        </div>
-                                        <div class="col-3 col-lg-2 d-flex">
-                                            <button type="button" class="btn btn-outline-secondary border border-0 btn-print rounded-2 ms-lg-3"><i class="bi bi-printer"></i></button>
-                                            <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-5">
-                                        <input type="text" name="details[${index}].Note" value="${note}" class="form-control small order-note w-100" placeholder="Ghi chú">
-                                                                </div>`
+                        </div>
+                        <div class="col-4 col-lg-2">
+                            <input type="hidden" name="details[${index}].OrderId" value="${id}"  class="detail-order-id">
+                            <input type="text" id="order-prices-${index + 1}" value="${detail.price}" class="form-control border border-0 text-end order-price ps-0" inputmode="numeric"  autocomplete="off">
+                        </div>
+                        <div class="col-2 col-lg-2">
+                            <input type="number" name="details[${index}].Quantity" id="order-quantities-${index + 1}"  value="${detail.quantity}" class="form-control border border-0 text-end order-quantity px-0" inputmode="numeric" autocomplete="off" placeholder="Số lượng">
+                        </div>
+                        <div class="col-3 col-lg-2 d-flex align-items-center justify-content-end">
+                            <div class="display-price"></div>
+                            <input type="hidden" name="details[${index}].Price" id="order-price-${index + 1}" value="0" class="form-control border border-0 text-end order-price ps-0" autocomplete="off" readonly>
+                        </div>
+                        <div class="col-3 col-lg-2 d-flex">
+                            <button type="button" class="btn btn-outline-secondary border border-0 btn-cancel rounded-2">&times;</button>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-5">
+                        <input type="text" name="details[${index}].Note" value="${note}" class="form-control small order-note w-100" placeholder="Ghi chú">
+                                                                        </div>`
                     $('#order-form').find('#order-details').append(str).find(`#order-products-${index + 1}`).val(detail.productId)
                 })
                 calcBill();
