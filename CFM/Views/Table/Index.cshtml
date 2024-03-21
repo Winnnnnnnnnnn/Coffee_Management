@@ -23,10 +23,8 @@
 <div class="page-content">
     <div class="card p-4">
         <div class="card-header bg-white">
-            <a asp-controller="Table" asp-action="Create" type="button" class="btn btn-primary me-2"><i
+            <a asp-controller="Table" asp-action="Create" type="button" class="btn btn-primary btn-create-table me-2"><i
                     class="bi bi-plus-circle-dotted"></i>Thêm</a>
-            <button type="button" class="btn btn-remove-table btn-danger d-none" id="btn-remove-tables"> <i
-                    class="icon-mid bi bi-trash"></i> Xóa</button>
         </div>
         <div class="card-body">
             <form id="batch-form" asp-action="Delete" method="post">
@@ -55,7 +53,7 @@
             $.get('/User/GetUserInfo', function (data) {
                 switch (data.role) {
                     case 3:
-                        $('.btn-create').remove();
+                        $('.btn-create-table').remove();
                         break;
                     default:
                         break;
