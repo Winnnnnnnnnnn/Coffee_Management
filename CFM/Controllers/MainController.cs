@@ -71,7 +71,35 @@ namespace CFM.Controllers
             }
             return Json(new
             {
-                msg = "Đã tạo đơn hàng",
+                msg = "Đã tạo đơn hàng thành công",
+                status = "success",
+            });
+        }
+
+        [HttpPost]
+        public object Edit(IFormCollection request)
+        {
+            System.Console.WriteLine(int.Parse(request["id"]));
+            Order order = orderRepository.GetOrderByID(int.Parse(request["id"]));
+            User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("user"));
+            order.UserId = user.Id;
+            order.TotalPrice = int.Parse(request["total_price"]);
+            orderRepository.UpdateOrder(order);
+            order.RemoveDetails();
+            //Tạo detail
+            for (int i = 0; i < request["quantity[]"].Count(); i++)
+            {
+                Detail detail = new Detail();
+                detail.OrderId = order.Id;
+                detail.ProductId = int.Parse(request["id[]"][i]);
+                detail.Quantity = int.Parse(request["quantity[]"][i]);
+                detail.Price = int.Parse(request["price[]"][i]);
+                detailRepository.InsertDetail(detail);
+            }
+
+            return Json(new
+            {
+                msg = "Đã cập nhật đơn hàng thành công",
                 status = "success",
             });
         }
