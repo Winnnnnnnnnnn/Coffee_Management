@@ -49,7 +49,7 @@ namespace MyLibrary.DataAccess
                 using (var context = new Coffee_ManagementContext())
                 {
                     var orders = context.Orders
-                        .Where(order => order.CreatedAt >= startDate && order.CreatedAt <= endDate)
+                        .Where(order => order.CreatedAt >= startDate && order.CreatedAt <= endDate).Where(order => order.Status != 0)
                         .ToList();
                     return orders;
                 }
